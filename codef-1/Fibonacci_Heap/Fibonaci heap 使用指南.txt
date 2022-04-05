@@ -1,0 +1,34 @@
+斐波那契堆：
+节点数：total_n
+最小节点指针：*min
+
+重要函数：
+插入节点：FibNode<T>* insert(*node)
+                 FibNode<T>* insert(Registration *data, T p_want)
+p_want 可以是 data->priority (T = string) 或 data->person->letter (T = int)
+
+删除节点：remove(key)
+                 删去remove(*node)  -->>  改为：
+1.priority是string:                                           2.priority是int:
+   decrease(node, " ");                                       decrease(node, 0);
+   removeMin();                                                   removeMin();
+
+删除最小节点：removeMin()
+
+更改节点数值：update（old_key，new_key）
+                       update(*node,key)
+
+整理斐波那契堆：consolidate()
+
+将other堆合并到当前堆：combine(FibHeap<T> *other);
+
+显示斐波那契堆：print()
+
+其他函数：
+斐波那契堆里是否存在这个key(返还bool)：contains(key)
+
+查找（返还node指针）：search(key)
+
+
+
+
