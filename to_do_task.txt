@@ -1,0 +1,9 @@
+（一）treatment_type
+1. 为Registration（和Appointment）数据类型添加treatment_type属性（1~3）
+2. 更新Registration::set_priority(void)操作
+
+
+（二）B+tree
+1. 写一个B+tree结构
+2. 将reg_list改成B+tree结构
+3. 将Vaccination.cpp中与原reg_list相关的操作更新
