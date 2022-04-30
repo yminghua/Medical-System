@@ -1,0 +1,75 @@
+====Files Introduction====
+<Data_Structure.h>  Contains self design data structure "Registration" and "Appointment" and some simple member function. 
+<Fibonacci_heap.h>  Contains the fibonacci heap data structure modified to be compatible with our "Registration" data type. 
+<AList.cpp>  Contains a list structure.
+<waiting_queue.cpp>  Contains a queue structure for registration files who needs to wait, e.g. mid-risk people need to wait 30 days, withdraw-then-register people need to wait 14 days, high-risk people need to wait indefinitely.
+<appointment_queue.cpp>  Contains a queue structure for generated appointments. 
+<System.h>  The overall data structure "System" for our medical Registration-and-Responses system. 
+<Vaccination_System.cpp>  The implementation for the member function for System data type, including Register、Gen_Appointment、Report、n_Day_Pass etc.
+<test_Vaccination_System.cpp>  The final rendering of our program. You can play with this file only, we've already inserted some of the test data in it, but you can comment it out. How to use it is pretty obvious.
+<test_data.txt>  Test data.
+
+
+====Program testing and running====
+Compile and run test_Vaccination_System.cpp.
+Test data:
+we've already insert our test data in our member function Half_Day_Pass() in <Vaccination_System.cpp> line 656 to 840, 
+so that the test registration profiles (and withdraw and change_status request) we set for each day would automatically be 
+added every time the system run time increment, and every functionality would run normal. If you wish to use your own 
+test files, please commented out the our test data and use command line to register your own registration file. you can use 
+sys.register() in <test_Vaccination_System.cpp>, or mimic our format in the member function Half_Day_Pass(). 
+
+In <test_Vaccination_System.cpp>, You can use command 9 "print all data" to view the current location for all waiting registrations and appointments that have been generated. 
+
+If you are using our test data, you should only use Half_Day_Pass and n_Day_Pass to call the transfer and gen_appointment operations, rather 
+than calling them explicitly. We explicitly add these two operations into the test files for debug usage. Calling them won't cause any trouble or 
+disfunction our program, but it will interfere with some of our testing purpose (like we are considering various cases where the registration is 
+stored before a withdraw request, calling transfer or gen_appointment explicitly without time passing will change the time stamps). These purposes 
+are commented in our <test_data.txt> file.
+
+In our program we assume there're 3 local medical posts which can deal with appointments (provide real medical services), and each of their daily capacity 
+is initially set to be 4 (2 people for the morning and 2 for the afternoon). So all 3 local posts can deal with 12 appointments per day. This is for testing purpose, 
+as our testing data set is not very big (100 registrations in all). You can change this setting in the Gen_Appointment() member function in the file
+<Vaccination_System.cpp> line 128 by setting the value of "max" to the desired daily capacity (per post) you prefer.
+
+
+
+
+====Reports====
+The weekly and monthly report are generated automatically, e.g. on every monday and every first date of a month. 
+In our system, we generate a weekly report every 7 days and a monthly report every 30 days. You can also print out 
+the reports any time you want, but the report won't contain the information for a full 7 days or 30 days but rather 
+the days that have already passed for this week/month. e.g. if you want to print a weekly report on Wednesday, it won't 
+give you the data from last Wednesday to this Wednesday but rather from Monday to Wednesday this week. Same 
+for monthly report.
+
+
+
+====System clock====
+For testing purpose, we have a variable named counter in our system to keep track of the time, the unit is half a day. 
+If counter=k, it means the system has run for k/2 days. If k is odd, it means it is a morning; If k is even, it indicates it 
+is a afternoon. e.g. counter=1 means the morning for the first day, counter=4 means the afternoon for the second day. 
+Same time slots are used for the medical center, each local treatment spot has equal capacity for morning and afternoon. 
+
+
+
+
+====Priority level and Special case handling====
+Priority level: Priority letter(indicate a date that the person should recieve treatment)>risk>profession>age_group>register_time
+
+Special case handling: This is mainly concerned with withdraw request and Change_Status(a person's risk level and profession may change).
+We've classified the registration into 7 status(0~6), which indicates the current location where the registration file is stored. 
+0: In the Appointment_Queue. An appointment has already been generated for this registration.
+1: In the local or central heap. Waiting for an appointment to be generated.
+2: In the priority letter heap.(kind of like an vip channel) Waiting for the letter date to come then to generate appointment and recieve treatment. //we assume that those who submit the letter knows exactly the date they want to be set for treatment, so they won't recieve a treatment earlier than the ddl date the letter indicated. It's very easy to modify this setting: just let them queue up in the central heap(normal channel) as well.
+3: In the mid_risk waiting queue. Has to wait for 30 days before it's appointment can be generated. (Unless nobody else--except for high risk people--is waiting, then they can generate appointment first.)
+4: In the high_risk waiting queue. Has to wait indefinitely until there's no other people waiting.
+5. In the withdraw_then_register waiting queue. Has to wait for 14 days(2 weeks). (Unless nobody else--except for high risk people and mid risk people--is waiting, then they can generate appointment first.)
+6. In the withdrawn list. Here we record the registration that has been withdrawn.
+With this clear definition for the status of the registration, we can handle withdraw and Change_Status easily. 
+For withdraw, just delete it from the current location, add it to withdrawn list and change its status to 6;
+For Change_Status(reg_id, new_profession, new_risk), the change in profession doesn't affect the location that 
+this file is stored, just affect it's priority; So reset it's priority and queue it up again. For new_risk, there are 3 
+possibility(0,1 for low, 2 for mid, 3 for high), so at most 3*6(status 6 doesn't matter)=18 situation to be considered. 
+It might not be brief, but its straight-forward simplicity and correctness are guaranteed. See the code in <Vaccination_System.cpp> for more details.
+

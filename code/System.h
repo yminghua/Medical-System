@@ -39,6 +39,8 @@ public:
     void Half_Day_Pass();                                                                                               // Indicate that half day has passed in the system
     void n_Day_Pass(int n);
     void Weekly_Report();
+    void Weekly_ReportP();
+    void Weekly_ReportA();
     void Monthly_Report();
     void print();
 };
