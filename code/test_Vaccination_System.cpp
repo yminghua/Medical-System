@@ -11,7 +11,7 @@ int main()
 {
     int op;
     System system;
-    system.Register(599206,"DominicLong",16834,1,1,0,0,2);
+    /*system.Register(599206,"DominicLong",16834,1,1,0,0,2);
     system.Register(203183,	"TrumanSapir",	13294,	7,	7,	0,	1,	1);
     system.Transfer();
     system.Register(594855, "Devin_Gosse", 10295, 6, 6, 1, 0, 3);
@@ -30,9 +30,10 @@ int main()
     system.Register(967331, "Amos_Vaughan", 18198, 4, 4, 2, 0, 2);
     system.Register(765764, "Kyle_Dunbar", 16745, 6, 6, 2, 0, 3);
     system.Register(720947, "Payne_Frank", 18219, 3, 3, 0, 0, 1);
-    system.Register(236769, "Theodore_Robin", 12826, 3, 3, 1, 4, 3);
-
+    */
     //system.Gen_Appointment();
+    system.Register(100000, "Number_One", 10000, 3, 3, 0, 0, 1);
+
     do
     {
         do
@@ -43,16 +44,18 @@ int main()
             cout << "2: Half day past\n";
             cout << "3: Withdraw\n";
             cout << "4: Change status\n";
-            cout << "5: Weekly report\n";
+            cout << "5: Weekly report-by Name\n";
             cout << "6: Monthly report\n";
             cout << "7: Transfer\n";
             cout << "8: Gen_Appointment\n";
             cout << "9: print all data\n";
             cout << "10: system run time\n";
             cout << "11: n days past\n";
+            cout << "12: Weekly report-by Profession\n";
+            cout << "13: Weekly report-by Age_group\n";
             cin >> op;
         }
-        while ((op < 0) || (op > 11));
+        while ((op < 0) || (op > 13));
         switch (op)
         {
             case 0: return (0);
@@ -70,7 +73,7 @@ int main()
             case 2:
             {
                 // half day past
-                system.Half_Day_Pass();
+                system.Half_Day_Pass();                
                 break;
             }
             case 3:
@@ -142,11 +145,25 @@ int main()
                 system.n_Day_Pass(n);
                 break;
             }
+            case 12:
+            {
+                // weekly report
+                cout << "12\n";
+                system.Weekly_ReportP();
+                break;
+            }
+            case 13:
+            {
+                // weekly report
+                cout << "13\n";
+                system.Weekly_ReportA();
+                break;
+            }
             /*
             case 12:
             {
-                // Print all data
-                cout << "11\n";
+                // 12
+                cout << "12\n";
                 break;
             }*/
             default: return (0);

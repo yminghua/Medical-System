@@ -1,4 +1,5 @@
 #include <string>
+#include <stdio.h>
 #include "Data_Structure.h"
 //#include              //many head function
 // class KMPlist
@@ -7,8 +8,8 @@
  class Waiting_Queue_Node
 {
 public:
-    Registration* head_pointer;
-    Waiting_Queue_Node* prev, *next=NULL;
+    Registration* head_pointer=NULL;
+    Waiting_Queue_Node* prev=NULL, *next=NULL;
 
 //    Waiting_Queue_Node(Registration* input){
 //        head_pointer = input;
@@ -35,9 +36,11 @@ public:
 Waiting_Queue_Node* Waiting_Queue::insert(Registration *node)
 {
     Waiting_Queue_Node *one = new Waiting_Queue_Node;
+//    cout<<"success"<<endl;
     one->head_pointer = node;
     one->next =NULL;
     one->prev =NULL;
+
     if (head == NULL)
     {
         head = one;
@@ -58,22 +61,28 @@ Waiting_Queue_Node* Waiting_Queue::insert(Registration *node)
 
 Registration *Waiting_Queue::pop()
 {
+    if(head == NULL) return NULL;
     Waiting_Queue_Node* drop = head;
     head = head->next;
+    if (head == NULL) tail = NULL;
     Registration *out = drop->head_pointer;
     delete drop;
     return out;
 }
 
  void Waiting_Queue::deletenode(Waiting_Queue_Node* node){
-
-    if(head == node) pop();
-    if(tail == node) {(node->prev)->next=NULL;delete(node);}
+//    cout<<"aa"<<endl;
+    if(head == node) {pop();return;}
+//    cout<<"bbbb"<<endl;
+    if(tail == node) {(node->prev)->next=NULL;tail = node->prev; delete node;}
     else{
+        if (node->next == NULL||node->prev == NULL) while(1){}//debug::
+//        cout<<"bb"<<endl;
         (node->prev)->next = node->next;
         (node->next)->prev = node->prev;
-        delete(node);
+        delete node;
     }
+    
 }
 
 void Waiting_Queue::print(){
@@ -119,7 +128,9 @@ void RegWR_Queue::iinsert(Registration* node, Waiting_Queue_Node* loc){
     one->head_pointer = node;
     one->next = NULL;
     one->prev = NULL;
-    if (loc==NULL){one->next = head;head=one;return;}
+    if (loc==NULL){one->next = head;
+    if(head!=NULL)head->prev = one;
+    head=one;return;}
     one->prev = loc;one->next = loc->next;
     if(loc->next!=NULL)loc->next->prev = one;
     loc->next = one;
@@ -127,7 +138,7 @@ void RegWR_Queue::iinsert(Registration* node, Waiting_Queue_Node* loc){
 
 void RegWR_Queue::print(){
     Waiting_Queue_Node* pointer=head;
-    cout<<"regWR queue print test::"<<endl;
+//    cout<<"regWR queue print test::"<<endl;
     while(pointer!=NULL){
         pointer->head_pointer->print();
         pointer = pointer->next;

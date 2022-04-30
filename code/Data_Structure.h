@@ -35,7 +35,7 @@ class Registration
 {
 public:
     Person *person=NULL;
-    int time;  //registration time = current counter
+    int time;  //registration time, = current counter
     int reg_id; //The unique identifier for each registration, starting from 0
     int registry;  //1~3
     string priority;
@@ -63,10 +63,13 @@ void Registration::set_priority(void)
 void Registration::print(void)
 {
     cout << "reg_id: " << reg_id << "   "
+         << "reg_time: " << time << "   "
          << "status: " << status << "   "
-         << "risk: " << person->risk << "   "
          << "letter: " << person->letter << "   "
          << "personal_id: " << person->id << "   "
+         << "profession: " << person->profession << "   "
+         << "age_group: " << person->age_group << "   "
+         << "risk: " << person->risk << "   "
          << "name: " << person->name << "\n";
 }
 
@@ -76,8 +79,8 @@ class Appointment
 public:
     Person *person;
     int reg_id; //the registration id
-    int loc; //1~3
-    int time;
+    int loc; //1~3, appointment location
+    int time; //The appointment time
     int waiting_time; //The time the person has waited from register to appointment finished
 
 public:
@@ -87,10 +90,13 @@ public:
 void Appointment::print()
 {
     cout << "reg_id: " << reg_id << "   "
-         << "time: " << time << "   "
+         << "appointed_time: " << time << "   "
          << "loc: " << loc << "   "
          << "waiting_time: " << waiting_time << "   "
          << "personal_id: " << person->id << "   "
+         << "profession: " << person->profession << "   "
+         << "age_group: " << person->age_group << "   "
+         << "risk: " << person->risk << "   "
          << "name: " << person->name << "\n";
 }
 

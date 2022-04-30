@@ -229,7 +229,10 @@ void FibHeap<T>::combine(FibHeap<T> *other)
     {
         this->min = other->min;
         this->total_n = other->total_n;
-        free(other->cons);
+        //cout<<"ddd"<<endl;
+        //cout<<other->cons<<endl;
+    //    free(other->cons);
+        //cout<<"ccc"<<endl;
         other->min = NULL;
         other->total_n = 0;
         other->maxDegree = 0;
@@ -238,7 +241,7 @@ void FibHeap<T>::combine(FibHeap<T> *other)
     }
     else if((other->min) == NULL)           // this has "minimum node" && other has no "minimum node"
     {
-        free(other->cons);
+    //    free(other->cons);
         other->min = NULL;
         other->total_n = 0;
         other->maxDegree = 0;
@@ -253,7 +256,7 @@ void FibHeap<T>::combine(FibHeap<T> *other)
         if (this->min->priority > other->min->priority)
             this->min = other->min;
         this->total_n += other->total_n;
-        free(other->cons);
+    //    free(other->cons);
         other->min = NULL;
         other->total_n = 0;
         other->maxDegree = 0;
