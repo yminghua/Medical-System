@@ -33,7 +33,7 @@ void System::Register(int id, string name, int contact, int profession, int age_
     global_reg_id++;
     Month_global_reg_id_number++;
     reg->set_priority();
-    Reg_List.insert(reg);
+    Reg_List.Insert(reg->reg_id, reg); //modified for BP
     /* Now check for special case: Priority letter, High/Midium risk, if has withdrawn */
     //First check whether the person has withdrawn before. If has, delete him from the withdrawn queue
     bool withdraw=false; //True if this person is in the withdrawn list
@@ -276,7 +276,7 @@ void System::Gen_Appointment()
 
 void System::Withdraw(int reg_id)
 {
-    Registration *reg = Reg_List.getitem(reg_id);
+    Registration *reg = Reg_List.Search(reg_id, NULL);
     if (reg == NULL)
     {
         cout << "This reg_id does not exist!\n";
@@ -386,7 +386,7 @@ void System::Withdraw(int reg_id)
 
 void System::Change_Status(int reg_id, int new_profession, int new_risk)
 {
-    Registration *reg = Reg_List.getitem(reg_id);
+    Registration *reg = Reg_List.Search(reg_id, NULL);
     if (reg==NULL) {
         cout<<"This reg_id does not exist!\n";
         return;
@@ -865,7 +865,7 @@ void System::n_Day_Pass(int n)
         Half_Day_Pass();
 }
 
-void System::Weekly_Report()    //this one only can sort by name
+/*void System::Weekly_Report()    //this one only can sort by name
 {
     cout << "==Weekly Report==" << endl;
     cout<<"\nsorted by name"<<endl;
@@ -937,7 +937,7 @@ void System::Weekly_Report()    //this one only can sort by name
 //    }//finish the appointming report!!
     instack.deleteall();  
     //now, over!!
-}
+}*/
 
 void System::Monthly_Report()
 {
@@ -992,7 +992,7 @@ void System::print()
     cout << "\n";
 }
 
-void System::Weekly_ReportA()    //this one only can sort by name
+/*void System::Weekly_ReportA()    //this one only can sort by name
 {
     cout << "==Weekly Report==" << endl;
     cout<<"\nsorted by age group"<<endl;
@@ -1064,9 +1064,9 @@ void System::Weekly_ReportA()    //this one only can sort by name
 //    }//finish the appointming report!!
     instack.deleteall();  
     //now, over!!
-}
+}*/
 
-void System::Weekly_ReportP()    //this one only can sort by Profession
+/*void System::Weekly_ReportP()    //this one only can sort by Profession
 {
     cout << "==Weekly Report==" << endl;
     cout<<"\nsorted by profession"<<endl;
@@ -1138,4 +1138,4 @@ void System::Weekly_ReportP()    //this one only can sort by Profession
 //    }//finish the appointming report!!
     instack.deleteall();  
     //now, over!!
-}
+}*/
