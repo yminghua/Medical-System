@@ -276,7 +276,7 @@ void System::Gen_Appointment()
 
 void System::Withdraw(int reg_id)
 {
-    Registration *reg = Reg_List.Search(reg_id, NULL);
+    Registration *reg = Reg_List.Search(reg_id);
     if (reg == NULL)
     {
         cout << "This reg_id does not exist!\n";
@@ -386,7 +386,7 @@ void System::Withdraw(int reg_id)
 
 void System::Change_Status(int reg_id, int new_profession, int new_risk)
 {
-    Registration *reg = Reg_List.Search(reg_id, NULL);
+    Registration *reg = Reg_List.Search(reg_id);
     if (reg==NULL) {
         cout<<"This reg_id does not exist!\n";
         return;
@@ -637,7 +637,7 @@ void System::Change_Status(int reg_id, int new_profession, int new_risk)
 
 void System::Half_Day_Pass()
 {
-//    cout<<"finish"<<endl;
+/*//    cout<<"finish"<<endl;
     //for the weekly report::
     int num = appointment_queue.updateR(counter);
 //   cout<<"finish"<<endl;
@@ -662,7 +662,7 @@ void System::Half_Day_Pass()
         App_adder=0; Withdraw_adder=0;
         tt_time = 0;
         tt_time_count =0;
-    }
+    }*/
 
     counter++;
  //  cout<<"finish"<<endl;
@@ -704,6 +704,7 @@ void System::Half_Day_Pass()
     case 2:
     {
 
+        cout << "a\n";
         Register(587429,"Norton_Sailsbury",11964,7,4,3,0,2);
         Register(892282,"Ian_Kipling",16888,4,6,1,0,1);
         Register(379365,"Abigail_Noel",10506,7,7,1,5,3);
@@ -714,13 +715,16 @@ void System::Half_Day_Pass()
         Register(614764,"Baron_Yerkes",18172,4,1,1,0,2);
         Register(845238,"Phyllis_Lattimore",15197,1,3,3,0,3);
         Register(659971,"Mona_Bloor",11828,8,2,0,0,2);
+        cout << "b\n";
 
-        Withdraw(2);  // register in 1, withdraw in 2. withdraw before appointment
+        
+        /*Withdraw(2);  // register in 1, withdraw in 2. withdraw before appointment
         Withdraw(7);  // register in 1, withdraw in 2. medium risk and letter
         Withdraw(11); // register in 1, withdraw in 2. with letter
-
+        /*
         Change_Status(16, 3, 2); // register in 1, change in 2. increase risk from 0 to 2
-        Change_Status(17, 3, 3); // register in 1, change in 2. increase risk from 1 to 3, with letter*/
+        Change_Status(17, 3, 3); // register in 1, change in 2. increase risk from 1 to 3, with letter
+        */
         break;
     }
     case 3:

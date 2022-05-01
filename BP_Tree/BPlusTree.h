@@ -220,7 +220,7 @@ public:
     virtual ~BPlusTree();
 
     // 查找指定的数据
-    Registration *Search(KEY_TYPE data, char *sPath); //modified
+    Registration *Search(KEY_TYPE data); //modified
     // 插入指定的数据
     bool Insert(KEY_TYPE data, Registration *Reg_data); //modified
     // 删除指定的数据

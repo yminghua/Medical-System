@@ -456,21 +456,25 @@ BPlusTree::~BPlusTree()
 }
 
 // 在树中查找数据
-Registration* BPlusTree::Search(KEY_TYPE data, char *sPath)
+Registration* BPlusTree::Search(KEY_TYPE data)
 {
-    Registration *Reg_result;
+    printf("search begin\n");
+    Registration *Reg_result = NULL;
     int i = 0;
     int offset = 0;
-    if (NULL != sPath)
+    /*if (NULL != sPath)
     {
         (void)sprintf(sPath + offset, "The serach path is:");
         offset += 19;
-    }
+    }*/
 
+    printf("1\n");
     CNode *pNode = GetRoot();
     // 循环查找对应的叶子结点
+    printf("2\n");
     while (NULL != pNode)
     {
+        printf("3\n");
         // 结点为叶子结点，循环结束
         if (NODE_TYPE_LEAF == pNode->GetType())
         {
@@ -482,14 +486,15 @@ Registration* BPlusTree::Search(KEY_TYPE data, char *sPath)
         {
         }
 
-        if (NULL != sPath)
+        /*if (NULL != sPath)
         {
             (void)sprintf(sPath + offset, " %3d -->", pNode->GetElement(1));
             offset += 8;
-        }
+        }*/
 
         pNode = pNode->GetPointer(i);
     }
+    printf("4\n");
 
     // 没找到
     if (NULL == pNode)
@@ -498,25 +503,30 @@ Registration* BPlusTree::Search(KEY_TYPE data, char *sPath)
         return 0;
     }
 
-    if (NULL != sPath)
+    /*if (NULL != sPath)
     {
         (void)sprintf(sPath + offset, "%3d", pNode->GetElement(1));
         offset += 3;
-    }
+    }*/
 
     // 在叶子结点中继续找
-    CLeafNode *pNode_leaf = (CLeafNode *) (pNode);
+    printf("5\n");
+    CLeafNode *pNode_leaf = (CLeafNode *)pNode;
+    printf("6\n");
     bool found = false;
     for (i = 1; (i <= pNode_leaf->GetCount()); i++)
     {
+        printf("7\n");
         if (data == pNode_leaf->GetElement(i))
         {
+            printf("8\n");
             found = true;
             Reg_result = pNode_leaf->Reg_Datas[i];
         }
+        printf("9\n");
     }
 
-    if (NULL != sPath)
+    /*if (NULL != sPath)
     {
         if (true == found)
         {
@@ -527,8 +537,8 @@ Registration* BPlusTree::Search(KEY_TYPE data, char *sPath)
         {
             (void)sprintf(sPath + offset, " ,failed.");
         }
-    }
-
+    }*/
+    printf("10\n");
     return Reg_result;
 }
 
@@ -543,11 +553,11 @@ Registration* BPlusTree::Search(KEY_TYPE data, char *sPath)
 bool BPlusTree::Insert(KEY_TYPE data, Registration *Reg_data) //
 {
     // 检查是否重复插入
-    bool found = Search(data, NULL);
-    if (true == found)
+    /*Registration *found = Search(data);
+    if (!(NULL == found))
     {
         return false;
-    }
+    }*/
     // for debug
     // if (289 == data)
     //{
@@ -574,13 +584,16 @@ bool BPlusTree::Insert(KEY_TYPE data, Registration *Reg_data) //
     // 原叶子结点已满，新建叶子结点，并把原结点后一半数据剪切到新结点
     CLeafNode *pNewNode = new CLeafNode;
     KEY_TYPE key = INVALID;
+    printf("split begin\n");
     key = pOldNode->Split(pNewNode);
+    printf("split succeed\n");
 
     // 在双向链表中插入结点
     CLeafNode *pOldNext = pOldNode->m_pNextNode;
     pOldNode->m_pNextNode = pNewNode;
     pNewNode->m_pNextNode = pOldNext;
     pNewNode->m_pPrevNode = pOldNode;
+    printf("1\n");
     if (NULL == pOldNext)
     {
         m_pLeafTail = pNewNode;
@@ -589,6 +602,7 @@ bool BPlusTree::Insert(KEY_TYPE data, Registration *Reg_data) //
     {
         pOldNext->m_pPrevNode = pNewNode;
     }
+    printf("2\n");
 
     // 判断是插入到原结点还是新结点中，确保是按数据值排序的
     if (data < key)
@@ -599,13 +613,16 @@ bool BPlusTree::Insert(KEY_TYPE data, Registration *Reg_data) //
     {
         pNewNode->Insert(data, Reg_data); // 插入新结点
     }
+    printf("3\n");
 
     // 父结点
     CInternalNode *pFather = (CInternalNode *)(pOldNode->GetFather());
+    //printf("3.1\n");
 
     // 如果原结点是根节点，对应情况2
     if (NULL == pFather)
     {
+        printf("3.2\n");
         CNode *pNode1 = new CInternalNode;
         pNode1->SetPointer(1, pOldNode); // 指针1指向原结点
         pNode1->SetElement(1, key);      // 设置键
@@ -615,11 +632,14 @@ bool BPlusTree::Insert(KEY_TYPE data, Registration *Reg_data) //
         pNode1->SetCount(1);
 
         SetRoot(pNode1); // 指定新的根结点
+        printf("3.3\n");
         return true;
     }
+    printf("4\n");
 
     // 情况3和情况4在这里实现
     bool ret = InsertInternalNode(pFather, key, pNewNode);
+    printf("5\n");
     return ret;
 }
 
