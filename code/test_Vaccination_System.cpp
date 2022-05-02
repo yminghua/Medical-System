@@ -95,20 +95,20 @@ int main()
                 system.Change_Status(reg_id, new_profession, new_risk);
                 break;
             }
-            case 5:
+            /*case 5:
             {
                 // weekly report
                 cout << "5\n";
                 system.Weekly_Report();
                 break;
-            }
-            case 6:
+            }*/
+            /*case 6:
             {
                 // monthly report
                 cout << "6\n";
                 system.Monthly_Report();
                 break;
-            }
+            }*/
             case 7:
             {
                 // Transfer
@@ -145,20 +145,20 @@ int main()
                 system.n_Day_Pass(n);
                 break;
             }
-            case 12:
+            /*case 12:
             {
                 // weekly report
                 cout << "12\n";
                 system.Weekly_ReportP();
                 break;
-            }
-            case 13:
+            }*/
+            /*case 13:
             {
                 // weekly report
                 cout << "13\n";
                 system.Weekly_ReportA();
                 break;
-            }
+            }*/
             /*
             case 12:
             {

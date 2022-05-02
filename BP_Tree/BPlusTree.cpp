@@ -1,7 +1,8 @@
-#include "BPlusTree.h"
-#include "stdio.h"
+#include <stdio.h>
 #include "stdlib.h"
+#include <iostream>
 using namespace std;
+#include "BPlusTree.h"
 
 CNode::CNode()
 {
@@ -338,6 +339,7 @@ CLeafNode::CLeafNode()
     for (int i = 0; i < MAXNUM_DATA; i++)
     {
         m_Datas[i] = INVALID;
+        Reg_Datas[i] = INVALID; // Modified(new)
     }
 
     m_pPrevNode = NULL;
@@ -366,6 +368,7 @@ bool CLeafNode::Insert(KEY_TYPE value, Registration *data)
     for (j = m_Count; j > i; j--)
     {
         m_Datas[j] = m_Datas[j - 1];
+        Reg_Datas[j] = Reg_Datas[j - 1]; // Modified(new)
     }
 
     // 把数据存入当前位置
@@ -557,11 +560,11 @@ Registration* BPlusTree::Search(KEY_TYPE data)
 bool BPlusTree::Insert(KEY_TYPE data, Registration *Reg_data) //
 {
     // 检查是否重复插入
-    /*Registration *found = Search(data);
-    if (!(NULL == found))
+    bool found = Search(data); // Modified(new)
+    if (true == found)
     {
         return false;
-    }*/
+    }
     // for debug
     // if (289 == data)
     //{
