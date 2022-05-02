@@ -83,7 +83,7 @@ public:
     // 删除结点
     void DeleteChildren();
 
-protected:
+public:
     NODE_TYPE m_Type; // 结点类型，取值为NODE_TYPE类型
 
     int m_Count; // 有效数据个数，对中间结点指键个数，对叶子结点指数据个数
@@ -152,7 +152,7 @@ public:
     // 从另一结点移一个元素到本结点
     bool MoveOneElement(CNode *pNode);
 
-protected:
+public:
     KEY_TYPE m_Keys[MAXNUM_KEY];       // 键数组
     CNode *m_Pointers[MAXNUM_POINTER]; // 指针数组
 };
@@ -206,7 +206,7 @@ public:
     CLeafNode *m_pPrevNode; // 前一个结点
     CLeafNode *m_pNextNode; // 后一个结点
 
-protected:
+public:
     KEY_TYPE m_Datas[MAXNUM_DATA]; // 数据数组
 public:
     Registration *Reg_Datas[MAXNUM_DATA]; // modified
@@ -251,6 +251,14 @@ public:
 
     void SetRoot(CNode *root)
     {
+        //Modified
+        if (root != NULL)
+        {
+            m_Root = root;
+            root->m_pFather = NULL;
+            return;
+        }
+        //
         m_Root = root;
     }
 
@@ -285,7 +293,7 @@ public:
     CLeafNode *m_pLeafHead; // 头结点
     CLeafNode *m_pLeafTail; // 尾结点
 
-protected:
+public:
     // 为插入而查找叶子结点
     CLeafNode *SearchLeafNode(KEY_TYPE data);
     //插入键到中间结点

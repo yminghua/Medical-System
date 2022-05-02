@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <cmath>
 #include <string>
+#include <iostream>
 using std::string;
 using namespace std;
 

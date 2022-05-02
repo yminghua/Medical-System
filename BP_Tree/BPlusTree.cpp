@@ -1,7 +1,8 @@
-#include "BPlusTree.h"
-#include "stdio.h"
+#include <stdio.h>
 #include "stdlib.h"
+#include <iostream>
 using namespace std;
+#include "BPlusTree.h"
 
 CNode::CNode()
 {
@@ -250,17 +251,21 @@ bool CInternalNode::Combine(CNode *pNode)
     }
 
     // 取待合并结点的第一个孩子的第一个元素作为新键值
-    KEY_TYPE NewKey = pNode->GetPointer(1)->GetElement(1); //疑问：感觉应该改为KEY_TYPE NewKey = pNode->GetElement(1);
+    KEY_TYPE NewKey = pNode->GetPointer(1)->GetElement(1);
 
     m_Keys[m_Count] = NewKey;
     m_Count++;
-    m_Pointers[m_Count] = pNode->GetPointer(1); //疑问：感觉应该为m_Pointers[m_Count+1] = pNode->GetPointer(1);
+    m_Pointers[m_Count] = pNode->GetPointer(1);
+    
+    pNode->GetPointer(1)->SetFather(this); //Modified
 
     for (int i = 1; i <= pNode->GetCount(); i++)
     {
         m_Keys[m_Count] = pNode->GetElement(i);
         m_Count++;
         m_Pointers[m_Count] = pNode->GetPointer(i + 1);
+
+        pNode->GetPointer(i+1)->SetFather(this); //Modified
     }
 
     return true;
@@ -334,6 +339,7 @@ CLeafNode::CLeafNode()
     for (int i = 0; i < MAXNUM_DATA; i++)
     {
         m_Datas[i] = INVALID;
+        Reg_Datas[i] = INVALID; // Modified(new)
     }
 
     m_pPrevNode = NULL;
@@ -362,6 +368,7 @@ bool CLeafNode::Insert(KEY_TYPE value, Registration *data)
     for (j = m_Count; j > i; j--)
     {
         m_Datas[j] = m_Datas[j - 1];
+        Reg_Datas[j] = Reg_Datas[j - 1]; // Modified(new)
     }
 
     // 把数据存入当前位置
@@ -553,11 +560,11 @@ Registration* BPlusTree::Search(KEY_TYPE data)
 bool BPlusTree::Insert(KEY_TYPE data, Registration *Reg_data) //
 {
     // 检查是否重复插入
-    /*Registration *found = Search(data);
-    if (!(NULL == found))
+    bool found = Search(data); // Modified(new)
+    if (true == found)
     {
         return false;
-    }*/
+    }
     // for debug
     // if (289 == data)
     //{
@@ -778,6 +785,17 @@ bool BPlusTree::Delete(KEY_TYPE data)
     }
     else
     {
+        // Modified
+        for (int i = 1; i <= pFather->GetCount(); i++)
+        {
+            if (pFather->GetElement(i) == data)
+            {
+                pFather->SetElement(i, pOldNode->GetElement(1));
+                cout << "Change father's key successfully!" << endl;
+            }
+        }
+        //
+
         (void)pOldNode->Combine(pBrother);
         NewKey = pBrother->GetElement(1);
 
