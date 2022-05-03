@@ -48,9 +48,10 @@ CNode *CNode::GetBrother(int &flag)
 }
 
 // 递归删除子结点
-void CNode::DeleteChildren() // 疑问：这里的指针下标是否需要从0开始
+void CNode::DeleteChildren()
 {
-    for (int i = 1; i <= GetCount(); i++) // GetCount()为返回结点中关键字即数据的个数
+    // GetCount()为返回结点中关键字即数据的个数
+    for (int i = 1; i <= GetCount() + 1; i++) // Modified(new)
     {
         CNode *pNode = GetPointer(i);
         if (NULL != pNode) // 叶子结点没有指针
@@ -339,7 +340,7 @@ CLeafNode::CLeafNode()
     for (int i = 0; i < MAXNUM_DATA; i++)
     {
         m_Datas[i] = INVALID;
-        Reg_Datas[i] = INVALID; // Modified(new)
+        Reg_Datas[i] = NULL; // Modified(new)
     }
 
     m_pPrevNode = NULL;
@@ -368,7 +369,7 @@ bool CLeafNode::Insert(KEY_TYPE value, Registration *data)
     for (j = m_Count; j > i; j--)
     {
         m_Datas[j] = m_Datas[j - 1];
-        Reg_Datas[j] = Reg_Datas[j - 1]; // Modified(new)
+        Reg_Datas[j] = Reg_Datas[j - 1]; // Modified
     }
 
     // 把数据存入当前位置
@@ -403,10 +404,11 @@ bool CLeafNode::Delete(KEY_TYPE value)
     for (j = i; j < m_Count - 1; j++)
     {
         m_Datas[j] = m_Datas[j + 1];
+        Reg_Datas[j] = Reg_Datas[j + 1]; // Modified(new)
     }
 
     m_Datas[j] = INVALID;
-    Reg_Datas[i] = INVALID; //modified
+    Reg_Datas[i] = NULL; // Modified(new)
     m_Count--;
 
     // 返回成功
@@ -424,7 +426,7 @@ KEY_TYPE CLeafNode::Split(CLeafNode *pNode)
         pNode->SetElement(j, this->GetElement(i));
         pNode->Reg_Datas[j] = this->Reg_Datas[i]; //modified
         this->SetElement(i, INVALID);
-        this->Reg_Datas[i] = INVALID; //modified
+        this->Reg_Datas[i] = NULL; //modified
     }
     // 设置好Count个数
     this->SetCount(this->GetCount() - j);
@@ -468,7 +470,7 @@ Registration* BPlusTree::Search(KEY_TYPE data)
     printf("search begin\n");
     Registration *Reg_result = NULL;
     int i = 0;
-    int offset = 0;
+    // int offset = 0;
     /*if (NULL != sPath)
     {
         (void)sprintf(sPath + offset, "The serach path is:");
@@ -507,7 +509,7 @@ Registration* BPlusTree::Search(KEY_TYPE data)
     if (NULL == pNode)
     {
         printf("This Reg_id does not exist");
-        return 0;
+        return NULL; // Modified(new)
     }
 
     /*if (NULL != sPath)
@@ -528,10 +530,17 @@ Registration* BPlusTree::Search(KEY_TYPE data)
         {
             printf("8\n");
             found = true;
-            Reg_result = pNode_leaf->Reg_Datas[i];
+            Reg_result = pNode_leaf->Reg_Datas[i - 1]; // Modified(new)
         }
         printf("9\n");
     }
+    
+    // Modified(new)
+    if (found == false)
+    {
+        cout << "This Reg_id does not exist!" << endl;
+    }
+    //
 
     /*if (NULL != sPath)
     {
@@ -560,11 +569,14 @@ Registration* BPlusTree::Search(KEY_TYPE data)
 bool BPlusTree::Insert(KEY_TYPE data, Registration *Reg_data) //
 {
     // 检查是否重复插入
-    bool found = Search(data); // Modified(new)
-    if (true == found)
+
+    // Modified(new)
+    if (Search(data) != NULL)
     {
         return false;
     }
+    //
+
     // for debug
     // if (289 == data)
     //{
@@ -711,7 +723,7 @@ bool BPlusTree::Delete(KEY_TYPE data)
 
     // 兄弟结点填充度>50%，对应情况2A
     KEY_TYPE NewData = INVALID;
-    Registration *New_Reg_Data;
+    Registration *New_Reg_Data = NULL;
     if (pBrother->GetCount() > ORDER_V)
     {
         if (FLAG_LEFT == flag) // 兄弟在左边，移最后一个数据过来
@@ -722,7 +734,7 @@ bool BPlusTree::Delete(KEY_TYPE data)
         else // 兄弟在右边，移第一个数据过来
         {
             NewData = pBrother->GetElement(1);
-            New_Reg_Data = pBrother->Reg_Datas[1];
+            New_Reg_Data = pBrother->Reg_Datas[0]; // Modified(new)
         }
 
         pOldNode->Insert(NewData, New_Reg_Data);
