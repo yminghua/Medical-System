@@ -1,6 +1,6 @@
 /* BPlusTree.h
 
-B+æ ‘å®šä¹‰æ–‡ä»¶ï¼Œæœ¬ç¨‹åºå®è¡Œä¸€ä¸ªç®€å•çš„B+æ ‘
+B+Ê÷¶¨ÒåÎÄ¼ş£¬±¾³ÌĞòÊµĞĞÒ»¸ö¼òµ¥µÄB+Ê÷
 
 Definition (from http://www.seanster.com/BplusTree/BplusTree.html ):
 (1) A B+ tree of order v consists of a root, internal nodes and leaves.
@@ -9,39 +9,39 @@ Definition (from http://www.seanster.com/BplusTree/BplusTree.html ):
 (4) Leaves are always on the same level.
 (5) If a leaf is a primary index, it consists of a bucket of records, sorted by search key. If it is a secondary index, it will have many short records consisting of a key and a pointer to the actual record.
 
-(1) ä¸€ä¸ªvé˜¶çš„B+æ ‘ç”±æ ¹ç»“ç‚¹ã€å†…éƒ¨ç»“ç‚¹å’Œå¶å­ç»“ç‚¹ç»„æˆã€‚
-(2) æ ¹ç»“ç‚¹å¯ä»¥æ˜¯å¶å­ç»“ç‚¹ï¼Œä¹Ÿå¯ä»¥æ˜¯æœ‰ä¸¤ä¸ªæˆ–æ›´å¤šå­æ ‘çš„å†…éƒ¨ç»“ç‚¹ã€‚
-(3) æ¯ä¸ªå†…éƒ¨ç»“ç‚¹åŒ…å«v - 2vä¸ªé”®ã€‚å¦‚æœä¸€ä¸ªå†…éƒ¨ç»“ç‚¹åŒ…å«kä¸ªé”®ï¼Œåˆ™æœ‰ä¸”åªæœ‰k+1ä¸ªæŒ‡å‘å­æ ‘çš„æŒ‡é’ˆã€‚
-(4) å¶å­ç»“ç‚¹æ€»æ˜¯åœ¨æ ‘çš„åŒä¸€å±‚ä¸Šã€‚
-(5) å¦‚æœå¶å­ç»“ç‚¹æ˜¯ä¸»ç´¢å¼•ï¼Œå®ƒåŒ…å«ä¸€ç»„æŒ‰é”®å€¼æ’åºçš„è®°å½•ï¼›å¦‚æœå¶å­ç»“ç‚¹æ˜¯ä»ç´¢å¼•ï¼Œå®ƒåŒ…å«ä¸€ç»„çŸ­è®°å½•ï¼Œæ¯ä¸ªçŸ­è®°å½•åŒ…å«ä¸€ä¸ªé”®ä»¥åŠæŒ‡å‘å®é™…è®°å½•çš„æŒ‡é’ˆã€‚
-(6) å†…éƒ¨ç»“ç‚¹çš„é”®å€¼å’Œå¶å­ç»“ç‚¹çš„æ•°æ®å€¼éƒ½æ˜¯ä»å°åˆ°å¤§æ’åºçš„ã€‚
-(7) åœ¨ä¸­é—´ç»“ç‚¹ä¸­ï¼Œæ¯ä¸ªé”®çš„å·¦å­æ ‘ä¸­çš„æ‰€æœ‰çš„é”®éƒ½å°äºè¿™ä¸ªé”®ï¼Œæ¯ä¸ªé”®çš„å³å­æ ‘ä¸­çš„æ‰€æœ‰çš„é”®éƒ½å¤§äºç­‰äºè¿™ä¸ªé”®ã€‚
+(1) Ò»¸öv½×µÄB+Ê÷ÓÉ¸ù½áµã¡¢ÄÚ²¿½áµãºÍÒ¶×Ó½áµã×é³É¡£
+(2) ¸ù½áµã¿ÉÒÔÊÇÒ¶×Ó½áµã£¬Ò²¿ÉÒÔÊÇÓĞÁ½¸ö»ò¸ü¶à×ÓÊ÷µÄÄÚ²¿½áµã¡£
+(3) Ã¿¸öÄÚ²¿½áµã°üº¬v - 2v¸ö¼ü¡£Èç¹ûÒ»¸öÄÚ²¿½áµã°üº¬k¸ö¼ü£¬ÔòÓĞÇÒÖ»ÓĞk+1¸öÖ¸Ïò×ÓÊ÷µÄÖ¸Õë¡£
+(4) Ò¶×Ó½áµã×ÜÊÇÔÚÊ÷µÄÍ¬Ò»²ãÉÏ¡£
+(5) Èç¹ûÒ¶×Ó½áµãÊÇÖ÷Ë÷Òı£¬Ëü°üº¬Ò»×é°´¼üÖµÅÅĞòµÄ¼ÇÂ¼£»Èç¹ûÒ¶×Ó½áµãÊÇ´ÓË÷Òı£¬Ëü°üº¬Ò»×é¶Ì¼ÇÂ¼£¬Ã¿¸ö¶Ì¼ÇÂ¼°üº¬Ò»¸ö¼üÒÔ¼°Ö¸ÏòÊµ¼Ê¼ÇÂ¼µÄÖ¸Õë¡£
+(6) ÄÚ²¿½áµãµÄ¼üÖµºÍÒ¶×Ó½áµãµÄÊı¾İÖµ¶¼ÊÇ´ÓĞ¡µ½´óÅÅĞòµÄ¡£
+(7) ÔÚÖĞ¼ä½áµãÖĞ£¬Ã¿¸ö¼üµÄ×ó×ÓÊ÷ÖĞµÄËùÓĞµÄ¼ü¶¼Ğ¡ÓÚÕâ¸ö¼ü£¬Ã¿¸ö¼üµÄÓÒ×ÓÊ÷ÖĞµÄËùÓĞµÄ¼ü¶¼´óÓÚµÈÓÚÕâ¸ö¼ü¡£
 
 */
 
-/* B+ æ ‘çš„é˜¶ï¼Œå³å†…éƒ¨ç»“ç‚¹ä¸­é”®çš„æœ€å°æ•°ç›®vã€‚
-   ä¹Ÿæœ‰äº›äººæŠŠé˜¶å®šä¹‰ä¸ºå†…éƒ¨ç»“ç‚¹ä¸­é”®çš„æœ€å¤§æ•°ç›®ï¼Œå³2vã€‚
-   ä¸€èˆ¬è€Œè¨€ï¼Œå¶å­ç»“ç‚¹ä¸­æœ€å¤§æ•°æ®ä¸ªæ•°å’Œå†…éƒ¨ç»“ç‚¹ä¸­æœ€å¤§é”®ä¸ªæ•°æ˜¯ä¸€æ ·çš„ï¼Œä¹Ÿæ˜¯2vã€‚(æˆ‘æƒ³è¿™æ ·åšçš„ç›®çš„æ˜¯ä¸ºäº†æŠŠå†…éƒ¨ç»“ç‚¹å’Œå¶å­ç»“ç‚¹ç»Ÿä¸€åˆ°åŒä¸€ä¸ªç»“æ„ä¸­å§)
+/* B+ Ê÷µÄ½×£¬¼´ÄÚ²¿½áµãÖĞ¼üµÄ×îĞ¡ÊıÄ¿v¡£
+   Ò²ÓĞĞ©ÈË°Ñ½×¶¨ÒåÎªÄÚ²¿½áµãÖĞ¼üµÄ×î´óÊıÄ¿£¬¼´2v¡£
+   Ò»°ã¶øÑÔ£¬Ò¶×Ó½áµãÖĞ×î´óÊı¾İ¸öÊıºÍÄÚ²¿½áµãÖĞ×î´ó¼ü¸öÊıÊÇÒ»ÑùµÄ£¬Ò²ÊÇ2v¡£(ÎÒÏëÕâÑù×öµÄÄ¿µÄÊÇÎªÁË°ÑÄÚ²¿½áµãºÍÒ¶×Ó½áµãÍ³Ò»µ½Í¬Ò»¸ö½á¹¹ÖĞ°É)
 */
-#define ORDER_V 2 /* ä¸ºç®€å•èµ·è§ï¼ŒæŠŠvå›ºå®šä¸º2ï¼Œå®é™…çš„B+æ ‘vå€¼åº”è¯¥æ˜¯å¯é…çš„ã€‚è¿™é‡Œçš„væ˜¯å†…éƒ¨èŠ‚ç‚¹ä¸­é”®çš„æœ€å°å€¼ */
+#define ORDER_V 2 /* Îª¼òµ¥Æğ¼û£¬°Ñv¹Ì¶¨Îª2£¬Êµ¼ÊµÄB+Ê÷vÖµÓ¦¸ÃÊÇ¿ÉÅäµÄ¡£ÕâÀïµÄvÊÇÄÚ²¿½ÚµãÖĞ¼üµÄ×îĞ¡Öµ */
 
-#define MAXNUM_KEY (ORDER_V * 2)        /* å†…éƒ¨ç»“ç‚¹ä¸­æœ€å¤šé”®ä¸ªæ•°ï¼Œä¸º2v */
-#define MAXNUM_POINTER (MAXNUM_KEY + 1) /* å†…éƒ¨ç»“ç‚¹ä¸­æœ€å¤šæŒ‡å‘å­æ ‘çš„æŒ‡é’ˆä¸ªæ•°ï¼Œä¸º2v+1 */
-#define MAXNUM_DATA (ORDER_V * 2)       /* å¶å­ç»“ç‚¹ä¸­æœ€å¤šæ•°æ®ä¸ªæ•°ï¼Œä¸º2v */
+#define MAXNUM_KEY (ORDER_V * 2)        /* ÄÚ²¿½áµãÖĞ×î¶à¼ü¸öÊı£¬Îª2v */
+#define MAXNUM_POINTER (MAXNUM_KEY + 1) /* ÄÚ²¿½áµãÖĞ×î¶àÖ¸Ïò×ÓÊ÷µÄÖ¸Õë¸öÊı£¬Îª2v+1 */
+#define MAXNUM_DATA (ORDER_V * 2)       /* Ò¶×Ó½áµãÖĞ×î¶àÊı¾İ¸öÊı£¬Îª2v */
 
-/* é”®å€¼çš„ç±»å‹*/
-typedef int KEY_TYPE; /* ä¸ºç®€å•èµ·è§ï¼Œå®šä¹‰ä¸ºintç±»å‹ï¼Œå®é™…çš„B+æ ‘é”®å€¼ç±»å‹åº”è¯¥æ˜¯å¯é…çš„ */
-/*å¤‡æ³¨ï¼š ä¸ºç®€å•èµ·è§ï¼Œå¶å­ç»“ç‚¹çš„æ•°æ®ä¹Ÿåªå­˜å‚¨é”®å€¼*/
+/* ¼üÖµµÄÀàĞÍ*/
+typedef int KEY_TYPE; /* Îª¼òµ¥Æğ¼û£¬¶¨ÒåÎªintÀàĞÍ£¬Êµ¼ÊµÄB+Ê÷¼üÖµÀàĞÍÓ¦¸ÃÊÇ¿ÉÅäµÄ */
+/*±¸×¢£º Îª¼òµ¥Æğ¼û£¬Ò¶×Ó½áµãµÄÊı¾İÒ²Ö»´æ´¢¼üÖµ*/
 
-/* ç»“ç‚¹ç±»å‹ */
+/* ½áµãÀàĞÍ */
 enum NODE_TYPE
 {
-    NODE_TYPE_ROOT = 1,     // æ ¹ç»“ç‚¹
-    NODE_TYPE_INTERNAL = 2, // å†…éƒ¨ç»“ç‚¹
-    NODE_TYPE_LEAF = 3,     // å¶å­ç»“ç‚¹
+    NODE_TYPE_ROOT = 1,     // ¸ù½áµã
+    NODE_TYPE_INTERNAL = 2, // ÄÚ²¿½áµã
+    NODE_TYPE_LEAF = 3,     // Ò¶×Ó½áµã
 };
 
-#define NULL 0
+// #define NULL 0
 #define INVALID 0
 
 #define FLAG_LEFT 1
@@ -50,55 +50,55 @@ enum NODE_TYPE
 //Declare Registration datatype
 class Registration;
 
-/* ç»“ç‚¹æ•°æ®ç»“æ„ï¼Œä¸ºå†…éƒ¨ç»“ç‚¹å’Œå¶å­ç»“ç‚¹çš„çˆ¶ç±» */
+/* ½áµãÊı¾İ½á¹¹£¬ÎªÄÚ²¿½áµãºÍÒ¶×Ó½áµãµÄ¸¸Àà */
 class CNode
 {
 public:
     CNode();
     virtual ~CNode();
 
-    //è·å–å’Œè®¾ç½®ç»“ç‚¹ç±»å‹
+    //»ñÈ¡ºÍÉèÖÃ½áµãÀàĞÍ
     NODE_TYPE GetType() { return m_Type; }
     void SetType(NODE_TYPE type) { m_Type = type; }
 
-    // è·å–å’Œè®¾ç½®æœ‰æ•ˆæ•°æ®ä¸ªæ•°
+    // »ñÈ¡ºÍÉèÖÃÓĞĞ§Êı¾İ¸öÊı
     int GetCount() { return m_Count; }
     void SetCount(int i) { m_Count = i; }
 
-    // è·å–å’Œè®¾ç½®æŸä¸ªå…ƒç´ ï¼Œå¯¹ä¸­é—´ç»“ç‚¹æŒ‡é”®å€¼ï¼Œå¯¹å¶å­ç»“ç‚¹æŒ‡æ•°æ®
+    // »ñÈ¡ºÍÉèÖÃÄ³¸öÔªËØ£¬¶ÔÖĞ¼ä½áµãÖ¸¼üÖµ£¬¶ÔÒ¶×Ó½áµãÖ¸Êı¾İ
     virtual KEY_TYPE GetElement(int i) { return 0; }
     virtual void SetElement(int i, KEY_TYPE value) {}
 
-    // è·å–å’Œè®¾ç½®æŸä¸ªæŒ‡é’ˆï¼Œå¯¹ä¸­é—´ç»“ç‚¹æŒ‡æŒ‡é’ˆï¼Œå¯¹å¶å­ç»“ç‚¹æ— æ„ä¹‰
+    // »ñÈ¡ºÍÉèÖÃÄ³¸öÖ¸Õë£¬¶ÔÖĞ¼ä½áµãÖ¸Ö¸Õë£¬¶ÔÒ¶×Ó½áµãÎŞÒâÒå
     virtual CNode *GetPointer(int i) { return NULL; }
     virtual void SetPointer(int i, CNode *pointer) {}
 
-    // è·å–å’Œè®¾ç½®çˆ¶ç»“ç‚¹
+    // »ñÈ¡ºÍÉèÖÃ¸¸½áµã
     CNode *GetFather() { return m_pFather; }
     void SetFather(CNode *father) { m_pFather = father; }
 
-    // è·å–ä¸€ä¸ªæœ€è¿‘çš„å…„å¼Ÿç»“ç‚¹
+    // »ñÈ¡Ò»¸ö×î½üµÄĞÖµÜ½áµã
     CNode *GetBrother(int &flag);
 
-    // åˆ é™¤ç»“ç‚¹
+    // É¾³ı½áµã
     void DeleteChildren();
 
 public:
-    NODE_TYPE m_Type; // ç»“ç‚¹ç±»å‹ï¼Œå–å€¼ä¸ºNODE_TYPEç±»å‹
+    NODE_TYPE m_Type; // ½áµãÀàĞÍ£¬È¡ÖµÎªNODE_TYPEÀàĞÍ
 
-    int m_Count; // æœ‰æ•ˆæ•°æ®ä¸ªæ•°ï¼Œå¯¹ä¸­é—´ç»“ç‚¹æŒ‡é”®ä¸ªæ•°ï¼Œå¯¹å¶å­ç»“ç‚¹æŒ‡æ•°æ®ä¸ªæ•°
+    int m_Count; // ÓĞĞ§Êı¾İ¸öÊı£¬¶ÔÖĞ¼ä½áµãÖ¸¼ü¸öÊı£¬¶ÔÒ¶×Ó½áµãÖ¸Êı¾İ¸öÊı
 
-    CNode *m_pFather; // æŒ‡å‘çˆ¶ç»“ç‚¹çš„æŒ‡é’ˆï¼Œæ ‡å‡†B+æ ‘ä¸­å¹¶æ²¡æœ‰è¯¥æŒ‡é’ˆï¼ŒåŠ ä¸Šæ˜¯ä¸ºäº†æ›´å¿«åœ°å®ç°ç»“ç‚¹åˆ†è£‚å’Œæ—‹è½¬ç­‰æ“ä½œ
+    CNode *m_pFather; // Ö¸Ïò¸¸½áµãµÄÖ¸Õë£¬±ê×¼B+Ê÷ÖĞ²¢Ã»ÓĞ¸ÃÖ¸Õë£¬¼ÓÉÏÊÇÎªÁË¸ü¿ìµØÊµÏÖ½áµã·ÖÁÑºÍĞı×ªµÈ²Ù×÷
 };
 
-/* å†…éƒ¨ç»“ç‚¹æ•°æ®ç»“æ„ */
+/* ÄÚ²¿½áµãÊı¾İ½á¹¹ */
 class CInternalNode : public CNode
 {
 public:
     CInternalNode();
     virtual ~CInternalNode();
 
-    // è·å–å’Œè®¾ç½®é”®å€¼ï¼Œå¯¹ç”¨æˆ·æ¥è¯´ï¼Œæ•°å­—ä»1å¼€å§‹ï¼Œå®é™…åœ¨ç»“ç‚¹ä¸­æ˜¯ä»0å¼€å§‹çš„
+    // »ñÈ¡ºÍÉèÖÃ¼üÖµ£¬¶ÔÓÃ»§À´Ëµ£¬Êı×Ö´Ó1¿ªÊ¼£¬Êµ¼ÊÔÚ½áµãÖĞÊÇ´Ó0¿ªÊ¼µÄ
     KEY_TYPE GetElement(int i)
     {
         if ((i > 0) && (i <= MAXNUM_KEY))
@@ -119,7 +119,7 @@ public:
         }
     }
 
-    // è·å–å’Œè®¾ç½®æŒ‡é’ˆï¼Œå¯¹ç”¨æˆ·æ¥è¯´ï¼Œæ•°å­—ä»1å¼€å§‹
+    // »ñÈ¡ºÍÉèÖÃÖ¸Õë£¬¶ÔÓÃ»§À´Ëµ£¬Êı×Ö´Ó1¿ªÊ¼
     CNode *GetPointer(int i)
     {
         if ((i > 0) && (i <= MAXNUM_POINTER))
@@ -140,31 +140,31 @@ public:
         }
     }
 
-    // åœ¨ç»“ç‚¹pNodeä¸Šæ’å…¥é”®value
+    // ÔÚ½áµãpNodeÉÏ²åÈë¼üvalue
     bool Insert(KEY_TYPE value, CNode *pNode);
-    // åˆ é™¤é”®value
+    // É¾³ı¼üvalue
     bool Delete(KEY_TYPE value);
 
-    // åˆ†è£‚ç»“ç‚¹
+    // ·ÖÁÑ½áµã
     KEY_TYPE Split(CInternalNode *pNode, KEY_TYPE key);
-    // ç»“åˆç»“ç‚¹(åˆå¹¶ç»“ç‚¹)
+    // ½áºÏ½áµã(ºÏ²¢½áµã)
     bool Combine(CNode *pNode);
-    // ä»å¦ä¸€ç»“ç‚¹ç§»ä¸€ä¸ªå…ƒç´ åˆ°æœ¬ç»“ç‚¹
+    // ´ÓÁíÒ»½áµãÒÆÒ»¸öÔªËØµ½±¾½áµã
     bool MoveOneElement(CNode *pNode);
 
 public:
-    KEY_TYPE m_Keys[MAXNUM_KEY];       // é”®æ•°ç»„
-    CNode *m_Pointers[MAXNUM_POINTER]; // æŒ‡é’ˆæ•°ç»„
+    KEY_TYPE m_Keys[MAXNUM_KEY];       // ¼üÊı×é
+    CNode *m_Pointers[MAXNUM_POINTER]; // Ö¸ÕëÊı×é
 };
 
-/* å¶å­ç»“ç‚¹æ•°æ®ç»“æ„ */
+/* Ò¶×Ó½áµãÊı¾İ½á¹¹ */
 class CLeafNode : public CNode
 {
 public:
     CLeafNode();
     virtual ~CLeafNode();
 
-    // è·å–å’Œè®¾ç½®æ•°æ®
+    // »ñÈ¡ºÍÉèÖÃÊı¾İ
     KEY_TYPE GetElement(int i)
     {
         if ((i > 0) && (i <= MAXNUM_DATA))
@@ -185,65 +185,65 @@ public:
         }
     }
 
-    // è·å–å’Œè®¾ç½®æŒ‡é’ˆï¼Œå¯¹å¶å­ç»“ç‚¹æ— æ„ä¹‰ï¼Œåªæ˜¯å®è¡Œçˆ¶ç±»çš„è™šå‡½æ•°
+    // »ñÈ¡ºÍÉèÖÃÖ¸Õë£¬¶ÔÒ¶×Ó½áµãÎŞÒâÒå£¬Ö»ÊÇÊµĞĞ¸¸ÀàµÄĞéº¯Êı
     CNode *GetPointer(int i)
     {
         return NULL;
     }
 
-    // æ’å…¥æ•°æ®
+    // ²åÈëÊı¾İ
     bool Insert(KEY_TYPE value, Registration *data); //modified
-    // åˆ é™¤æ•°æ®
+    // É¾³ıÊı¾İ
     bool Delete(KEY_TYPE value);
 
-    // åˆ†è£‚ç»“ç‚¹
+    // ·ÖÁÑ½áµã
     KEY_TYPE Split(CLeafNode *pNode);
-    // ç»“åˆç»“ç‚¹
+    // ½áºÏ½áµã
     bool Combine(CLeafNode *pNode);
 
 public:
-    // ä»¥ä¸‹ä¸¤ä¸ªå˜é‡ç”¨äºå®ç°åŒå‘é“¾è¡¨
-    CLeafNode *m_pPrevNode; // å‰ä¸€ä¸ªç»“ç‚¹
-    CLeafNode *m_pNextNode; // åä¸€ä¸ªç»“ç‚¹
+    // ÒÔÏÂÁ½¸ö±äÁ¿ÓÃÓÚÊµÏÖË«ÏòÁ´±í
+    CLeafNode *m_pPrevNode; // Ç°Ò»¸ö½áµã
+    CLeafNode *m_pNextNode; // ºóÒ»¸ö½áµã
 
 public:
-    KEY_TYPE m_Datas[MAXNUM_DATA]; // æ•°æ®æ•°ç»„
+    KEY_TYPE m_Datas[MAXNUM_DATA]; // Êı¾İÊı×é
 public:
     Registration *Reg_Datas[MAXNUM_DATA]; // modified
 };
 
-/* B+æ ‘æ•°æ®ç»“æ„ */
+/* B+Ê÷Êı¾İ½á¹¹ */
 class BPlusTree
 {
 public:
     BPlusTree();
     virtual ~BPlusTree();
 
-    // æŸ¥æ‰¾æŒ‡å®šçš„æ•°æ®
+    // ²éÕÒÖ¸¶¨µÄÊı¾İ
     Registration *Search(KEY_TYPE data); //modified
-    // æ’å…¥æŒ‡å®šçš„æ•°æ®
+    // ²åÈëÖ¸¶¨µÄÊı¾İ
     bool Insert(KEY_TYPE data, Registration *Reg_data); //modified
-    // åˆ é™¤æŒ‡å®šçš„æ•°æ®
+    // É¾³ıÖ¸¶¨µÄÊı¾İ
     bool Delete(KEY_TYPE data);
 
-    // æ¸…é™¤æ ‘
+    // Çå³ıÊ÷
     void ClearTree();
 
-    // æ‰“å°æ ‘
+    // ´òÓ¡Ê÷
     void PrintTree();
 
-    // æ—‹è½¬æ ‘
+    // Ğı×ªÊ÷
     BPlusTree *RotateTree();
 
-    // æ£€æŸ¥æ ‘æ˜¯å¦æ»¡è¶³B+æ ‘çš„å®šä¹‰
+    // ¼ì²éÊ÷ÊÇ·ñÂú×ãB+Ê÷µÄ¶¨Òå
     bool CheckTree();
 
     void PrintNode(CNode *pNode);
 
-    // é€’å½’æ£€æŸ¥ç»“ç‚¹åŠå…¶å­æ ‘æ˜¯å¦æ»¡è¶³B+æ ‘çš„å®šä¹‰
+    // µİ¹é¼ì²é½áµã¼°Æä×ÓÊ÷ÊÇ·ñÂú×ãB+Ê÷µÄ¶¨Òå
     bool CheckNode(CNode *pNode);
 
-    // è·å–å’Œè®¾ç½®æ ¹ç»“ç‚¹
+    // »ñÈ¡ºÍÉèÖÃ¸ù½áµã
     CNode *GetRoot()
     {
         return m_Root;
@@ -262,7 +262,7 @@ public:
         m_Root = root;
     }
 
-    // è·å–å’Œè®¾ç½®æ·±åº¦
+    // »ñÈ¡ºÍÉèÖÃÉî¶È
     int GetDepth()
     {
         return m_Depth;
@@ -273,13 +273,13 @@ public:
         m_Depth = depth;
     }
 
-    // æ·±åº¦åŠ ä¸€
+    // Éî¶È¼ÓÒ»
     void IncDepth()
     {
         m_Depth = m_Depth + 1;
     }
 
-    // æ·±åº¦å‡ä¸€
+    // Éî¶È¼õÒ»
     void DecDepth()
     {
         if (m_Depth > 0)
@@ -289,18 +289,18 @@ public:
     }
 
 public:
-    // ä»¥ä¸‹ä¸¤ä¸ªå˜é‡ç”¨äºå®ç°åŒå‘é“¾è¡¨
-    CLeafNode *m_pLeafHead; // å¤´ç»“ç‚¹
-    CLeafNode *m_pLeafTail; // å°¾ç»“ç‚¹
+    // ÒÔÏÂÁ½¸ö±äÁ¿ÓÃÓÚÊµÏÖË«ÏòÁ´±í
+    CLeafNode *m_pLeafHead; // Í·½áµã
+    CLeafNode *m_pLeafTail; // Î²½áµã
 
 public:
-    // ä¸ºæ’å…¥è€ŒæŸ¥æ‰¾å¶å­ç»“ç‚¹
+    // Îª²åÈë¶ø²éÕÒÒ¶×Ó½áµã
     CLeafNode *SearchLeafNode(KEY_TYPE data);
-    //æ’å…¥é”®åˆ°ä¸­é—´ç»“ç‚¹
+    //²åÈë¼üµ½ÖĞ¼ä½áµã
     bool InsertInternalNode(CInternalNode *pNode, KEY_TYPE key, CNode *pRightSon);
-    // åœ¨ä¸­é—´ç»“ç‚¹ä¸­åˆ é™¤é”®
+    // ÔÚÖĞ¼ä½áµãÖĞÉ¾³ı¼ü
     bool DeleteInternalNode(CInternalNode *pNode, KEY_TYPE key);
 
-    CNode *m_Root; // æ ¹ç»“ç‚¹
-    int m_Depth;   // æ ‘çš„æ·±åº¦
+    CNode *m_Root; // ¸ù½áµã
+    int m_Depth;   // Ê÷µÄÉî¶È
 };

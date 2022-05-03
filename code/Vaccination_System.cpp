@@ -994,6 +994,10 @@ void System::print()
     cout << "The Appointment Files in appointment_queue are:\n";
     appointment_queue.print();
     cout << "\n";
+
+    cout << "Reg_List is:\n";
+    Reg_List.PrintTree();
+    cout << "\n";
 }
 
 /*void System::Weekly_ReportA()    //this one only can sort by name

@@ -15,10 +15,10 @@ CNode::~CNode()
     DeleteChildren();
 }
 
-// è·å–ä¸€ä¸ªæœ€è¿‘çš„å…„å¼Ÿç»“ç‚¹
+// »ñÈ¡Ò»¸ö×î½üµÄĞÖµÜ½áµã
 CNode *CNode::GetBrother(int &flag)
 {
-    CNode *pFather = GetFather(); //è·å–å…¶çˆ¶ç»“ç‚¹æŒ‡é’ˆ
+    CNode *pFather = GetFather(); //»ñÈ¡Æä¸¸½áµãÖ¸Õë
     if (NULL == pFather)
     {
         return NULL;
@@ -26,19 +26,19 @@ CNode *CNode::GetBrother(int &flag)
 
     CNode *pBrother = NULL;
 
-    for (int i = 1; i <= pFather->GetCount() + 1; i++) // GetCount()è¡¨ç¤ºè·å–æ•°æ®æˆ–å…³é”®å­—æ•°ï¼Œè¦æ¯”æŒ‡é’ˆæ•°å°1ã€‚
+    for (int i = 1; i <= pFather->GetCount() + 1; i++) // GetCount()±íÊ¾»ñÈ¡Êı¾İ»ò¹Ø¼ü×ÖÊı£¬Òª±ÈÖ¸ÕëÊıĞ¡1¡£
     {
-        // æ‰¾åˆ°æœ¬ç»“ç‚¹çš„ä½ç½®
+        // ÕÒµ½±¾½áµãµÄÎ»ÖÃ
         if (pFather->GetPointer(i) == this)
         {
-            if (i == (pFather->GetCount() + 1)) //è¡¨ç¤ºå…¶ä¸ºçˆ¶ç»“ç‚¹çš„æœ€å³è¾¹å­©å­ã€‚
+            if (i == (pFather->GetCount() + 1)) //±íÊ¾ÆäÎª¸¸½áµãµÄ×îÓÒ±ßº¢×Ó¡£
             {
-                pBrother = pFather->GetPointer(i - 1); // æœ¬èº«æ˜¯æœ€åä¸€ä¸ªæŒ‡é’ˆï¼Œåªèƒ½æ‰¾å‰ä¸€ä¸ªæŒ‡é’ˆ
+                pBrother = pFather->GetPointer(i - 1); // ±¾ÉíÊÇ×îºóÒ»¸öÖ¸Õë£¬Ö»ÄÜÕÒÇ°Ò»¸öÖ¸Õë
                 flag = FLAG_LEFT;
             }
             else
             {
-                pBrother = pFather->GetPointer(i + 1); // ä¼˜å…ˆæ‰¾åä¸€ä¸ªæŒ‡é’ˆ
+                pBrother = pFather->GetPointer(i + 1); // ÓÅÏÈÕÒºóÒ»¸öÖ¸Õë
                 flag = FLAG_RIGHT;
             }
         }
@@ -47,14 +47,14 @@ CNode *CNode::GetBrother(int &flag)
     return pBrother;
 }
 
-// é€’å½’åˆ é™¤å­ç»“ç‚¹
+// µİ¹éÉ¾³ı×Ó½áµã
 void CNode::DeleteChildren()
 {
-    // GetCount()ä¸ºè¿”å›ç»“ç‚¹ä¸­å…³é”®å­—å³æ•°æ®çš„ä¸ªæ•°
+    // GetCount()Îª·µ»Ø½áµãÖĞ¹Ø¼ü×Ö¼´Êı¾İµÄ¸öÊı
     for (int i = 1; i <= GetCount() + 1; i++) // Modified(new)
     {
         CNode *pNode = GetPointer(i);
-        if (NULL != pNode) // å¶å­ç»“ç‚¹æ²¡æœ‰æŒ‡é’ˆ
+        if (NULL != pNode) // Ò¶×Ó½áµãÃ»ÓĞÖ¸Õë
         {
             pNode->DeleteChildren();
         }
@@ -63,7 +63,7 @@ void CNode::DeleteChildren()
     }
 }
 
-//å°†å†…éƒ¨èŠ‚ç‚¹çš„å…³é”®å­—å’ŒæŒ‡é’ˆåˆ†åˆ«åˆå§‹åŒ–ä¸º0å’Œç©º
+//½«ÄÚ²¿½ÚµãµÄ¹Ø¼ü×ÖºÍÖ¸Õë·Ö±ğ³õÊ¼»¯Îª0ºÍ¿Õ
 CInternalNode::CInternalNode()
 {
     m_Type = NODE_TYPE_INTERNAL;
@@ -87,13 +87,13 @@ CInternalNode::~CInternalNode()
     }
 }
 
-// åœ¨ä¸­é—´ç»“ç‚¹ä¸­æ’å…¥é”®ã€‚
-/*ç–‘é—®ï¼šä¸­é—´ç»“ç‚¹éœ€è¦æ’å…¥å€¼å—ï¼Ÿåœ¨æ’å…¥å€¼æ—¶ï¼Œé€šå¸¸éƒ½æ˜¯å…ˆæ‰¾åˆ°åœ¨å¶å­ç»“ç‚¹ä¸­çš„ä½ç½®ï¼Œç„¶åå†æ’å…¥ã€‚
-ä¸­é—´ç»“ç‚¹é€šå¸¸å½“å¶å­ç»“ç‚¹éœ€è¦åˆ†è£‚æ—¶å°†åˆ†è£‚åçš„ä¸¤ä¸ªå­©å­ç»“ç‚¹æ’å…¥å…¶ä¸­*/
+// ÔÚÖĞ¼ä½áµãÖĞ²åÈë¼ü¡£
+/*ÒÉÎÊ£ºÖĞ¼ä½áµãĞèÒª²åÈëÖµÂğ£¿ÔÚ²åÈëÖµÊ±£¬Í¨³£¶¼ÊÇÏÈÕÒµ½ÔÚÒ¶×Ó½áµãÖĞµÄÎ»ÖÃ£¬È»ºóÔÙ²åÈë¡£
+ÖĞ¼ä½áµãÍ¨³£µ±Ò¶×Ó½áµãĞèÒª·ÖÁÑÊ±½«·ÖÁÑºóµÄÁ½¸öº¢×Ó½áµã²åÈëÆäÖĞ*/
 bool CInternalNode::Insert(KEY_TYPE value, CNode *pNode)
 {
     int i;
-    // å¦‚æœä¸­é—´ç»“ç‚¹å·²æ»¡ï¼Œç›´æ¥è¿”å›å¤±è´¥
+    // Èç¹ûÖĞ¼ä½áµãÒÑÂú£¬Ö±½Ó·µ»ØÊ§°Ü
     if (GetCount() >= MAXNUM_KEY)
     {
         return false;
@@ -101,35 +101,35 @@ bool CInternalNode::Insert(KEY_TYPE value, CNode *pNode)
 
     int j = 0;
 
-    // æ‰¾åˆ°è¦æ’å…¥é”®çš„ä½ç½®
+    // ÕÒµ½Òª²åÈë¼üµÄÎ»ÖÃ
     for (i = 0; (value > m_Keys[i]) && (i < m_Count); i++)
     {
     }
 
-    // å½“å‰ä½ç½®åŠå…¶åé¢çš„é”®ä¾æ¬¡åç§»ï¼Œç©ºå‡ºå½“å‰ä½ç½®
+    // µ±Ç°Î»ÖÃ¼°ÆäºóÃæµÄ¼üÒÀ´ÎºóÒÆ£¬¿Õ³öµ±Ç°Î»ÖÃ
     for (j = m_Count; j > i; j--)
     {
         m_Keys[j] = m_Keys[j - 1];
     }
 
-    // å½“å‰ä½ç½®åŠå…¶åé¢çš„æŒ‡é’ˆä¾æ¬¡åç§»
+    // µ±Ç°Î»ÖÃ¼°ÆäºóÃæµÄÖ¸ÕëÒÀ´ÎºóÒÆ
     for (j = m_Count + 1; j > i + 1; j--)
     {
         m_Pointers[j] = m_Pointers[j - 1];
     }
 
-    // æŠŠé”®å’ŒæŒ‡é’ˆå­˜å…¥å½“å‰ä½ç½®
+    // °Ñ¼üºÍÖ¸Õë´æÈëµ±Ç°Î»ÖÃ
     m_Keys[i] = value;
-    m_Pointers[i + 1] = pNode; // æ³¨æ„æ˜¯ç¬¬i+1ä¸ªæŒ‡é’ˆè€Œä¸æ˜¯ç¬¬iä¸ªæŒ‡é’ˆ
-    pNode->SetFather(this);    // éå¸¸é‡è¦  è¯¥å‡½æ•°çš„æ„æ€æ˜¯æ’å…¥å…³é”®å­—valueåŠå…¶æ‰€æŒ‡å‘å­æ ‘
+    m_Pointers[i + 1] = pNode; // ×¢ÒâÊÇµÚi+1¸öÖ¸Õë¶ø²»ÊÇµÚi¸öÖ¸Õë
+    pNode->SetFather(this);    // ·Ç³£ÖØÒª  ¸Ãº¯ÊıµÄÒâË¼ÊÇ²åÈë¹Ø¼ü×Övalue¼°ÆäËùÖ¸Ïò×ÓÊ÷
 
     m_Count++;
 
-    // è¿”å›æˆåŠŸ
+    // ·µ»Ø³É¹¦
     return true;
 }
 
-// åœ¨ä¸­é—´ç»“ç‚¹ä¸­åˆ é™¤é”®ï¼Œä»¥åŠè¯¥é”®åçš„æŒ‡é’ˆ
+// ÔÚÖĞ¼ä½áµãÖĞÉ¾³ı¼ü£¬ÒÔ¼°¸Ã¼üºóµÄÖ¸Õë
 bool CInternalNode::Delete(KEY_TYPE key)
 {
     int i, j, k;
@@ -154,23 +154,23 @@ bool CInternalNode::Delete(KEY_TYPE key)
     return true;
 }
 
-/* åˆ†è£‚ä¸­é—´ç»“ç‚¹
-åˆ†è£‚ä¸­é—´ç»“ç‚¹å’Œåˆ†è£‚å¶å­ç»“ç‚¹å®Œå…¨ä¸åŒï¼Œå› ä¸ºä¸­é—´ç»“ç‚¹ä¸ä»…æœ‰2Vé”®ï¼Œè¿˜æœ‰2V+1æŒ‡é’ˆï¼Œå¦‚æœå•çº¯åœ°ä¸€åˆ†ä¸º2ï¼ŒæŒ‡é’ˆå°†æ— æ³•åˆ† é…ã€‚
-å› æ­¤æ ¹æ®http://www.seanster.com/BplusTree/BplusTree.html ï¼Œåˆ†è£‚ä¸­ é—´ç»“ç‚¹çš„ç®—æ³•æ˜¯ï¼š
-æ ¹æ®è¦æ’å…¥çš„é”®keyåˆ¤æ–­ï¼š
-(1)å¦‚æœkeyå°äºç¬¬Vä¸ªé”®ï¼Œåˆ™æŠŠç¬¬Vä¸ªé”®æå‡ºæ¥,å…¶å·¦å³çš„é”®åˆ†åˆ«åˆ†åˆ°ä¸¤ä¸ªç»“ç‚¹ä¸­
-(2) å¦‚æœkeyå¤§äºç¬¬V+1ä¸ªé”®ï¼Œåˆ™æŠŠç¬¬V+1ä¸ªé”®æå‡ºæ¥,å…¶å·¦å³çš„é”®åˆ†åˆ«åˆ†åˆ°ä¸¤ä¸ªç»“ç‚¹ä¸­
-(3)å¦‚æœkeyä»‹äºç¬¬Vå’ŒV+1ä¸ªé”®ä¹‹é—´ï¼Œåˆ™æŠŠkeyä½œä¸º è¦æå‡ºçš„é”®ï¼ŒåŸæ¥çš„é”®å„åˆ†ä¸€åŠåˆ°ä¸¤ä¸ªç»“ç‚¹ä¸­
-æå‡ºæ¥çš„RetKeyä½œç”¨æ˜¯ä¾¿äºåç»­æ’å…¥åˆ°ç¥–å…ˆç»“ç‚¹
+/* ·ÖÁÑÖĞ¼ä½áµã
+·ÖÁÑÖĞ¼ä½áµãºÍ·ÖÁÑÒ¶×Ó½áµãÍêÈ«²»Í¬£¬ÒòÎªÖĞ¼ä½áµã²»½öÓĞ2V¼ü£¬»¹ÓĞ2V+1Ö¸Õë£¬Èç¹ûµ¥´¿µØÒ»·ÖÎª2£¬Ö¸Õë½«ÎŞ·¨·Ö Åä¡£
+Òò´Ë¸ù¾İhttp://www.seanster.com/BplusTree/BplusTree.html £¬·ÖÁÑÖĞ ¼ä½áµãµÄËã·¨ÊÇ£º
+¸ù¾İÒª²åÈëµÄ¼ükeyÅĞ¶Ï£º
+(1)Èç¹ûkeyĞ¡ÓÚµÚV¸ö¼ü£¬Ôò°ÑµÚV¸ö¼üÌá³öÀ´,Æä×óÓÒµÄ¼ü·Ö±ğ·Öµ½Á½¸ö½áµãÖĞ
+(2) Èç¹ûkey´óÓÚµÚV+1¸ö¼ü£¬Ôò°ÑµÚV+1¸ö¼üÌá³öÀ´,Æä×óÓÒµÄ¼ü·Ö±ğ·Öµ½Á½¸ö½áµãÖĞ
+(3)Èç¹ûkey½éÓÚµÚVºÍV+1¸ö¼üÖ®¼ä£¬Ôò°Ñkey×÷Îª ÒªÌá³öµÄ¼ü£¬Ô­À´µÄ¼ü¸÷·ÖÒ»°ëµ½Á½¸ö½áµãÖĞ
+Ìá³öÀ´µÄRetKey×÷ÓÃÊÇ±ãÓÚºóĞø²åÈëµ½×æÏÈ½áµã
 */
-KEY_TYPE CInternalNode::Split(CInternalNode *pNode, KEY_TYPE key) // keyæ˜¯æ–°æ’å…¥çš„å€¼ï¼ŒpNodeæ˜¯åˆ†è£‚ç»“ç‚¹
+KEY_TYPE CInternalNode::Split(CInternalNode *pNode, KEY_TYPE key) // keyÊÇĞÂ²åÈëµÄÖµ£¬pNodeÊÇ·ÖÁÑ½áµã
 {
     int i = 0, j = 0;
 
-    // å¦‚æœè¦æ’å…¥çš„é”®å€¼åœ¨ç¬¬Vå’ŒV+1ä¸ªé”®å€¼ä¸­é—´ï¼Œéœ€è¦ç¿»è½¬ä¸€ä¸‹ï¼Œå› æ­¤å…ˆå¤„ç†æ­¤æƒ…å†µ
+    // Èç¹ûÒª²åÈëµÄ¼üÖµÔÚµÚVºÍV+1¸ö¼üÖµÖĞ¼ä£¬ĞèÒª·­×ªÒ»ÏÂ£¬Òò´ËÏÈ´¦Àí´ËÇé¿ö
     if ((key > this->GetElement(ORDER_V)) && (key < this->GetElement(ORDER_V + 1)))
     {
-        // æŠŠç¬¬V+1 -- 2Vä¸ªé”®ç§»åˆ°æŒ‡å®šçš„ç»“ç‚¹ä¸­
+        // °ÑµÚV+1 -- 2V¸ö¼üÒÆµ½Ö¸¶¨µÄ½áµãÖĞ
 
         for (i = ORDER_V + 1; i <= MAXNUM_KEY; i++)
         {
@@ -179,27 +179,27 @@ KEY_TYPE CInternalNode::Split(CInternalNode *pNode, KEY_TYPE key) // keyæ˜¯æ–°æ
             this->SetElement(i, INVALID);
         }
 
-        // æŠŠç¬¬V+2 -- 2V+1ä¸ªæŒ‡é’ˆç§»åˆ°æŒ‡å®šçš„ç»“ç‚¹ä¸­
+        // °ÑµÚV+2 -- 2V+1¸öÖ¸ÕëÒÆµ½Ö¸¶¨µÄ½áµãÖĞ
         j = 0;
         for (i = ORDER_V + 2; i <= MAXNUM_POINTER; i++)
         {
             j++;
-            this->GetPointer(i)->SetFather(pNode); // é‡æ–°è®¾ç½®å­ç»“ç‚¹çš„çˆ¶äº²
+            this->GetPointer(i)->SetFather(pNode); // ÖØĞÂÉèÖÃ×Ó½áµãµÄ¸¸Ç×
             pNode->SetPointer(j, this->GetPointer(i));
             this->SetPointer(i, INVALID);
         }
 
-        // è®¾ç½®å¥½Countä¸ªæ•°
+        // ÉèÖÃºÃCount¸öÊı
         this->SetCount(ORDER_V);
         pNode->SetCount(ORDER_V);
 
-        // æŠŠåŸé”®å€¼è¿”å›
+        // °ÑÔ­¼üÖµ·µ»Ø
         return key;
     }
 
-    // ä»¥ä¸‹å¤„ç†keyå°äºç¬¬Vä¸ªé”®å€¼æˆ–keyå¤§äºç¬¬V+1ä¸ªé”®å€¼çš„æƒ…å†µ
+    // ÒÔÏÂ´¦ÀíkeyĞ¡ÓÚµÚV¸ö¼üÖµ»òkey´óÓÚµÚV+1¸ö¼üÖµµÄÇé¿ö
 
-    // åˆ¤æ–­æ˜¯æå–ç¬¬Vè¿˜æ˜¯V+1ä¸ªé”®
+    // ÅĞ¶ÏÊÇÌáÈ¡µÚV»¹ÊÇV+1¸ö¼ü
     int position = 0;
     if (key < this->GetElement(ORDER_V))
     {
@@ -210,10 +210,10 @@ KEY_TYPE CInternalNode::Split(CInternalNode *pNode, KEY_TYPE key) // keyæ˜¯æ–°æ
         position = ORDER_V + 1;
     }
 
-    // æŠŠç¬¬positionä¸ªé”®æå‡ºæ¥ï¼Œä½œä¸ºæ–°çš„é”®å€¼è¿”å›
+    // °ÑµÚposition¸ö¼üÌá³öÀ´£¬×÷ÎªĞÂµÄ¼üÖµ·µ»Ø
     KEY_TYPE RetKey = this->GetElement(position);
 
-    // æŠŠç¬¬position+1 -- 2Vä¸ªé”®ç§»åˆ°æŒ‡å®šçš„ç»“ç‚¹ä¸­
+    // °ÑµÚposition+1 -- 2V¸ö¼üÒÆµ½Ö¸¶¨µÄ½áµãÖĞ
     j = 0;
     for (i = position + 1; i <= MAXNUM_KEY; i++)
     {
@@ -222,36 +222,36 @@ KEY_TYPE CInternalNode::Split(CInternalNode *pNode, KEY_TYPE key) // keyæ˜¯æ–°æ
         this->SetElement(i, INVALID);
     }
 
-    // æŠŠç¬¬position+1 -- 2V+1ä¸ªæŒ‡é’ˆç§»åˆ°æŒ‡å®šçš„ç»“ç‚¹ä¸­(æ³¨æ„æŒ‡é’ˆæ¯”é”®å¤šä¸€ä¸ª)
+    // °ÑµÚposition+1 -- 2V+1¸öÖ¸ÕëÒÆµ½Ö¸¶¨µÄ½áµãÖĞ(×¢ÒâÖ¸Õë±È¼ü¶àÒ»¸ö)
     j = 0;
     for (i = position + 1; i <= MAXNUM_POINTER; i++)
     {
         j++;
-        this->GetPointer(i)->SetFather(pNode); // é‡æ–°è®¾ç½®å­ç»“ç‚¹çš„çˆ¶äº²
+        this->GetPointer(i)->SetFather(pNode); // ÖØĞÂÉèÖÃ×Ó½áµãµÄ¸¸Ç×
         pNode->SetPointer(j, this->GetPointer(i));
         this->SetPointer(i, INVALID);
     }
 
-    // æ¸…é™¤æå–å‡ºçš„ä½ç½®
+    // Çå³ıÌáÈ¡³öµÄÎ»ÖÃ
     this->SetElement(position, INVALID);
 
-    // è®¾ç½®å¥½Countä¸ªæ•°
+    // ÉèÖÃºÃCount¸öÊı
     this->SetCount(position - 1);
     pNode->SetCount(MAXNUM_KEY - position);
 
     return RetKey;
 }
 
-//ç»“åˆç»“ç‚¹ï¼ŒæŠŠæŒ‡å®šä¸­é—´ç»“ç‚¹çš„æ•°æ®å…¨éƒ¨å‰ªåˆ‡åˆ°æœ¬ä¸­é—´ç»“ç‚¹
+//½áºÏ½áµã£¬°ÑÖ¸¶¨ÖĞ¼ä½áµãµÄÊı¾İÈ«²¿¼ôÇĞµ½±¾ÖĞ¼ä½áµã
 bool CInternalNode::Combine(CNode *pNode)
 {
-    // å‚æ•°æ£€æŸ¥
-    if (this->GetCount() + pNode->GetCount() + 1 > MAXNUM_DATA) // é¢„ç•™ä¸€ä¸ªæ–°é”®çš„ä½ç½®
+    // ²ÎÊı¼ì²é
+    if (this->GetCount() + pNode->GetCount() + 1 > MAXNUM_DATA) // Ô¤ÁôÒ»¸öĞÂ¼üµÄÎ»ÖÃ
     {
         return false;
     }
 
-    // å–å¾…åˆå¹¶ç»“ç‚¹çš„ç¬¬ä¸€ä¸ªå­©å­çš„ç¬¬ä¸€ä¸ªå…ƒç´ ä½œä¸ºæ–°é”®å€¼
+    // È¡´ıºÏ²¢½áµãµÄµÚÒ»¸öº¢×ÓµÄµÚÒ»¸öÔªËØ×÷ÎªĞÂ¼üÖµ
     KEY_TYPE NewKey = pNode->GetPointer(1)->GetElement(1);
 
     m_Keys[m_Count] = NewKey;
@@ -272,10 +272,10 @@ bool CInternalNode::Combine(CNode *pNode)
     return true;
 }
 
-// ä»å¦ä¸€ç»“ç‚¹ç§»ä¸€ä¸ªå…ƒç´ åˆ°æœ¬ç»“ç‚¹
+// ´ÓÁíÒ»½áµãÒÆÒ»¸öÔªËØµ½±¾½áµã
 bool CInternalNode::MoveOneElement(CNode *pNode)
 {
-    // å‚æ•°æ£€æŸ¥
+    // ²ÎÊı¼ì²é
     if (this->GetCount() >= MAXNUM_DATA)
     {
         return false;
@@ -283,10 +283,10 @@ bool CInternalNode::MoveOneElement(CNode *pNode)
 
     int i, j;
 
-    // å…„å¼Ÿç»“ç‚¹åœ¨æœ¬ç»“ç‚¹å·¦è¾¹
+    // ĞÖµÜ½áµãÔÚ±¾½áµã×ó±ß
     if (pNode->GetElement(1) < this->GetElement(1))
     {
-        // å…ˆè…¾å‡ºä½ç½®
+        // ÏÈÌÚ³öÎ»ÖÃ
         for (i = m_Count; i > 0; i--)
         {
             m_Keys[i] = m_Keys[i - 1];
@@ -296,25 +296,25 @@ bool CInternalNode::MoveOneElement(CNode *pNode)
             m_Pointers[j] = m_Pointers[j - 1];
         }
 
-        // èµ‹å€¼
-        // ç¬¬ä¸€ä¸ªé”®å€¼ä¸æ˜¯å…„å¼Ÿç»“ç‚¹çš„æœ€åä¸€ä¸ªé”®å€¼ï¼Œè€Œæ˜¯æœ¬ç»“ç‚¹ç¬¬ä¸€ä¸ªå­ç»“ç‚¹çš„ç¬¬ä¸€ä¸ªå…ƒç´ çš„å€¼
+        // ¸³Öµ
+        // µÚÒ»¸ö¼üÖµ²»ÊÇĞÖµÜ½áµãµÄ×îºóÒ»¸ö¼üÖµ£¬¶øÊÇ±¾½áµãµÚÒ»¸ö×Ó½áµãµÄµÚÒ»¸öÔªËØµÄÖµ
         m_Keys[0] = GetPointer(1)->GetElement(1);
-        // ç¬¬ä¸€ä¸ªå­ç»“ç‚¹ä¸ºå…„å¼Ÿç»“ç‚¹çš„æœ€åä¸€ä¸ªå­ç»“ç‚¹
+        // µÚÒ»¸ö×Ó½áµãÎªĞÖµÜ½áµãµÄ×îºóÒ»¸ö×Ó½áµã
         m_Pointers[0] = pNode->GetPointer(pNode->GetCount() + 1);
 
-        // ä¿®æ”¹å…„å¼Ÿç»“ç‚¹
+        // ĞŞ¸ÄĞÖµÜ½áµã
         pNode->SetElement(pNode->GetCount(), INVALID);
         pNode->SetPointer(pNode->GetCount() + 1, INVALID);
     }
-    else // å…„å¼Ÿç»“ç‚¹åœ¨æœ¬ç»“ç‚¹å³è¾¹
+    else // ĞÖµÜ½áµãÔÚ±¾½áµãÓÒ±ß
     {
-        // èµ‹å€¼
-        // æœ€åä¸€ä¸ªé”®å€¼ä¸æ˜¯å…„å¼Ÿç»“ç‚¹çš„ç¬¬ä¸€ä¸ªé”®å€¼ï¼Œè€Œæ˜¯å…„å¼Ÿç»“ç‚¹ç¬¬ä¸€ä¸ªå­ç»“ç‚¹çš„ç¬¬ä¸€ä¸ªå…ƒç´ çš„å€¼
+        // ¸³Öµ
+        // ×îºóÒ»¸ö¼üÖµ²»ÊÇĞÖµÜ½áµãµÄµÚÒ»¸ö¼üÖµ£¬¶øÊÇĞÖµÜ½áµãµÚÒ»¸ö×Ó½áµãµÄµÚÒ»¸öÔªËØµÄÖµ
         m_Keys[m_Count] = pNode->GetPointer(1)->GetElement(1);
-        // æœ€åä¸€ä¸ªå­ç»“ç‚¹ä¸ºå…„å¼Ÿç»“ç‚¹çš„ç¬¬ä¸€ä¸ªå­ç»“ç‚¹
+        // ×îºóÒ»¸ö×Ó½áµãÎªĞÖµÜ½áµãµÄµÚÒ»¸ö×Ó½áµã
         m_Pointers[m_Count + 1] = pNode->GetPointer(1);
 
-        // ä¿®æ”¹å…„å¼Ÿç»“ç‚¹
+        // ĞŞ¸ÄĞÖµÜ½áµã
         for (i = 1; i < pNode->GetCount() - 1; i++)
         {
             pNode->SetElement(i, pNode->GetElement(i + 1));
@@ -325,14 +325,14 @@ bool CInternalNode::MoveOneElement(CNode *pNode)
         }
     }
 
-    // è®¾ç½®æ•°ç›®
+    // ÉèÖÃÊıÄ¿
     this->SetCount(this->GetCount() + 1);
     pNode->SetCount(pNode->GetCount() - 1);
 
     return true;
 }
 
-// æ¸…é™¤å¶å­ç»“ç‚¹ä¸­çš„æ•°æ®
+// Çå³ıÒ¶×Ó½áµãÖĞµÄÊı¾İ
 CLeafNode::CLeafNode()
 {
     m_Type = NODE_TYPE_LEAF;
@@ -350,35 +350,35 @@ CLeafNode::~CLeafNode()
 {
 }
 
-// åœ¨å¶å­ç»“ç‚¹ä¸­æ’å…¥æ•°æ®
+// ÔÚÒ¶×Ó½áµãÖĞ²åÈëÊı¾İ
 bool CLeafNode::Insert(KEY_TYPE value, Registration *data)
 {
     int i, j;
-    // å¦‚æœå¶å­ç»“ç‚¹å·²æ»¡ï¼Œç›´æ¥è¿”å›å¤±è´¥
+    // Èç¹ûÒ¶×Ó½áµãÒÑÂú£¬Ö±½Ó·µ»ØÊ§°Ü
     if (GetCount() >= MAXNUM_DATA)
     {
         return false;
     }
 
-    // æ‰¾åˆ°è¦æ’å…¥æ•°æ®çš„ä½ç½®
+    // ÕÒµ½Òª²åÈëÊı¾İµÄÎ»ÖÃ
     for (i = 0; (value > m_Datas[i]) && (i < m_Count); i++)
     {
     }
 
-    // å½“å‰ä½ç½®åŠå…¶åé¢çš„æ•°æ®ä¾æ¬¡åç§»ï¼Œç©ºå‡ºå½“å‰ä½ç½®
+    // µ±Ç°Î»ÖÃ¼°ÆäºóÃæµÄÊı¾İÒÀ´ÎºóÒÆ£¬¿Õ³öµ±Ç°Î»ÖÃ
     for (j = m_Count; j > i; j--)
     {
         m_Datas[j] = m_Datas[j - 1];
         Reg_Datas[j] = Reg_Datas[j - 1]; // Modified
     }
 
-    // æŠŠæ•°æ®å­˜å…¥å½“å‰ä½ç½®
+    // °ÑÊı¾İ´æÈëµ±Ç°Î»ÖÃ
     m_Datas[i] = value;
     Reg_Datas[i] = data; //modified
 
     m_Count++;
 
-    // è¿”å›æˆåŠŸ
+    // ·µ»Ø³É¹¦
     return true;
 }
 
@@ -394,13 +394,13 @@ bool CLeafNode::Delete(KEY_TYPE value)
             break;
         }
     }
-    // å¦‚æœæ²¡æœ‰æ‰¾åˆ°ï¼Œè¿”å›å¤±è´¥
+    // Èç¹ûÃ»ÓĞÕÒµ½£¬·µ»ØÊ§°Ü
     if (false == found)
     {
         return false;
     }
 
-    // åé¢çš„æ•°æ®ä¾æ¬¡å‰ç§»
+    // ºóÃæµÄÊı¾İÒÀ´ÎÇ°ÒÆ
     for (j = i; j < m_Count - 1; j++)
     {
         m_Datas[j] = m_Datas[j + 1];
@@ -411,35 +411,35 @@ bool CLeafNode::Delete(KEY_TYPE value)
     Reg_Datas[i] = NULL; // Modified(new)
     m_Count--;
 
-    // è¿”å›æˆåŠŸ
+    // ·µ»Ø³É¹¦
     return true;
 }
 
-// åˆ†è£‚å¶å­ç»“ç‚¹ï¼ŒæŠŠæœ¬å¶å­ç»“ç‚¹çš„åä¸€åŠæ•°æ®å‰ªåˆ‡åˆ°æŒ‡å®šçš„å¶å­ç»“ç‚¹ä¸­
+// ·ÖÁÑÒ¶×Ó½áµã£¬°Ñ±¾Ò¶×Ó½áµãµÄºóÒ»°ëÊı¾İ¼ôÇĞµ½Ö¸¶¨µÄÒ¶×Ó½áµãÖĞ
 KEY_TYPE CLeafNode::Split(CLeafNode *pNode)
 {
-    // æŠŠæœ¬å¶å­ç»“ç‚¹çš„åä¸€åŠæ•°æ®ç§»åˆ°æŒ‡å®šçš„ç»“ç‚¹ä¸­
+    // °Ñ±¾Ò¶×Ó½áµãµÄºóÒ»°ëÊı¾İÒÆµ½Ö¸¶¨µÄ½áµãÖĞ
     int j = 0;
     for (int i = ORDER_V + 1; i <= MAXNUM_DATA; i++)
     {
         j++;
         pNode->SetElement(j, this->GetElement(i));
-        pNode->Reg_Datas[j] = this->Reg_Datas[i]; //modified
+        pNode->Reg_Datas[j-1] = this->Reg_Datas[i-1]; // Modified(new)
         this->SetElement(i, INVALID);
-        this->Reg_Datas[i] = NULL; //modified
+        this->Reg_Datas[i-1] = NULL; // Modified(new)
     }
-    // è®¾ç½®å¥½Countä¸ªæ•°
+    // ÉèÖÃºÃCount¸öÊı
     this->SetCount(this->GetCount() - j);
     pNode->SetCount(pNode->GetCount() + j);
 
-    // è¿”å›æ–°ç»“ç‚¹çš„ç¬¬ä¸€ä¸ªå…ƒç´ ä½œä¸ºé”®
+    // ·µ»ØĞÂ½áµãµÄµÚÒ»¸öÔªËØ×÷Îª¼ü
     return pNode->GetElement(1);
 }
 
-// ç»“åˆç»“ç‚¹ï¼ŒæŠŠæŒ‡å®šå¶å­ç»“ç‚¹çš„æ•°æ®å…¨éƒ¨å‰ªåˆ‡åˆ°æœ¬å¶å­ç»“ç‚¹
+// ½áºÏ½áµã£¬°ÑÖ¸¶¨Ò¶×Ó½áµãµÄÊı¾İÈ«²¿¼ôÇĞµ½±¾Ò¶×Ó½áµã
 bool CLeafNode::Combine(CLeafNode *pNode)
 {
-    // å‚æ•°æ£€æŸ¥
+    // ²ÎÊı¼ì²é
     if (this->GetCount() + pNode->GetCount() > MAXNUM_DATA)
     {
         return false;
@@ -464,7 +464,7 @@ BPlusTree::~BPlusTree()
     ClearTree();
 }
 
-// åœ¨æ ‘ä¸­æŸ¥æ‰¾æ•°æ®
+// ÔÚÊ÷ÖĞ²éÕÒÊı¾İ
 Registration* BPlusTree::Search(KEY_TYPE data)
 {
     printf("search begin\n");
@@ -479,18 +479,18 @@ Registration* BPlusTree::Search(KEY_TYPE data)
 
     printf("1\n");
     CNode *pNode = GetRoot();
-    // å¾ªç¯æŸ¥æ‰¾å¯¹åº”çš„å¶å­ç»“ç‚¹
+    // Ñ­»·²éÕÒ¶ÔÓ¦µÄÒ¶×Ó½áµã
     printf("2\n");
     while (NULL != pNode)
     {
         printf("3\n");
-        // ç»“ç‚¹ä¸ºå¶å­ç»“ç‚¹ï¼Œå¾ªç¯ç»“æŸ
+        // ½áµãÎªÒ¶×Ó½áµã£¬Ñ­»·½áÊø
         if (NODE_TYPE_LEAF == pNode->GetType())
         {
             break;
         }
 
-        // æ‰¾åˆ°ç¬¬ä¸€ä¸ªé”®å€¼å¤§äºç­‰äºkeyçš„ä½ç½®
+        // ÕÒµ½µÚÒ»¸ö¼üÖµ´óÓÚµÈÓÚkeyµÄÎ»ÖÃ
         for (i = 1; (data >= pNode->GetElement(i)) && (i <= pNode->GetCount()); i++)
         {
         }
@@ -505,10 +505,10 @@ Registration* BPlusTree::Search(KEY_TYPE data)
     }
     printf("4\n");
 
-    // æ²¡æ‰¾åˆ°
+    // Ã»ÕÒµ½
     if (NULL == pNode)
     {
-        printf("This Reg_id does not exist");
+        printf("This Reg_id does not exist\n");
         return NULL; // Modified(new)
     }
 
@@ -518,7 +518,7 @@ Registration* BPlusTree::Search(KEY_TYPE data)
         offset += 3;
     }*/
 
-    // åœ¨å¶å­ç»“ç‚¹ä¸­ç»§ç»­æ‰¾
+    // ÔÚÒ¶×Ó½áµãÖĞ¼ÌĞøÕÒ
     printf("5\n");
     CLeafNode *pNode_leaf = (CLeafNode *)pNode;
     printf("6\n");
@@ -531,6 +531,11 @@ Registration* BPlusTree::Search(KEY_TYPE data)
             printf("8\n");
             found = true;
             Reg_result = pNode_leaf->Reg_Datas[i - 1]; // Modified(new)
+            if (Reg_result == NULL)
+            {
+                cout << "Error!" << endl;
+            }
+            
         }
         printf("9\n");
     }
@@ -558,17 +563,17 @@ Registration* BPlusTree::Search(KEY_TYPE data)
     return Reg_result;
 }
 
-/* åœ¨B+æ ‘ä¸­æ’å…¥æ•°æ®
-æ’å…¥æ•°æ®é¦–å…ˆè¦æ‰¾åˆ°ç†è®ºä¸Šè¦æ’å…¥çš„å¶å­ç»“ç‚¹ï¼Œç„¶ååˆ†ä¸‰ç§æƒ…å†µï¼š
-(1) å¶å­ç»“ç‚¹æœªæ»¡ã€‚ç›´æ¥åœ¨è¯¥ç»“ç‚¹ä¸­æ’å…¥å³å¯ï¼›
-(2) å¶å­ç»“ç‚¹å·²æ»¡ï¼Œä¸”æ— çˆ¶ç»“ç‚¹(å³æ ¹ç»“ç‚¹æ˜¯å¶å­ç»“ç‚¹)ï¼Œéœ€è¦é¦–å…ˆæŠŠå¶å­ç»“ç‚¹åˆ†è£‚ï¼Œç„¶åé€‰æ‹©æ’å…¥åŸç»“ç‚¹æˆ–æ–°ç»“ç‚¹ï¼Œç„¶åæ–°ç”Ÿæˆæ ¹èŠ‚ç‚¹ï¼›
-(3) å¶å­ç»“ç‚¹å·²æ»¡ï¼Œä½†å…¶çˆ¶ç»“ç‚¹æœªæ»¡ã€‚éœ€è¦é¦–å…ˆæŠŠå¶å­ç»“ç‚¹åˆ†è£‚ï¼Œç„¶åé€‰æ‹©æ’å…¥åŸç»“ç‚¹æˆ–æ–°ç»“ç‚¹ï¼Œå†ä¿®æ”¹çˆ¶ç»“ç‚¹çš„æŒ‡é’ˆï¼›
-(4) å¶å­ç»“ç‚¹å·²æ»¡ï¼Œä¸”å…¶çˆ¶ç»“ç‚¹å·²æ»¡ã€‚éœ€è¦é¦–å…ˆæŠŠå¶å­ç»“ç‚¹åˆ†è£‚ï¼Œç„¶åé€‰æ‹©æ’å…¥åŸç»“ç‚¹æˆ–æ–°ç»“ç‚¹ï¼Œæ¥ç€æŠŠçˆ¶ç»“ç‚¹åˆ†è£‚ï¼Œå†ä¿®æ”¹ç¥–çˆ¶ç»“ç‚¹çš„æŒ‡é’ˆã€‚
-    å› ä¸ºç¥–çˆ¶ç»“ç‚¹ä¹Ÿå¯èƒ½æ»¡ï¼Œæ‰€ä»¥å¯èƒ½éœ€è¦ä¸€ç›´é€’å½’åˆ°æœªæ»¡çš„ç¥–å…ˆç»“ç‚¹ä¸ºæ­¢ã€‚
+/* ÔÚB+Ê÷ÖĞ²åÈëÊı¾İ
+²åÈëÊı¾İÊ×ÏÈÒªÕÒµ½ÀíÂÛÉÏÒª²åÈëµÄÒ¶×Ó½áµã£¬È»ºó·ÖÈıÖÖÇé¿ö£º
+(1) Ò¶×Ó½áµãÎ´Âú¡£Ö±½ÓÔÚ¸Ã½áµãÖĞ²åÈë¼´¿É£»
+(2) Ò¶×Ó½áµãÒÑÂú£¬ÇÒÎŞ¸¸½áµã(¼´¸ù½áµãÊÇÒ¶×Ó½áµã)£¬ĞèÒªÊ×ÏÈ°ÑÒ¶×Ó½áµã·ÖÁÑ£¬È»ºóÑ¡Ôñ²åÈëÔ­½áµã»òĞÂ½áµã£¬È»ºóĞÂÉú³É¸ù½Úµã£»
+(3) Ò¶×Ó½áµãÒÑÂú£¬µ«Æä¸¸½áµãÎ´Âú¡£ĞèÒªÊ×ÏÈ°ÑÒ¶×Ó½áµã·ÖÁÑ£¬È»ºóÑ¡Ôñ²åÈëÔ­½áµã»òĞÂ½áµã£¬ÔÙĞŞ¸Ä¸¸½áµãµÄÖ¸Õë£»
+(4) Ò¶×Ó½áµãÒÑÂú£¬ÇÒÆä¸¸½áµãÒÑÂú¡£ĞèÒªÊ×ÏÈ°ÑÒ¶×Ó½áµã·ÖÁÑ£¬È»ºóÑ¡Ôñ²åÈëÔ­½áµã»òĞÂ½áµã£¬½Ó×Å°Ñ¸¸½áµã·ÖÁÑ£¬ÔÙĞŞ¸Ä×æ¸¸½áµãµÄÖ¸Õë¡£
+    ÒòÎª×æ¸¸½áµãÒ²¿ÉÄÜÂú£¬ËùÒÔ¿ÉÄÜĞèÒªÒ»Ö±µİ¹éµ½Î´ÂúµÄ×æÏÈ½áµãÎªÖ¹¡£
 */
 bool BPlusTree::Insert(KEY_TYPE data, Registration *Reg_data) //
 {
-    // æ£€æŸ¥æ˜¯å¦é‡å¤æ’å…¥
+    // ¼ì²éÊÇ·ñÖØ¸´²åÈë
 
     // Modified(new)
     if (Search(data) != NULL)
@@ -583,9 +588,9 @@ bool BPlusTree::Insert(KEY_TYPE data, Registration *Reg_data) //
     //    printf("\n%d,check failed!",data);
     //}
 
-    // æŸ¥æ‰¾ç†æƒ³çš„å¶å­ç»“ç‚¹
+    // ²éÕÒÀíÏëµÄÒ¶×Ó½áµã
     CLeafNode *pOldNode = SearchLeafNode(data);
-    // å¦‚æœæ²¡æœ‰æ‰¾åˆ°ï¼Œè¯´æ˜æ•´ä¸ªæ ‘æ˜¯ç©ºçš„ï¼Œç”Ÿæˆæ ¹ç»“ç‚¹
+    // Èç¹ûÃ»ÓĞÕÒµ½£¬ËµÃ÷Õû¸öÊ÷ÊÇ¿ÕµÄ£¬Éú³É¸ù½áµã
     if (NULL == pOldNode)
     {
         pOldNode = new CLeafNode;
@@ -594,20 +599,21 @@ bool BPlusTree::Insert(KEY_TYPE data, Registration *Reg_data) //
         SetRoot(pOldNode);
     }
 
-    // å¶å­ç»“ç‚¹æœªæ»¡ï¼Œå¯¹åº”æƒ…å†µ1ï¼Œç›´æ¥æ’å…¥
+    // Ò¶×Ó½áµãÎ´Âú£¬¶ÔÓ¦Çé¿ö1£¬Ö±½Ó²åÈë
     if (pOldNode->GetCount() < MAXNUM_DATA)
     {
+        cout << "Insert directly into leaf node" << endl;
         return pOldNode->Insert(data, Reg_data);
     }
 
-    // åŸå¶å­ç»“ç‚¹å·²æ»¡ï¼Œæ–°å»ºå¶å­ç»“ç‚¹ï¼Œå¹¶æŠŠåŸç»“ç‚¹åä¸€åŠæ•°æ®å‰ªåˆ‡åˆ°æ–°ç»“ç‚¹
+    // Ô­Ò¶×Ó½áµãÒÑÂú£¬ĞÂ½¨Ò¶×Ó½áµã£¬²¢°ÑÔ­½áµãºóÒ»°ëÊı¾İ¼ôÇĞµ½ĞÂ½áµã
     CLeafNode *pNewNode = new CLeafNode;
     KEY_TYPE key = INVALID;
     printf("split begin\n");
     key = pOldNode->Split(pNewNode);
     printf("split succeed\n");
 
-    // åœ¨åŒå‘é“¾è¡¨ä¸­æ’å…¥ç»“ç‚¹
+    // ÔÚË«ÏòÁ´±íÖĞ²åÈë½áµã
     CLeafNode *pOldNext = pOldNode->m_pNextNode;
     pOldNode->m_pNextNode = pNewNode;
     pNewNode->m_pNextNode = pOldNext;
@@ -623,115 +629,116 @@ bool BPlusTree::Insert(KEY_TYPE data, Registration *Reg_data) //
     }
     printf("2\n");
 
-    // åˆ¤æ–­æ˜¯æ’å…¥åˆ°åŸç»“ç‚¹è¿˜æ˜¯æ–°ç»“ç‚¹ä¸­ï¼Œç¡®ä¿æ˜¯æŒ‰æ•°æ®å€¼æ’åºçš„
+    // ÅĞ¶ÏÊÇ²åÈëµ½Ô­½áµã»¹ÊÇĞÂ½áµãÖĞ£¬È·±£ÊÇ°´Êı¾İÖµÅÅĞòµÄ
     if (data < key)
     {
-        pOldNode->Insert(data, Reg_data); // æ’å…¥åŸç»“ç‚¹
+        pOldNode->Insert(data, Reg_data); // ²åÈëÔ­½áµã
     }
     else
     {
-        pNewNode->Insert(data, Reg_data); // æ’å…¥æ–°ç»“ç‚¹
+        pNewNode->Insert(data, Reg_data); // ²åÈëĞÂ½áµã
     }
     printf("3\n");
 
-    // çˆ¶ç»“ç‚¹
+    // ¸¸½áµã
     CInternalNode *pFather = (CInternalNode *)(pOldNode->GetFather());
     //printf("3.1\n");
 
-    // å¦‚æœåŸç»“ç‚¹æ˜¯æ ¹èŠ‚ç‚¹ï¼Œå¯¹åº”æƒ…å†µ2
+    // Èç¹ûÔ­½áµãÊÇ¸ù½Úµã£¬¶ÔÓ¦Çé¿ö2
     if (NULL == pFather)
     {
         printf("3.2\n");
         CNode *pNode1 = new CInternalNode;
-        pNode1->SetPointer(1, pOldNode); // æŒ‡é’ˆ1æŒ‡å‘åŸç»“ç‚¹
-        pNode1->SetElement(1, key);      // è®¾ç½®é”®
-        pNode1->SetPointer(2, pNewNode); // æŒ‡é’ˆ2æŒ‡å‘æ–°ç»“ç‚¹
-        pOldNode->SetFather(pNode1);     // æŒ‡å®šçˆ¶ç»“ç‚¹
-        pNewNode->SetFather(pNode1);     // æŒ‡å®šçˆ¶ç»“ç‚¹
+        pNode1->SetPointer(1, pOldNode); // Ö¸Õë1Ö¸ÏòÔ­½áµã
+        pNode1->SetElement(1, key);      // ÉèÖÃ¼ü
+        pNode1->SetPointer(2, pNewNode); // Ö¸Õë2Ö¸ÏòĞÂ½áµã
+        pOldNode->SetFather(pNode1);     // Ö¸¶¨¸¸½áµã
+        pNewNode->SetFather(pNode1);     // Ö¸¶¨¸¸½áµã
         pNode1->SetCount(1);
 
-        SetRoot(pNode1); // æŒ‡å®šæ–°çš„æ ¹ç»“ç‚¹
+        SetRoot(pNode1); // Ö¸¶¨ĞÂµÄ¸ù½áµã
         printf("3.3\n");
         return true;
     }
     printf("4\n");
 
-    // æƒ…å†µ3å’Œæƒ…å†µ4åœ¨è¿™é‡Œå®ç°
+    // Çé¿ö3ºÍÇé¿ö4ÔÚÕâÀïÊµÏÖ
     bool ret = InsertInternalNode(pFather, key, pNewNode);
     printf("5\n");
     return ret;
 }
 
-/* åˆ é™¤æŸæ•°æ®
-åˆ é™¤æ•°æ®çš„ç®—æ³•å¦‚ä¸‹ï¼š
-(1) å¦‚æœåˆ é™¤åå¶å­ç»“ç‚¹å¡«å……åº¦ä»>=50%ï¼Œåªéœ€è¦ä¿®æ”¹å¶å­ç»“ç‚¹ï¼Œå¦‚æœåˆ é™¤çš„æ˜¯çˆ¶ç»“ç‚¹çš„é”®ï¼Œçˆ¶ç»“ç‚¹ä¹Ÿè¦ç›¸åº”ä¿®æ”¹ï¼›
-(2) å¦‚æœåˆ é™¤åå¶å­ç»“ç‚¹å¡«å……åº¦<50%ï¼Œéœ€è¦å…ˆæ‰¾åˆ°ä¸€ä¸ªæœ€è¿‘çš„å…„å¼Ÿç»“ç‚¹(å·¦å³å‡å¯)ï¼Œç„¶ååˆ†ä¸¤ç§æƒ…å†µï¼š
-    A. å¦‚æœè¯¥å…„å¼Ÿç»“ç‚¹å¡«å……åº¦>50%ï¼ŒæŠŠè¯¥å…„å¼Ÿç»“ç‚¹çš„æœ€è¿‘ä¸€ä¸ªæ•°æ®å‰ªåˆ‡åˆ°æœ¬ç»“ç‚¹ï¼Œçˆ¶ç»“ç‚¹çš„é”®å€¼ä¹Ÿè¦ç›¸åº”ä¿®æ”¹ã€‚
-    B. å¦‚æœè¯¥å…„å¼Ÿç»“ç‚¹çš„å¡«å……åº¦=50%ï¼Œåˆ™æŠŠä¸¤ä¸ªç»“ç‚¹åˆå¹¶ï¼Œçˆ¶ç»“ç‚¹é”®ä¹Ÿç›¸åº”åˆå¹¶ã€‚(å¦‚æœåˆå¹¶åçˆ¶ç»“ç‚¹çš„å¡«å……åº¦<50%ï¼Œåˆ™éœ€è¦é€’å½’)
+/* É¾³ıÄ³Êı¾İ
+É¾³ıÊı¾İµÄËã·¨ÈçÏÂ£º
+(1) Èç¹ûÉ¾³ıºóÒ¶×Ó½áµãÌî³ä¶ÈÈÔ>=50%£¬Ö»ĞèÒªĞŞ¸ÄÒ¶×Ó½áµã£¬Èç¹ûÉ¾³ıµÄÊÇ¸¸½áµãµÄ¼ü£¬¸¸½áµãÒ²ÒªÏàÓ¦ĞŞ¸Ä£»
+(2) Èç¹ûÉ¾³ıºóÒ¶×Ó½áµãÌî³ä¶È<50%£¬ĞèÒªÏÈÕÒµ½Ò»¸ö×î½üµÄĞÖµÜ½áµã(×óÓÒ¾ù¿É)£¬È»ºó·ÖÁ½ÖÖÇé¿ö£º
+    A. Èç¹û¸ÃĞÖµÜ½áµãÌî³ä¶È>50%£¬°Ñ¸ÃĞÖµÜ½áµãµÄ×î½üÒ»¸öÊı¾İ¼ôÇĞµ½±¾½áµã£¬¸¸½áµãµÄ¼üÖµÒ²ÒªÏàÓ¦ĞŞ¸Ä¡£
+    B. Èç¹û¸ÃĞÖµÜ½áµãµÄÌî³ä¶È=50%£¬Ôò°ÑÁ½¸ö½áµãºÏ²¢£¬¸¸½áµã¼üÒ²ÏàÓ¦ºÏ²¢¡£(Èç¹ûºÏ²¢ºó¸¸½áµãµÄÌî³ä¶È<50%£¬ÔòĞèÒªµİ¹é)
 */
 bool BPlusTree::Delete(KEY_TYPE data)
 {
-    // æŸ¥æ‰¾ç†æƒ³çš„å¶å­ç»“ç‚¹
+    // ²éÕÒÀíÏëµÄÒ¶×Ó½áµã
     CLeafNode *pOldNode = SearchLeafNode(data);
-    // å¦‚æœæ²¡æœ‰æ‰¾åˆ°ï¼Œè¿”å›å¤±è´¥
+    // Èç¹ûÃ»ÓĞÕÒµ½£¬·µ»ØÊ§°Ü
     if (NULL == pOldNode)
     {
         return false;
     }
 
-    // åˆ é™¤æ•°æ®ï¼Œå¦‚æœå¤±è´¥ä¸€å®šæ˜¯æ²¡æœ‰æ‰¾åˆ°ï¼Œç›´æ¥è¿”å›å¤±è´¥
+    // É¾³ıÊı¾İ£¬Èç¹ûÊ§°ÜÒ»¶¨ÊÇÃ»ÓĞÕÒµ½£¬Ö±½Ó·µ»ØÊ§°Ü
     bool success = pOldNode->Delete(data);
     if (false == success)
     {
         return false;
     }
 
-    // è·å–çˆ¶ç»“ç‚¹
+    // »ñÈ¡¸¸½áµã
     CInternalNode *pFather = (CInternalNode *)(pOldNode->GetFather());
     if (NULL == pFather)
     {
-        // å¦‚æœä¸€ä¸ªæ•°æ®éƒ½æ²¡æœ‰äº†ï¼Œåˆ é™¤æ ¹ç»“ç‚¹(åªæœ‰æ ¹èŠ‚ç‚¹å¯èƒ½å‡ºç°æ­¤æƒ…å†µ)
+        // Èç¹ûÒ»¸öÊı¾İ¶¼Ã»ÓĞÁË£¬É¾³ı¸ù½áµã(Ö»ÓĞ¸ù½Úµã¿ÉÄÜ³öÏÖ´ËÇé¿ö)
         if (0 == pOldNode->GetCount())
         {
             delete pOldNode;
             m_pLeafHead = NULL;
             m_pLeafTail = NULL;
             SetRoot(NULL);
+            cout << "Delete root successfully!\n" << "Tree is empty!" << endl;
         }
 
         return true;
     }
 
-    // åˆ é™¤åå¶å­ç»“ç‚¹å¡«å……åº¦ä»>=50%ï¼Œå¯¹åº”æƒ…å†µ1
+    // É¾³ıºóÒ¶×Ó½áµãÌî³ä¶ÈÈÔ>=50%£¬¶ÔÓ¦Çé¿ö1
     if (pOldNode->GetCount() >= ORDER_V)
     {
         for (int i = 1; (data >= pFather->GetElement(i)) && (i <= pFather->GetCount()); i++)
         {
-            // å¦‚æœåˆ é™¤çš„æ˜¯çˆ¶ç»“ç‚¹çš„é”®å€¼ï¼Œéœ€è¦æ›´æ”¹è¯¥é”®
+            // Èç¹ûÉ¾³ıµÄÊÇ¸¸½áµãµÄ¼üÖµ£¬ĞèÒª¸ü¸Ä¸Ã¼ü
             if (pFather->GetElement(i) == data)
             {
-                pFather->SetElement(i, pOldNode->GetElement(1)); // æ›´æ”¹ä¸ºå¶å­ç»“ç‚¹æ–°çš„ç¬¬ä¸€ä¸ªå…ƒç´ 
+                pFather->SetElement(i, pOldNode->GetElement(1)); // ¸ü¸ÄÎªÒ¶×Ó½áµãĞÂµÄµÚÒ»¸öÔªËØ
             }
         }
 
         return true;
     }
 
-    // æ‰¾åˆ°ä¸€ä¸ªæœ€è¿‘çš„å…„å¼Ÿç»“ç‚¹(æ ¹æ®B+æ ‘çš„å®šä¹‰ï¼Œé™¤äº†å¶å­ç»“ç‚¹ï¼Œæ€»æ˜¯èƒ½æ‰¾åˆ°çš„)
+    // ÕÒµ½Ò»¸ö×î½üµÄĞÖµÜ½áµã(¸ù¾İB+Ê÷µÄ¶¨Òå£¬³ıÁËÒ¶×Ó½áµã£¬×ÜÊÇÄÜÕÒµ½µÄ)
     int flag = FLAG_LEFT;
     CLeafNode *pBrother = (CLeafNode *)(pOldNode->GetBrother(flag));
 
-    // å…„å¼Ÿç»“ç‚¹å¡«å……åº¦>50%ï¼Œå¯¹åº”æƒ…å†µ2A
+    // ĞÖµÜ½áµãÌî³ä¶È>50%£¬¶ÔÓ¦Çé¿ö2A
     KEY_TYPE NewData = INVALID;
     Registration *New_Reg_Data = NULL;
     if (pBrother->GetCount() > ORDER_V)
     {
-        if (FLAG_LEFT == flag) // å…„å¼Ÿåœ¨å·¦è¾¹ï¼Œç§»æœ€åä¸€ä¸ªæ•°æ®è¿‡æ¥
+        if (FLAG_LEFT == flag) // ĞÖµÜÔÚ×ó±ß£¬ÒÆ×îºóÒ»¸öÊı¾İ¹ıÀ´
         {
             NewData = pBrother->GetElement(pBrother->GetCount());
             New_Reg_Data = pBrother->Reg_Datas[pBrother->GetCount()];
         }
-        else // å…„å¼Ÿåœ¨å³è¾¹ï¼Œç§»ç¬¬ä¸€ä¸ªæ•°æ®è¿‡æ¥
+        else // ĞÖµÜÔÚÓÒ±ß£¬ÒÆµÚÒ»¸öÊı¾İ¹ıÀ´
         {
             NewData = pBrother->GetElement(1);
             New_Reg_Data = pBrother->Reg_Datas[0]; // Modified(new)
@@ -740,14 +747,14 @@ bool BPlusTree::Delete(KEY_TYPE data)
         pOldNode->Insert(NewData, New_Reg_Data);
         pBrother->Delete(NewData);
 
-        // ä¿®æ”¹çˆ¶ç»“ç‚¹çš„é”®å€¼
+        // ĞŞ¸Ä¸¸½áµãµÄ¼üÖµ
         if (FLAG_LEFT == flag)
         {
             for (int i = 1; i <= pFather->GetCount() + 1; i++)
             {
                 if (pFather->GetPointer(i) == pOldNode && i > 1)
                 {
-                    pFather->SetElement(i - 1, pOldNode->GetElement(1)); // æ›´æ”¹æœ¬ç»“ç‚¹å¯¹åº”çš„é”®
+                    pFather->SetElement(i - 1, pOldNode->GetElement(1)); // ¸ü¸Ä±¾½áµã¶ÔÓ¦µÄ¼ü
                 }
             }
         }
@@ -757,11 +764,11 @@ bool BPlusTree::Delete(KEY_TYPE data)
             {
                 if (pFather->GetPointer(i) == pOldNode && i > 1)
                 {
-                    pFather->SetElement(i - 1, pOldNode->GetElement(1)); // æ›´æ”¹æœ¬ç»“ç‚¹å¯¹åº”çš„é”®
+                    pFather->SetElement(i - 1, pOldNode->GetElement(1)); // ¸ü¸Ä±¾½áµã¶ÔÓ¦µÄ¼ü
                 }
                 if (pFather->GetPointer(i) == pBrother && i > 1)
                 {
-                    pFather->SetElement(i - 1, pBrother->GetElement(1)); // æ›´æ”¹å…„å¼Ÿç»“ç‚¹å¯¹åº”çš„é”®
+                    pFather->SetElement(i - 1, pBrother->GetElement(1)); // ¸ü¸ÄĞÖµÜ½áµã¶ÔÓ¦µÄ¼ü
                 }
             }
         }
@@ -769,12 +776,12 @@ bool BPlusTree::Delete(KEY_TYPE data)
         return true;
     }
 
-    // æƒ…å†µ2B
+    // Çé¿ö2B
 
-    // çˆ¶ç»“ç‚¹ä¸­è¦åˆ é™¤çš„é”®
+    // ¸¸½áµãÖĞÒªÉ¾³ıµÄ¼ü
     KEY_TYPE NewKey = NULL;
 
-    // æŠŠæœ¬ç»“ç‚¹ä¸å…„å¼Ÿç»“ç‚¹åˆå¹¶ï¼Œæ— è®ºå¦‚ä½•åˆå¹¶åˆ°æ•°æ®è¾ƒå°çš„ç»“ç‚¹ï¼Œè¿™æ ·çˆ¶ç»“ç‚¹å°±æ— éœ€ä¿®æ”¹æŒ‡é’ˆ
+    // °Ñ±¾½áµãÓëĞÖµÜ½áµãºÏ²¢£¬ÎŞÂÛÈçºÎºÏ²¢µ½Êı¾İ½ÏĞ¡µÄ½áµã£¬ÕâÑù¸¸½áµã¾ÍÎŞĞèĞŞ¸ÄÖ¸Õë
 
     if (FLAG_LEFT == flag)
     {
@@ -783,7 +790,7 @@ bool BPlusTree::Delete(KEY_TYPE data)
 
         CLeafNode *pOldNext = pOldNode->m_pNextNode;
         pBrother->m_pNextNode = pOldNext;
-        // åœ¨åŒå‘é“¾è¡¨ä¸­åˆ é™¤ç»“ç‚¹
+        // ÔÚË«ÏòÁ´±íÖĞÉ¾³ı½áµã
         if (NULL == pOldNext)
         {
             m_pLeafTail = pBrother;
@@ -792,7 +799,7 @@ bool BPlusTree::Delete(KEY_TYPE data)
         {
             pOldNext->m_pPrevNode = pBrother;
         }
-        // åˆ é™¤æœ¬ç»“ç‚¹
+        // É¾³ı±¾½áµã
         delete pOldNode;
     }
     else
@@ -813,7 +820,7 @@ bool BPlusTree::Delete(KEY_TYPE data)
 
         CLeafNode *pOldNext = pBrother->m_pNextNode;
         pOldNode->m_pNextNode = pOldNext;
-        // åœ¨åŒå‘é“¾è¡¨ä¸­åˆ é™¤ç»“ç‚¹
+        // ÔÚË«ÏòÁ´±íÖĞÉ¾³ı½áµã
         if (NULL == pOldNext)
         {
             m_pLeafTail = pOldNode;
@@ -822,14 +829,14 @@ bool BPlusTree::Delete(KEY_TYPE data)
         {
             pOldNext->m_pPrevNode = pOldNode;
         }
-        // åˆ é™¤æœ¬ç»“ç‚¹
+        // É¾³ı±¾½áµã
         delete pBrother;
     }
 
     return DeleteInternalNode(pFather, NewKey);
 }
 
-// æ¸…é™¤æ•´ä¸ªæ ‘ï¼Œåˆ é™¤æ‰€æœ‰ç»“ç‚¹
+// Çå³ıÕû¸öÊ÷£¬É¾³ıËùÓĞ½áµã
 void BPlusTree::ClearTree()
 {
     CNode *pNode = GetRoot();
@@ -845,7 +852,7 @@ void BPlusTree::ClearTree()
     SetRoot(NULL);
 }
 
-// æ—‹è½¬ä»¥é‡æ–°å¹³è¡¡ï¼Œå®é™…ä¸Šæ˜¯æŠŠæ•´ä¸ªæ ‘é‡æ„ä¸€ä¸‹,ç»“æœä¸ç†æƒ³ï¼Œå¾…é‡æ–°è€ƒè™‘
+// Ğı×ªÒÔÖØĞÂÆ½ºâ£¬Êµ¼ÊÉÏÊÇ°ÑÕû¸öÊ÷ÖØ¹¹Ò»ÏÂ,½á¹û²»ÀíÏë£¬´ıÖØĞÂ¿¼ÂÇ
 BPlusTree *BPlusTree::RotateTree()
 {
     BPlusTree *pNewTree = new BPlusTree;
@@ -863,7 +870,7 @@ BPlusTree *BPlusTree::RotateTree()
 
     return pNewTree;
 }
-// æ£€æŸ¥æ ‘æ˜¯å¦æ»¡è¶³B+æ ‘çš„å®šä¹‰
+// ¼ì²éÊ÷ÊÇ·ñÂú×ãB+Ê÷µÄ¶¨Òå
 bool BPlusTree::CheckTree()
 {
     CLeafNode *pThisNode = m_pLeafHead;
@@ -884,7 +891,7 @@ bool BPlusTree::CheckTree()
     return CheckNode(GetRoot());
 }
 
-// é€’å½’æ£€æŸ¥ç»“ç‚¹åŠå…¶å­æ ‘æ˜¯å¦æ»¡è¶³B+æ ‘çš„å®šä¹‰
+// µİ¹é¼ì²é½áµã¼°Æä×ÓÊ÷ÊÇ·ñÂú×ãB+Ê÷µÄ¶¨Òå
 bool BPlusTree::CheckNode(CNode *pNode)
 {
     if (NULL == pNode)
@@ -895,13 +902,13 @@ bool BPlusTree::CheckNode(CNode *pNode)
     int i = 0;
     bool ret = false;
 
-    // æ£€æŸ¥æ˜¯å¦æ»¡è¶³50%çš„å¡«å……åº¦
+    // ¼ì²éÊÇ·ñÂú×ã50%µÄÌî³ä¶È
     if ((pNode->GetCount() < ORDER_V) && (pNode != GetRoot()))
     {
         return false;
     }
 
-    // æ£€æŸ¥é”®æˆ–æ•°æ®æ˜¯å¦æŒ‰å¤§å°æ’åº
+    // ¼ì²é¼ü»òÊı¾İÊÇ·ñ°´´óĞ¡ÅÅĞò
     for (i = 1; i < pNode->GetCount(); i++)
     {
         if (pNode->GetElement(i) > pNode->GetElement(i + 1))
@@ -915,11 +922,11 @@ bool BPlusTree::CheckNode(CNode *pNode)
         return true;
     }
 
-    // å¯¹ä¸­é—´ç»“ç‚¹ï¼Œé€’å½’æ£€æŸ¥å­æ ‘
+    // ¶ÔÖĞ¼ä½áµã£¬µİ¹é¼ì²é×ÓÊ÷
     for (i = 1; i <= pNode->GetCount() + 1; i++)
     {
         ret = CheckNode(pNode->GetPointer(i));
-        // åªè¦æœ‰ä¸€ä¸ªä¸åˆæ³•å°±è¿”å›ä¸åˆæ³•
+        // Ö»ÒªÓĞÒ»¸ö²»ºÏ·¨¾Í·µ»Ø²»ºÏ·¨
         if (false == ret)
         {
             return false;
@@ -929,7 +936,7 @@ bool BPlusTree::CheckNode(CNode *pNode)
     return true;
 }
 
-// æ‰“å°æ•´ä¸ªæ ‘
+// ´òÓ¡Õû¸öÊ÷
 void BPlusTree::PrintTree()
 {
     CNode *pRoot = GetRoot();
@@ -940,10 +947,10 @@ void BPlusTree::PrintTree()
     int i, j, k;
     int total = 0;
 
-    printf("\nç¬¬ä¸€å±‚\n | ");
+    printf("\nµÚÒ»²ã\n | ");
     PrintNode(pRoot);
     total = 0;
-    printf("\nç¬¬äºŒå±‚\n | ");
+    printf("\nµÚ¶ş²ã\n | ");
     for (i = 1; i <= MAXNUM_POINTER; i++)
     {
         p1 = pRoot->GetPointer(i);
@@ -955,7 +962,7 @@ void BPlusTree::PrintTree()
             printf("\n | ");
     }
     total = 0;
-    printf("\nç¬¬ä¸‰å±‚\n | ");
+    printf("\nµÚÈı²ã\n | ");
     for (i = 1; i <= MAXNUM_POINTER; i++)
     {
         p1 = pRoot->GetPointer(i);
@@ -973,7 +980,7 @@ void BPlusTree::PrintTree()
         }
     }
     total = 0;
-    printf("\nç¬¬å››å±‚\n | ");
+    printf("\nµÚËÄ²ã\n | ");
     for (i = 1; i <= MAXNUM_POINTER; i++)
     {
         p1 = pRoot->GetPointer(i);
@@ -998,7 +1005,7 @@ void BPlusTree::PrintTree()
     }
 }
 
-// æ‰“å°æŸç»“ç‚¹
+// ´òÓ¡Ä³½áµã
 void BPlusTree::PrintNode(CNode *pNode)
 {
     if (NULL == pNode)
@@ -1009,6 +1016,12 @@ void BPlusTree::PrintNode(CNode *pNode)
     for (int i = 1; i <= MAXNUM_KEY; i++)
     {
         printf("%3d ", pNode->GetElement(i));
+        if (pNode->m_Type == NODE_TYPE_LEAF && i<=pNode->GetCount())
+        {
+            CLeafNode *p = (CLeafNode*)pNode;
+            cout << "(name:" << p->Reg_Datas[i-1]->person->name << ")";
+        }
+        
         if (i >= MAXNUM_KEY)
         {
             printf(" | ");
@@ -1016,22 +1029,23 @@ void BPlusTree::PrintNode(CNode *pNode)
     }
 }
 
-// æŸ¥æ‰¾å¯¹åº”çš„å¶å­ç»“ç‚¹
+// ²éÕÒ¶ÔÓ¦µÄÒ¶×Ó½áµã
 CLeafNode *BPlusTree::SearchLeafNode(KEY_TYPE data)
 {
     int i = 0;
 
     CNode *pNode = GetRoot();
-    // å¾ªç¯æŸ¥æ‰¾å¯¹åº”çš„å¶å­ç»“ç‚¹
+    // Ñ­»·²éÕÒ¶ÔÓ¦µÄÒ¶×Ó½áµã
     while (NULL != pNode)
     {
-        // ç»“ç‚¹ä¸ºå¶å­ç»“ç‚¹ï¼Œå¾ªç¯ç»“æŸ
+        // ½áµãÎªÒ¶×Ó½áµã£¬Ñ­»·½áÊø
         if (NODE_TYPE_LEAF == pNode->GetType())
         {
+            cout << "Find corresponding leaf node" <<endl;
             break;
         }
 
-        // æ‰¾åˆ°ç¬¬ä¸€ä¸ªé”®å€¼å¤§äºç­‰äºkeyçš„ä½ç½®
+        // ÕÒµ½µÚÒ»¸ö¼üÖµ´óÓÚµÈÓÚkeyµÄÎ»ÖÃ
         for (i = 1; i <= pNode->GetCount(); i++)
         {
             if (data < pNode->GetElement(i))
@@ -1046,7 +1060,7 @@ CLeafNode *BPlusTree::SearchLeafNode(KEY_TYPE data)
     return (CLeafNode *)pNode;
 }
 
-//é€’å½’å‡½æ•°ï¼šæ’å…¥é”®åˆ°ä¸­é—´ç»“ç‚¹
+//µİ¹éº¯Êı£º²åÈë¼üµ½ÖĞ¼ä½áµã
 bool BPlusTree::InsertInternalNode(CInternalNode *pNode, KEY_TYPE key, CNode *pRightSon)
 {
     if (NULL == pNode || NODE_TYPE_LEAF == pNode->GetType())
@@ -1054,15 +1068,15 @@ bool BPlusTree::InsertInternalNode(CInternalNode *pNode, KEY_TYPE key, CNode *pR
         return false;
     }
 
-    // ç»“ç‚¹æœªæ»¡ï¼Œç›´æ¥æ’å…¥
+    // ½áµãÎ´Âú£¬Ö±½Ó²åÈë
     if (pNode->GetCount() < MAXNUM_KEY)
     {
         return pNode->Insert(key, pRightSon);
     }
 
-    CInternalNode *pBrother = new CInternalNode; // C++ä¸­new ç±»åè¡¨ç¤ºåˆ†é…ä¸€ä¸ªç±»éœ€è¦çš„å†…å­˜ç©ºé—´ï¼Œå¹¶è¿”å›å…¶é¦–åœ°å€ï¼›
+    CInternalNode *pBrother = new CInternalNode; // C++ÖĞnew ÀàÃû±íÊ¾·ÖÅäÒ»¸öÀàĞèÒªµÄÄÚ´æ¿Õ¼ä£¬²¢·µ»ØÆäÊ×µØÖ·£»
     KEY_TYPE NewKey = INVALID;
-    // åˆ†è£‚æœ¬ç»“ç‚¹
+    // ·ÖÁÑ±¾½áµã
     NewKey = pNode->Split(pBrother, key);
 
     if (pNode->GetCount() < pBrother->GetCount())
@@ -1073,47 +1087,47 @@ bool BPlusTree::InsertInternalNode(CInternalNode *pNode, KEY_TYPE key, CNode *pR
     {
         pBrother->Insert(key, pRightSon);
     }
-    else // ä¸¤è€…ç›¸ç­‰ï¼Œå³é”®å€¼åœ¨ç¬¬Vå’ŒV+1ä¸ªé”®å€¼ä¸­é—´çš„æƒ…å†µï¼ŒæŠŠå­—èŠ‚ç‚¹æŒ‚åˆ°æ–°ç»“ç‚¹çš„ç¬¬ä¸€ä¸ªæŒ‡é’ˆä¸Š
+    else // Á½ÕßÏàµÈ£¬¼´¼üÖµÔÚµÚVºÍV+1¸ö¼üÖµÖĞ¼äµÄÇé¿ö£¬°Ñ×Ö½Úµã¹Òµ½ĞÂ½áµãµÄµÚÒ»¸öÖ¸ÕëÉÏ
     {
         pBrother->SetPointer(1, pRightSon);
         pRightSon->SetFather(pBrother);
     }
 
     CInternalNode *pFather = (CInternalNode *)(pNode->GetFather());
-    // ç›´åˆ°æ ¹ç»“ç‚¹éƒ½æ»¡äº†ï¼Œæ–°ç”Ÿæˆæ ¹ç»“ç‚¹
+    // Ö±µ½¸ù½áµã¶¼ÂúÁË£¬ĞÂÉú³É¸ù½áµã
     if (NULL == pFather)
     {
         pFather = new CInternalNode;
-        pFather->SetPointer(1, pNode);    // æŒ‡é’ˆ1æŒ‡å‘åŸç»“ç‚¹
-        pFather->SetElement(1, NewKey);   // è®¾ç½®é”®
-        pFather->SetPointer(2, pBrother); // æŒ‡é’ˆ2æŒ‡å‘æ–°ç»“ç‚¹
-        pNode->SetFather(pFather);        // æŒ‡å®šçˆ¶ç»“ç‚¹
-        pBrother->SetFather(pFather);     // æŒ‡å®šçˆ¶ç»“ç‚¹
+        pFather->SetPointer(1, pNode);    // Ö¸Õë1Ö¸ÏòÔ­½áµã
+        pFather->SetElement(1, NewKey);   // ÉèÖÃ¼ü
+        pFather->SetPointer(2, pBrother); // Ö¸Õë2Ö¸ÏòĞÂ½áµã
+        pNode->SetFather(pFather);        // Ö¸¶¨¸¸½áµã
+        pBrother->SetFather(pFather);     // Ö¸¶¨¸¸½áµã
         pFather->SetCount(1);
 
-        SetRoot(pFather); // æŒ‡å®šæ–°çš„æ ¹ç»“ç‚¹
+        SetRoot(pFather); // Ö¸¶¨ĞÂµÄ¸ù½áµã
         return true;
     }
 
-    // é€’å½’
+    // µİ¹é
     return InsertInternalNode(pFather, NewKey, pBrother);
 }
 
-// é€’å½’å‡½æ•°ï¼šåœ¨ä¸­é—´ç»“ç‚¹ä¸­åˆ é™¤é”®
+// µİ¹éº¯Êı£ºÔÚÖĞ¼ä½áµãÖĞÉ¾³ı¼ü
 bool BPlusTree::DeleteInternalNode(CInternalNode *pNode, KEY_TYPE key)
 {
-    // åˆ é™¤é”®ï¼Œå¦‚æœå¤±è´¥ä¸€å®šæ˜¯æ²¡æœ‰æ‰¾åˆ°ï¼Œç›´æ¥è¿”å›å¤±è´¥
+    // É¾³ı¼ü£¬Èç¹ûÊ§°ÜÒ»¶¨ÊÇÃ»ÓĞÕÒµ½£¬Ö±½Ó·µ»ØÊ§°Ü
     bool success = pNode->Delete(key);
     if (false == success)
     {
         return false;
     }
 
-    // è·å–çˆ¶ç»“ç‚¹
+    // »ñÈ¡¸¸½áµã
     CInternalNode *pFather = (CInternalNode *)(pNode->GetFather());
     if (NULL == pFather)
     {
-        // å¦‚æœä¸€ä¸ªæ•°æ®éƒ½æ²¡æœ‰äº†ï¼ŒæŠŠæ ¹ç»“ç‚¹çš„ç¬¬ä¸€ä¸ªç»“ç‚¹ä½œä¸ºæ ¹ç»“ç‚¹
+        // Èç¹ûÒ»¸öÊı¾İ¶¼Ã»ÓĞÁË£¬°Ñ¸ù½áµãµÄµÚÒ»¸ö½áµã×÷Îª¸ù½áµã
         if (0 == pNode->GetCount())
         {
             SetRoot(pNode->GetPointer(1));
@@ -1123,39 +1137,39 @@ bool BPlusTree::DeleteInternalNode(CInternalNode *pNode, KEY_TYPE key)
         return true;
     }
 
-    // åˆ é™¤åç»“ç‚¹å¡«å……åº¦ä»>=50%
+    // É¾³ıºó½áµãÌî³ä¶ÈÈÔ>=50%
     if (pNode->GetCount() >= ORDER_V)
     {
         for (int i = 1; (key >= pFather->GetElement(i)) && (i <= pFather->GetCount()); i++)
         {
-            // å¦‚æœåˆ é™¤çš„æ˜¯çˆ¶ç»“ç‚¹çš„é”®å€¼ï¼Œéœ€è¦æ›´æ”¹è¯¥é”®
+            // Èç¹ûÉ¾³ıµÄÊÇ¸¸½áµãµÄ¼üÖµ£¬ĞèÒª¸ü¸Ä¸Ã¼ü
             if (pFather->GetElement(i) == key)
             {
-                pFather->SetElement(i, pNode->GetElement(1)); // æ›´æ”¹ä¸ºå¶å­ç»“ç‚¹æ–°çš„ç¬¬ä¸€ä¸ªå…ƒç´ 
+                pFather->SetElement(i, pNode->GetElement(1)); // ¸ü¸ÄÎªÒ¶×Ó½áµãĞÂµÄµÚÒ»¸öÔªËØ
             }
         }
 
         return true;
     }
 
-    //æ‰¾åˆ°ä¸€ä¸ªæœ€è¿‘çš„å…„å¼Ÿç»“ç‚¹(æ ¹æ®B+æ ‘çš„å®šä¹‰ï¼Œé™¤äº†æ ¹ç»“ç‚¹ï¼Œæ€»æ˜¯èƒ½æ‰¾åˆ°çš„)
+    //ÕÒµ½Ò»¸ö×î½üµÄĞÖµÜ½áµã(¸ù¾İB+Ê÷µÄ¶¨Òå£¬³ıÁË¸ù½áµã£¬×ÜÊÇÄÜÕÒµ½µÄ)
     int flag = FLAG_LEFT;
     CInternalNode *pBrother = (CInternalNode *)(pNode->GetBrother(flag));
 
-    // å…„å¼Ÿç»“ç‚¹å¡«å……åº¦>50%
+    // ĞÖµÜ½áµãÌî³ä¶È>50%
     KEY_TYPE NewData = INVALID;
     if (pBrother->GetCount() > ORDER_V)
     {
         pNode->MoveOneElement(pBrother);
 
-        // ä¿®æ”¹çˆ¶ç»“ç‚¹çš„é”®å€¼
+        // ĞŞ¸Ä¸¸½áµãµÄ¼üÖµ
         if (FLAG_LEFT == flag)
         {
             for (int i = 1; i <= pFather->GetCount() + 1; i++)
             {
                 if (pFather->GetPointer(i) == pNode && i > 1)
                 {
-                    pFather->SetElement(i - 1, pNode->GetElement(1)); // æ›´æ”¹æœ¬ç»“ç‚¹å¯¹åº”çš„é”®
+                    pFather->SetElement(i - 1, pNode->GetElement(1)); // ¸ü¸Ä±¾½áµã¶ÔÓ¦µÄ¼ü
                 }
             }
         }
@@ -1165,11 +1179,11 @@ bool BPlusTree::DeleteInternalNode(CInternalNode *pNode, KEY_TYPE key)
             {
                 if (pFather->GetPointer(i) == pNode && i > 1)
                 {
-                    pFather->SetElement(i - 1, pNode->GetElement(1)); // æ›´æ”¹æœ¬ç»“ç‚¹å¯¹åº”çš„é”®
+                    pFather->SetElement(i - 1, pNode->GetElement(1)); // ¸ü¸Ä±¾½áµã¶ÔÓ¦µÄ¼ü
                 }
                 if (pFather->GetPointer(i) == pBrother && i > 1)
                 {
-                    pFather->SetElement(i - 1, pBrother->GetElement(1)); // æ›´æ”¹å…„å¼Ÿç»“ç‚¹å¯¹åº”çš„é”®
+                    pFather->SetElement(i - 1, pBrother->GetElement(1)); // ¸ü¸ÄĞÖµÜ½áµã¶ÔÓ¦µÄ¼ü
                 }
             }
         }
@@ -1177,10 +1191,10 @@ bool BPlusTree::DeleteInternalNode(CInternalNode *pNode, KEY_TYPE key)
         return true;
     }
 
-    // çˆ¶ç»“ç‚¹ä¸­è¦åˆ é™¤çš„é”®ï¼šå…„å¼Ÿç»“ç‚¹éƒ½ä¸å¤§äº50ï¼Œåˆ™éœ€è¦åˆå¹¶ç»“ç‚¹ï¼Œæ­¤æ—¶çˆ¶ç»“ç‚¹éœ€è¦åˆ é™¤é”®
+    // ¸¸½áµãÖĞÒªÉ¾³ıµÄ¼ü£ºĞÖµÜ½áµã¶¼²»´óÓÚ50£¬ÔòĞèÒªºÏ²¢½áµã£¬´ËÊ±¸¸½áµãĞèÒªÉ¾³ı¼ü
     KEY_TYPE NewKey = NULL;
 
-    // æŠŠæœ¬ç»“ç‚¹ä¸å…„å¼Ÿç»“ç‚¹åˆå¹¶ï¼Œæ— è®ºå¦‚ä½•åˆå¹¶åˆ°æ•°æ®è¾ƒå°çš„ç»“ç‚¹ï¼Œè¿™æ ·çˆ¶ç»“ç‚¹å°±æ— éœ€ä¿®æ”¹æŒ‡é’ˆ
+    // °Ñ±¾½áµãÓëĞÖµÜ½áµãºÏ²¢£¬ÎŞÂÛÈçºÎºÏ²¢µ½Êı¾İ½ÏĞ¡µÄ½áµã£¬ÕâÑù¸¸½áµã¾ÍÎŞĞèĞŞ¸ÄÖ¸Õë
     if (FLAG_LEFT == flag)
     {
         (void)pBrother->Combine(pNode);
@@ -1194,6 +1208,6 @@ bool BPlusTree::DeleteInternalNode(CInternalNode *pNode, KEY_TYPE key)
         delete pBrother;
     }
 
-    // é€’å½’
+    // µİ¹é
     return DeleteInternalNode(pFather, NewKey);
 }
