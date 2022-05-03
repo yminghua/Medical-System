@@ -47,8 +47,9 @@ enum NODE_TYPE
 #define FLAG_LEFT 1
 #define FLAG_RIGHT 2
 
+#include "../code/Data_Structure.h"
 //Declare Registration datatype
-class Registration;
+// class Registration;
 
 /* 结点数据结构，为内部结点和叶子结点的父类 */
 class CNode
