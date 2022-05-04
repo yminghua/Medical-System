@@ -18,28 +18,42 @@ CNode::~CNode()
 // 获取一个最近的兄弟结点
 CNode *CNode::GetBrother(int &flag)
 {
-    CNode *pFather = GetFather(); //获取其父结点指针
+    // CNode *pFather = GetFather(); //获取其父结点指针
+    CInternalNode *pFather = (CInternalNode *)(GetFather()); //获取其父结点指针
     if (NULL == pFather)
     {
+        printf("Father is NULL!!!\n");
         return NULL;
     }
 
     CNode *pBrother = NULL;
-
+    cout << "father's first key is: " << pFather->GetElement(1) << endl;
+    
     for (int i = 1; i <= pFather->GetCount() + 1; i++) // GetCount()表示获取数据或关键字数，要比指针数小1。
     {
         // 找到本结点的位置
         if (pFather->GetPointer(i) == this)
         {
+            cout << "Find!" << endl;
             if (i == (pFather->GetCount() + 1)) //表示其为父结点的最右边孩子。
             {
                 pBrother = pFather->GetPointer(i - 1); // 本身是最后一个指针，只能找前一个指针
+                if (pBrother == NULL)
+                {
+                    cout << "Brother is NULL" << endl;
+                }
                 flag = FLAG_LEFT;
+                cout << "Brother's first key: " << pBrother->GetElement(1) << endl;
             }
             else
             {
                 pBrother = pFather->GetPointer(i + 1); // 优先找后一个指针
+                if (pBrother == NULL)
+                {
+                    cout << "Brother is NULL" << endl;
+                }
                 flag = FLAG_RIGHT;
+                cout << "Brother's first key: " << pBrother->GetElement(1) << endl;
             }
         }
     }
@@ -252,7 +266,12 @@ bool CInternalNode::Combine(CNode *pNode)
     }
 
     // 取待合并结点的第一个孩子的第一个元素作为新键值
-    KEY_TYPE NewKey = pNode->GetPointer(1)->GetElement(1);
+    CNode *k = pNode->GetPointer(1);
+    while (k->GetType() != NODE_TYPE_LEAF)
+    {
+        k = k->GetPointer(1);
+    }
+    KEY_TYPE NewKey = k->GetElement(1);
 
     m_Keys[m_Count] = NewKey;
     m_Count++;
@@ -298,31 +317,52 @@ bool CInternalNode::MoveOneElement(CNode *pNode)
 
         // 赋值
         // 第一个键值不是兄弟结点的最后一个键值，而是本结点第一个子结点的第一个元素的值
-        m_Keys[0] = GetPointer(1)->GetElement(1);
+        // Modified(new)
+        CNode *k = this->GetPointer(1);
+        while (k->GetType() != NODE_TYPE_LEAF)
+        {
+            k = k->GetPointer(1);
+        }
+        m_Keys[0] = k->GetElement(1);
+        //
         // 第一个子结点为兄弟结点的最后一个子结点
         m_Pointers[0] = pNode->GetPointer(pNode->GetCount() + 1);
+        pNode->GetPointer(pNode->GetCount() + 1)->SetFather(this); // Modified(new)
 
         // 修改兄弟结点
         pNode->SetElement(pNode->GetCount(), INVALID);
-        pNode->SetPointer(pNode->GetCount() + 1, INVALID);
+        pNode->SetPointer(pNode->GetCount() + 1, NULL);
     }
     else // 兄弟结点在本结点右边
     {
         // 赋值
         // 最后一个键值不是兄弟结点的第一个键值，而是兄弟结点第一个子结点的第一个元素的值
-        m_Keys[m_Count] = pNode->GetPointer(1)->GetElement(1);
+        // Modified(new)
+        CNode *k = pNode->GetPointer(1);
+        while (k->GetType() != NODE_TYPE_LEAF)
+        {
+            k = k->GetPointer(1);
+        }
+        m_Keys[m_Count] = k->GetElement(1);
+
         // 最后一个子结点为兄弟结点的第一个子结点
         m_Pointers[m_Count + 1] = pNode->GetPointer(1);
+        pNode->GetPointer(1)->SetFather(this); //Modified(new)
 
         // 修改兄弟结点
-        for (i = 1; i < pNode->GetCount() - 1; i++)
+        for (i = 1; i <= pNode->GetCount() - 1; i++) // Modified(new)
         {
             pNode->SetElement(i, pNode->GetElement(i + 1));
         }
-        for (j = 1; j < pNode->GetCount(); j++)
+        for (j = 1; j <= pNode->GetCount(); j++) // Modified(new)
         {
             pNode->SetPointer(j, pNode->GetPointer(j + 1));
         }
+
+        // Modified(new)
+        pNode->SetElement(pNode->GetCount(), INVALID);
+        pNode->SetPointer(pNode->GetCount() + 1, NULL);
+        //
     }
 
     // 设置数目
@@ -408,7 +448,7 @@ bool CLeafNode::Delete(KEY_TYPE value)
     }
 
     m_Datas[j] = INVALID;
-    Reg_Datas[i] = NULL; // Modified(new)
+    Reg_Datas[j] = NULL; // Modified(new)
     m_Count--;
 
     // 返回成功
@@ -447,7 +487,7 @@ bool CLeafNode::Combine(CLeafNode *pNode)
 
     for (int i = 1; i <= pNode->GetCount(); i++)
     {
-        this->Insert(pNode->GetElement(i), pNode->Reg_Datas[i]); //modified
+        this->Insert(pNode->GetElement(i), pNode->Reg_Datas[i-1]); // Modified(new)
     }
 
     return true;
@@ -530,7 +570,7 @@ Registration* BPlusTree::Search(KEY_TYPE data)
         {
             printf("8\n");
             found = true;
-            Reg_result = pNode_leaf->Reg_Datas[i - 1]; // Modified(new)
+            Reg_result = pNode_leaf->Reg_Datas[i-1]; // Modified(new)
             if (Reg_result == NULL)
             {
                 cout << "Error!" << endl;
@@ -684,6 +724,7 @@ bool BPlusTree::Delete(KEY_TYPE data)
     {
         return false;
     }
+    printf("Search leaf node success\n");
 
     // 删除数据，如果失败一定是没有找到，直接返回失败
     bool success = pOldNode->Delete(data);
@@ -691,6 +732,7 @@ bool BPlusTree::Delete(KEY_TYPE data)
     {
         return false;
     }
+    printf("Delete data success\n");
 
     // 获取父结点
     CInternalNode *pFather = (CInternalNode *)(pOldNode->GetFather());
@@ -708,16 +750,19 @@ bool BPlusTree::Delete(KEY_TYPE data)
 
         return true;
     }
+    printf("Get father success\n");
 
     // 删除后叶子结点填充度仍>=50%，对应情况1
     if (pOldNode->GetCount() >= ORDER_V)
     {
+        printf("S1\n");
         for (int i = 1; (data >= pFather->GetElement(i)) && (i <= pFather->GetCount()); i++)
         {
             // 如果删除的是父结点的键值，需要更改该键
             if (pFather->GetElement(i) == data)
             {
                 pFather->SetElement(i, pOldNode->GetElement(1)); // 更改为叶子结点新的第一个元素
+                printf("Change father's key success\n");
             }
         }
 
@@ -727,16 +772,27 @@ bool BPlusTree::Delete(KEY_TYPE data)
     // 找到一个最近的兄弟结点(根据B+树的定义，除了叶子结点，总是能找到的)
     int flag = FLAG_LEFT;
     CLeafNode *pBrother = (CLeafNode *)(pOldNode->GetBrother(flag));
+    if (pBrother == NULL)
+    {
+        cout << "Brother is NULL!!!" << endl;
+    }
+    else
+    {
+        printf("Get brother success\n");
+    }
+    
 
     // 兄弟结点填充度>50%，对应情况2A
     KEY_TYPE NewData = INVALID;
     Registration *New_Reg_Data = NULL;
+
     if (pBrother->GetCount() > ORDER_V)
     {
+        printf("S2A\n");
         if (FLAG_LEFT == flag) // 兄弟在左边，移最后一个数据过来
         {
             NewData = pBrother->GetElement(pBrother->GetCount());
-            New_Reg_Data = pBrother->Reg_Datas[pBrother->GetCount()];
+            New_Reg_Data = pBrother->Reg_Datas[pBrother->GetCount()-1]; // Modified(new)
         }
         else // 兄弟在右边，移第一个数据过来
         {
@@ -746,6 +802,7 @@ bool BPlusTree::Delete(KEY_TYPE data)
 
         pOldNode->Insert(NewData, New_Reg_Data);
         pBrother->Delete(NewData);
+        printf("Move one element from brother success\n");
 
         // 修改父结点的键值
         if (FLAG_LEFT == flag)
@@ -755,6 +812,7 @@ bool BPlusTree::Delete(KEY_TYPE data)
                 if (pFather->GetPointer(i) == pOldNode && i > 1)
                 {
                     pFather->SetElement(i - 1, pOldNode->GetElement(1)); // 更改本结点对应的键
+                    printf("Change father's key success\n");
                 }
             }
         }
@@ -765,10 +823,12 @@ bool BPlusTree::Delete(KEY_TYPE data)
                 if (pFather->GetPointer(i) == pOldNode && i > 1)
                 {
                     pFather->SetElement(i - 1, pOldNode->GetElement(1)); // 更改本结点对应的键
+                    printf("Change father's key success\n");
                 }
                 if (pFather->GetPointer(i) == pBrother && i > 1)
                 {
                     pFather->SetElement(i - 1, pBrother->GetElement(1)); // 更改兄弟结点对应的键
+                    printf("Change father's key success\n");
                 }
             }
         }
@@ -777,7 +837,7 @@ bool BPlusTree::Delete(KEY_TYPE data)
     }
 
     // 情况2B
-
+    printf("S2B\n");
     // 父结点中要删除的键
     KEY_TYPE NewKey = NULL;
 
@@ -801,6 +861,7 @@ bool BPlusTree::Delete(KEY_TYPE data)
         }
         // 删除本结点
         delete pOldNode;
+        printf("Combine success\n");
     }
     else
     {
@@ -831,6 +892,7 @@ bool BPlusTree::Delete(KEY_TYPE data)
         }
         // 删除本结点
         delete pBrother;
+        printf("Combine success\n");
     }
 
     return DeleteInternalNode(pFather, NewKey);
@@ -843,7 +905,7 @@ void BPlusTree::ClearTree()
     if (NULL != pNode)
     {
         pNode->DeleteChildren();
-
+        // cout << "Delete root!" << endl;
         delete pNode;
     }
 
@@ -862,7 +924,7 @@ BPlusTree *BPlusTree::RotateTree()
     {
         for (int i = 1; i <= pNode->GetCount(); i++)
         {
-            (void)pNewTree->Insert(pNode->GetElement(i), pNode->Reg_Datas[i]);
+            (void)pNewTree->Insert(pNode->GetElement(i), pNode->Reg_Datas[i-1]); // Modified(new)
         }
 
         pNode = pNode->m_pNextNode;
@@ -941,7 +1003,10 @@ void BPlusTree::PrintTree()
 {
     CNode *pRoot = GetRoot();
     if (NULL == pRoot)
+    {
+        cout << "Tree is empty" << endl;
         return;
+    }    
 
     CNode *p1, *p2, *p3;
     int i, j, k;
@@ -1120,8 +1185,10 @@ bool BPlusTree::DeleteInternalNode(CInternalNode *pNode, KEY_TYPE key)
     bool success = pNode->Delete(key);
     if (false == success)
     {
+        printf("failed to delete internal node\n");
         return false;
     }
+    printf("Delete internal data success\n");
 
     // 获取父结点
     CInternalNode *pFather = (CInternalNode *)(pNode->GetFather());
@@ -1140,12 +1207,14 @@ bool BPlusTree::DeleteInternalNode(CInternalNode *pNode, KEY_TYPE key)
     // 删除后结点填充度仍>=50%
     if (pNode->GetCount() >= ORDER_V)
     {
+        printf("s1\n");
         for (int i = 1; (key >= pFather->GetElement(i)) && (i <= pFather->GetCount()); i++)
         {
             // 如果删除的是父结点的键值，需要更改该键
             if (pFather->GetElement(i) == key)
             {
                 pFather->SetElement(i, pNode->GetElement(1)); // 更改为叶子结点新的第一个元素
+                printf("Change father's key success\n");
             }
         }
 
@@ -1157,10 +1226,16 @@ bool BPlusTree::DeleteInternalNode(CInternalNode *pNode, KEY_TYPE key)
     CInternalNode *pBrother = (CInternalNode *)(pNode->GetBrother(flag));
 
     // 兄弟结点填充度>50%
-    KEY_TYPE NewData = INVALID;
+    // Modified(new)
+    KEY_TYPE NewData_l = pBrother->GetElement(pBrother->GetCount());
+    KEY_TYPE NewData_r = pBrother->GetElement(1);
+    //
+    
     if (pBrother->GetCount() > ORDER_V)
     {
+        printf("s2\n");
         pNode->MoveOneElement(pBrother);
+        printf("Move element success\n");
 
         // 修改父结点的键值
         if (FLAG_LEFT == flag)
@@ -1169,7 +1244,8 @@ bool BPlusTree::DeleteInternalNode(CInternalNode *pNode, KEY_TYPE key)
             {
                 if (pFather->GetPointer(i) == pNode && i > 1)
                 {
-                    pFather->SetElement(i - 1, pNode->GetElement(1)); // 更改本结点对应的键
+                    pFather->SetElement(i - 1, NewData_l); // 更改本结点对应的键 // Modified(new)
+                    printf("Change father's key success\n");
                 }
             }
         }
@@ -1177,13 +1253,14 @@ bool BPlusTree::DeleteInternalNode(CInternalNode *pNode, KEY_TYPE key)
         {
             for (int i = 1; i <= pFather->GetCount() + 1; i++)
             {
-                if (pFather->GetPointer(i) == pNode && i > 1)
-                {
-                    pFather->SetElement(i - 1, pNode->GetElement(1)); // 更改本结点对应的键
-                }
+                // if (pFather->GetPointer(i) == pNode && i > 1)
+                // {
+                //     pFather->SetElement(i - 1, pNode->GetElement(1)); // 更改本结点对应的键
+                // }
                 if (pFather->GetPointer(i) == pBrother && i > 1)
                 {
-                    pFather->SetElement(i - 1, pBrother->GetElement(1)); // 更改兄弟结点对应的键
+                    pFather->SetElement(i - 1, NewData_r); // 更改兄弟结点对应的键 //Modified(new)
+                    printf("Change father's key success\n");
                 }
             }
         }
@@ -1193,6 +1270,7 @@ bool BPlusTree::DeleteInternalNode(CInternalNode *pNode, KEY_TYPE key)
 
     // 父结点中要删除的键：兄弟结点都不大于50，则需要合并结点，此时父结点需要删除键
     KEY_TYPE NewKey = NULL;
+    printf("s3\n");
 
     // 把本结点与兄弟结点合并，无论如何合并到数据较小的结点，这样父结点就无需修改指针
     if (FLAG_LEFT == flag)
@@ -1200,12 +1278,14 @@ bool BPlusTree::DeleteInternalNode(CInternalNode *pNode, KEY_TYPE key)
         (void)pBrother->Combine(pNode);
         NewKey = pNode->GetElement(1);
         delete pNode;
+        printf("Combine success\n");
     }
     else
     {
         (void)pNode->Combine(pBrother);
         NewKey = pBrother->GetElement(1);
         delete pBrother;
+        printf("Combine success\n");
     }
 
     // 递归

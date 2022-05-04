@@ -116,7 +116,8 @@ int main(int argc, char *argv[])
         printf("    *           6。显示整个B+树；                                     *\n");
         printf("    *           7。检查整个B+树；                                     *\n");
         printf("    *           0。退出程序；                                         *\n");
-        printf("    *           11。test(Insert 16 Reg information);                  *\n");
+        printf("    *           11.Test(Insert 16 Reg information);                  *\n");
+        printf("    *           12.Clear Tree;                                        *\n");
         printf("    *******************************************************************\n");
         printf("\n    您的选择是：");
 
@@ -182,7 +183,21 @@ int main(int argc, char *argv[])
             
             break;
         }
-
+        case 12:
+        {
+            pTree->ClearTree();
+            break;
+        }
+        // case 17: (in test_Vaccination_System.cpp)
+        // {
+        //     int d[21] = {0,11,21,31,41,51,61,71,81,91,100,4,14,24,75,95,34,74,72,3,8};
+        //     for (int i = 0; i < 21; i++)
+        //     {
+        //         system.Reg_List.Delete(d[i]);
+        //         system.Reg_List.PrintTree();
+        //     }
+        //     break;
+        // }
         default:
             break;
         }

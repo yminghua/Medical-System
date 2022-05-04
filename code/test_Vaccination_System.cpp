@@ -53,12 +53,19 @@ int main()
             cout << "11: n days past\n";
             cout << "12: Weekly report-by Profession\n";
             cout << "13: Weekly report-by Age_group\n";
+            cout << "14: Print Reg_List\n";
+            cout << "15: Delete information in Reg_List\n";
+            cout << "16: Search information in Reg_List\n";
             cin >> op;
         }
-        while ((op < 0) || (op > 13));
+        while ((op < 0) || (op > 16));
         switch (op)
         {
-            case 0: return (0);
+            case 0: 
+            {
+                cout << "quit" << endl;
+                return (0);
+            }
             case 1:
             {
                 // generate a registration file based on the input data
@@ -159,13 +166,44 @@ int main()
                 system.Weekly_ReportA();
                 break;
             }*/
-            /*
-            case 12:
+            
+            case 14:
             {
-                // 12
-                cout << "12\n";
+                //Print Reg_List
+                system.Reg_List.PrintTree();
                 break;
-            }*/
+            }
+
+            case 15:
+            {
+                //Delete information in Reg_List
+                cout << "Please enter the reg_id you want to delete in Reg_List:\nreg_id=";
+                int reg_id;
+                cin >> reg_id;
+                bool success = system.Reg_List.Delete(reg_id);
+                if (true == success)
+                {
+                    printf("\nsuccessed!\n");
+                }
+                else
+                {
+                    printf("\nfailed!\n");
+                }
+                // system.Reg_List.PrintTree();
+                break;
+            }
+
+            case 16:
+            {
+                //Search information in Reg_List
+                cout << "Please enter the reg_id you want to search in Reg_List:\nreg_id=";
+                int reg_id;
+                cin >> reg_id;
+                Registration *r = system.Reg_List.Search(reg_id);
+                cout << "Reg_id: " << r->reg_id << " name: " << r->person->name << " id: " << r->person->id << endl;
+                break;
+            }
+
             default: return (0);
         }
     } while (op != 0);
