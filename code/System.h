@@ -33,7 +33,7 @@ public:
     int tt_time_count = 0;
 
 public:
-    void Register(int id, string name, int contact, int profession, int age_group, int risk, int letter, int registry); // Add in a new registration
+    void Register(int id, string name, int contact, int profession, int age_group, int risk, int letter, int registry, int treatment_type=1); // Add in a new registration
     void Transfer();                                                                                                    // Transfer the data from the three local heap to the central heap
     void Gen_Appointment();                                                                                             // Generate appoinments for the next day based on registrations stored in the central heap
     void Withdraw(int reg_id);                                                                                          // a withdraw request
