@@ -7,7 +7,7 @@ using namespace std;
 
 using std::string;
 
-void System::Register(int id, string name, int contact, int profession, int age_group, int risk, int letter, int registry)
+void System::Register(int id, string name, int contact, int profession, int age_group, int risk, int letter, int registry, int treatment_type)
 {
     //cout<<"register"<<endl;
     //for monthly report::waiting people in total:
@@ -28,6 +28,7 @@ void System::Register(int id, string name, int contact, int profession, int age_
 
     reg->person = per;
     reg->registry = registry;
+    reg->treatment_type = treatment_type;
     reg->time = counter;
     reg->reg_id = global_reg_id;
     global_reg_id++;
