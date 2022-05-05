@@ -39,6 +39,7 @@ public:
     int time;  //registration time, = current counter
     int reg_id; //The unique identifier for each registration, starting from 0
     int registry;  //1~3
+    int treatment_type = 1; //1~3
     string priority;
     int status; // 0~6. 0 indicates finished, 1~6 indicate the current location of the registration
     // handles. The number at the end indicate the corresponding status
@@ -57,6 +58,7 @@ public:
 void Registration::set_priority(void)
 {
     priority.clear();
+    priority += to_string(treatment_type);
     priority += to_string(person->profession);
     priority += to_string(person->age_group);
     priority += to_string(time);
