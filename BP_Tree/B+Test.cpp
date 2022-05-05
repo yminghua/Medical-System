@@ -1,15 +1,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
-#include "Data_Structure.h"
-#include "BPlusTree.h"
+#include "../code/Data_Structure.h"
+#include "BPlusTree.cpp"
 
-// éšæœºå»ºç«‹ä¸€æ£µæ ‘
+// Ëæ»ú½¨Á¢Ò»¿ÃÊ÷
 void Test1(BPlusTree *pTree, int count)
 {
     pTree->ClearTree();
 
-    // srand( (unsigned)time( NULL ) );//è¿™æ˜¯ä¸€ä¸ªç§å­ï¼Œå¦‚æœä¸è¦éšæœºåŠŸèƒ½ï¼Œè¯·æŠŠæ­¤å¥è¯æ³¨é‡Šæ‰
+    // srand( (unsigned)time( NULL ) );//ÕâÊÇÒ»¸öÖÖ×Ó£¬Èç¹û²»ÒªËæ»ú¹¦ÄÜ£¬Çë°Ñ´Ë¾ä»°×¢ÊÍµô
     for (int i = 0; i < count; i++)
     {
         int x = rand() % 999 + 1;
@@ -19,18 +19,25 @@ void Test1(BPlusTree *pTree, int count)
     printf("successed!\n");
 }
 
-// åœ¨æ ‘ä¸­æŸ¥æ‰¾æŸæ•°æ®
+// ÔÚÊ÷ÖĞ²éÕÒÄ³Êı¾İ
 void Test2(BPlusTree *pTree, int data)
 {
-    char sPath[255] = {
-        0,
-    };
+    // char sPath[255] = {
+    //     0,
+    // };
 
-    (void)pTree->Search(data);
-    printf("\n%s", sPath);
+    Registration *r = pTree->Search(data);
+    if (r == NULL)
+    {
+        cout << "Search failed!" << endl;
+        return;
+    }
+
+    cout << "key=" << data << " Reg_id=" << r->reg_id << endl;
+    
 }
 
-// åœ¨æ ‘ä¸­æ’å…¥æŸæ•°æ®
+// ÔÚÊ÷ÖĞ²åÈëÄ³Êı¾İ
 void Test3(BPlusTree *pTree, int data, Registration *Reg)
 {
     bool success = pTree->Insert(data, Reg);
@@ -44,7 +51,7 @@ void Test3(BPlusTree *pTree, int data, Registration *Reg)
     }
 }
 
-// åœ¨æ ‘ä¸­åˆ é™¤æŸæ•°æ®
+// ÔÚÊ÷ÖĞÉ¾³ıÄ³Êı¾İ
 void Test4(BPlusTree *pTree, int data)
 {
     bool success = pTree->Delete(data);
@@ -58,7 +65,7 @@ void Test4(BPlusTree *pTree, int data)
     }
 }
 
-// å¯¹æ ‘è¿›è¡Œæ—‹è½¬
+// ¶ÔÊ÷½øĞĞĞı×ª
 BPlusTree *Test5(BPlusTree *pTree)
 {
     BPlusTree *pNewTree = pTree->RotateTree();
@@ -67,13 +74,13 @@ BPlusTree *Test5(BPlusTree *pTree)
     return pNewTree;
 }
 
-// æ‰“å°
+// ´òÓ¡
 void Test6(BPlusTree *pTree)
 {
     pTree->PrintTree();
 }
 
-// å¯¹æ ‘è¿›è¡Œæ£€æŸ¥
+// ¶ÔÊ÷½øĞĞ¼ì²é
 void Test7(BPlusTree *pTree)
 {
     bool success = pTree->CheckTree();
@@ -87,52 +94,56 @@ void Test7(BPlusTree *pTree)
     }
 }
 
+
 int main(int argc, char *argv[])
 {
     BPlusTree *pTree = new BPlusTree;
 
     int x = 1;
     int y = 0;
-    Registration *r;
+    Registration *n = NULL;
+    
     while (0 != x)
     {
         printf("\n\n");
         printf("    *******************************************************************\n");
-        printf("    *           æ¬¢è¿è¿›å…¥B+æ ‘æ¼”ç¤ºç¨‹åºï¼Œè¯·é€‰æ‹©ç›¸åº”åŠŸèƒ½ã€‚                *\n");
-        printf("    *           1ã€‚éšæœºå»ºç«‹ä¸€æ£µB+æ ‘ï¼›                                 *\n");
-        printf("    *           2ã€‚åœ¨B+æ ‘ä¸­æŸ¥æ‰¾ä¸€ä¸ªæ•°ï¼›                               *\n");
-        printf("    *           3ã€‚åœ¨B+æ ‘ä¸­æ’å…¥ä¸€ä¸ªæ•°ï¼›                               *\n");
-        printf("    *           4ã€‚åœ¨B+æ ‘ä¸­åˆ é™¤ä¸€ä¸ªæ•°ï¼›                               *\n");
-        printf("    *           5ã€‚å¯¹B+æ ‘æ—‹è½¬ï¼Œè¿›è¡Œé‡æ–°å¹³è¡¡ï¼›                         *\n");
-        printf("    *           6ã€‚æ˜¾ç¤ºæ•´ä¸ªB+æ ‘ï¼›                                     *\n");
-        printf("    *           7ã€‚æ£€æŸ¥æ•´ä¸ªB+æ ‘ï¼›                                     *\n");
-        printf("    *           0ã€‚é€€å‡ºç¨‹åºï¼›                                         *\n");
+        printf("    *           »¶Ó­½øÈëB+Ê÷ÑİÊ¾³ÌĞò£¬ÇëÑ¡ÔñÏàÓ¦¹¦ÄÜ¡£                *\n");
+        printf("    *           1¡£Ëæ»ú½¨Á¢Ò»¿ÃB+Ê÷£»                                 *\n");
+        printf("    *           2¡£ÔÚB+Ê÷ÖĞ²éÕÒÒ»¸öÊı£»                               *\n");
+        printf("    *           3¡£ÔÚB+Ê÷ÖĞ²åÈëÒ»¸öÊı(Reg=NULL)£»                     *\n");
+        printf("    *           4¡£ÔÚB+Ê÷ÖĞÉ¾³ıÒ»¸öÊı£»                               *\n");
+        printf("    *           5¡£¶ÔB+Ê÷Ğı×ª£¬½øĞĞÖØĞÂÆ½ºâ£»                         *\n");
+        printf("    *           6¡£ÏÔÊ¾Õû¸öB+Ê÷£»                                     *\n");
+        printf("    *           7¡£¼ì²éÕû¸öB+Ê÷£»                                     *\n");
+        printf("    *           0¡£ÍË³ö³ÌĞò£»                                         *\n");
+        printf("    *           11.Test(Insert 16 Reg information);                  *\n");
+        printf("    *           12.Clear Tree;                                        *\n");
         printf("    *******************************************************************\n");
-        printf("\n    æ‚¨çš„é€‰æ‹©æ˜¯ï¼š");
+        printf("\n    ÄúµÄÑ¡ÔñÊÇ£º");
 
         scanf("%d", &x);
         switch (x)
         {
         case 1:
-            printf("è¯·è¾“å…¥æ•°æ®ä¸ªæ•°(10-150)ï¼š");
+            printf("ÇëÊäÈëÊı¾İ¸öÊı(10-150)£º");
             scanf("%d", &y);
             Test1(pTree, y);
             break;
 
         case 2:
-            printf("è¯·è¾“å…¥è¦æŸ¥æ‰¾çš„æ•°å€¼ï¼š");
+            printf("ÇëÊäÈëÒª²éÕÒµÄÊıÖµ£º");
             scanf("%d", &y);
             Test2(pTree, y);
             break;
 
         case 3:
-            printf("è¯·è¾“å…¥è¦æ’å…¥çš„æ•°å€¼ä¸æ³¨å†Œä¿¡æ¯ï¼š");
+            printf("ÇëÊäÈëÒª²åÈëµÄÊıÖµÓë×¢²áĞÅÏ¢£º");
             scanf("%d", &y);
-            Test3(pTree, y, r);
+            Test3(pTree, y, n);
             break;
 
         case 4:
-            printf("è¯·è¾“å…¥è¦åˆ é™¤çš„æ•°å€¼ï¼š");
+            printf("ÇëÊäÈëÒªÉ¾³ıµÄÊıÖµ£º");
             scanf("%d", &y);
             Test4(pTree, y);
             break;
@@ -154,6 +165,39 @@ int main(int argc, char *argv[])
             return 0;
             break;
 
+        case 11:
+        {
+            Registration *r[16];
+            int key[16] = {8, 14, 2, 15, 3, 1, 16, 6, 5, 27, 37, 18, 25, 7, 13, 20};
+            for (int i = 0; i < 16; i++)
+            {
+                r[i] = new Registration;
+                r[i]->reg_id = i;
+                pTree->Insert(key[i], r[i]);
+                cout << "Insert " << key[i] << endl;
+            }
+            for (int i = 0; i < 16; i++)
+            {
+                cout << r[i]->reg_id << endl;
+            }
+            
+            break;
+        }
+        case 12:
+        {
+            pTree->ClearTree();
+            break;
+        }
+        // case 17: (in test_Vaccination_System.cpp)
+        // {
+        //     int d[21] = {0,11,21,31,41,51,61,71,81,91,100,4,14,24,75,95,34,74,72,3,8};
+        //     for (int i = 0; i < 21; i++)
+        //     {
+        //         system.Reg_List.Delete(d[i]);
+        //         system.Reg_List.PrintTree();
+        //     }
+        //     break;
+        // }
         default:
             break;
         }
