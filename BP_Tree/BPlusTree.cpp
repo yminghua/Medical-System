@@ -199,7 +199,7 @@ KEY_TYPE CInternalNode::Split(CInternalNode *pNode, KEY_TYPE key) // key是新插入
         {
             j++;
             this->GetPointer(i)->SetFather(pNode); // 重新设置子结点的父亲
-            pNode->SetPointer(j, this->GetPointer(i));
+            pNode->SetPointer(j+1, this->GetPointer(i)); //Modified
             this->SetPointer(i, INVALID);
         }
 
