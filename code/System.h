@@ -3,7 +3,7 @@
 #include "Waiting_Queue.cpp"
 #include "Appointment_Queue.cpp"
 #include "AList.cpp"
-#include "..\BP_Tree\BPlusTree.cpp"
+#include "../BP_Tree/BPlusTree.cpp"
 
 
 
@@ -21,6 +21,7 @@ public:
     Waiting_Queue withdrawn; //6              // Record people who have withdrawn their registration
     Appointment_Queue appointment_queue; // 0
     BPlusTree Reg_List;                  // Store all the registration that's been made so far, track them by their reg_id
+    BPlusTree Reg_Byage;
     int counter = 0;        // Record the time the system has been running. If counter=k, it means the system has run for k/2 day. i.e. an increment in the counter means half day passed
     int global_reg_id = 0;
 
