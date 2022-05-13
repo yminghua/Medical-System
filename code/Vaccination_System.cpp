@@ -710,7 +710,7 @@ void System::Half_Day_Pass()
     case 2:
     {
 
-        cout << "a\n";
+     //   cout << "a\n";
         Register(587429,"Norton_Sailsbury",11964,7,4,3,0,2);
         Register(892282,"Ian_Kipling",16888,4,6,1,0,1);
         Register(379365,"Abigail_Noel",10506,7,7,1,5,3);
@@ -721,7 +721,7 @@ void System::Half_Day_Pass()
         Register(614764,"Baron_Yerkes",18172,4,1,1,0,2);
         Register(845238,"Phyllis_Lattimore",15197,1,3,3,0,3);
         Register(659971,"Mona_Bloor",11828,8,2,0,0,2);
-        cout << "b\n";
+    //    cout << "b\n";
 
         
         /*Withdraw(2);  // register in 1, withdraw in 2. withdraw before appointment

@@ -15,11 +15,11 @@ CNode::~CNode()
     DeleteChildren();
 }
 
-// ��ȡһ��������ֵܽ��
+//Get a nearby brother
 CNode *CNode::GetBrother(int &flag)
 {
-    // CNode *pFather = GetFather(); //��ȡ�丸���ָ��
-    CInternalNode *pFather = (CInternalNode *)(GetFather()); //��ȡ�丸���ָ��
+    // CNode *pFather = GetFather();
+    CInternalNode *pFather = (CInternalNode *)(GetFather()); //Get pointer of father node //Modified
     if (NULL == pFather)
     {
         printf("Father is NULL!!!\n");
@@ -29,15 +29,15 @@ CNode *CNode::GetBrother(int &flag)
     CNode *pBrother = NULL;
     cout << "father's first key is: " << pFather->GetElement(1) << endl;
     
-    for (int i = 1; i <= pFather->GetCount() + 1; i++) // GetCount()��ʾ��ȡ���ݻ�ؼ�������Ҫ��ָ����С1��
+    for (int i = 1; i <= pFather->GetCount() + 1; i++)
     {
-        // �ҵ�������λ��
+        //Find the location of current node
         if (pFather->GetPointer(i) == this)
         {
             cout << "Find!" << endl;
-            if (i == (pFather->GetCount() + 1)) //��ʾ��Ϊ���������ұߺ��ӡ�
+            if (i == (pFather->GetCount() + 1)) //Indicate that current node is on the rightmost
             {
-                pBrother = pFather->GetPointer(i - 1); // ���������һ��ָ�룬ֻ����ǰһ��ָ��
+                pBrother = pFather->GetPointer(i - 1); //Get its previous pointer
                 if (pBrother == NULL)
                 {
                     cout << "Brother is NULL" << endl;
@@ -47,7 +47,7 @@ CNode *CNode::GetBrother(int &flag)
             }
             else
             {
-                pBrother = pFather->GetPointer(i + 1); // �����Һ�һ��ָ��
+                pBrother = pFather->GetPointer(i + 1); //Find the latter pointer first
                 if (pBrother == NULL)
                 {
                     cout << "Brother is NULL" << endl;
@@ -61,14 +61,13 @@ CNode *CNode::GetBrother(int &flag)
     return pBrother;
 }
 
-// �ݹ�ɾ���ӽ��
+//Delete children recursively
 void CNode::DeleteChildren()
 {
-    // GetCount()Ϊ���ؽ���йؼ��ּ����ݵĸ���
-    for (int i = 1; i <= GetCount() + 1; i++) // Modified(new)
+    for (int i = 1; i <= GetCount() + 1; i++) // Modified
     {
         CNode *pNode = GetPointer(i);
-        if (NULL != pNode) // Ҷ�ӽ��û��ָ��
+        if (NULL != pNode)
         {
             pNode->DeleteChildren();
         }
@@ -77,7 +76,7 @@ void CNode::DeleteChildren()
     }
 }
 
-//���ڲ��ڵ�Ĺؼ��ֺ�ָ��ֱ��ʼ��Ϊ0�Ϳ�
+//Initialize the key and pointer of internal node to INVALID and NULL, respectively
 CInternalNode::CInternalNode()
 {
     m_Type = NODE_TYPE_INTERNAL;
@@ -101,13 +100,10 @@ CInternalNode::~CInternalNode()
     }
 }
 
-// ���м����в������
-/*���ʣ��м�����Ҫ����ֵ���ڲ���ֵʱ��ͨ���������ҵ���Ҷ�ӽ���е�λ�ã�Ȼ���ٲ��롣
-�м���ͨ����Ҷ�ӽ����Ҫ����ʱ�����Ѻ���������ӽ���������*/
+//Insert key into internal node
 bool CInternalNode::Insert(KEY_TYPE value, CNode *pNode)
 {
     int i;
-    // ����м���������ֱ�ӷ���ʧ��
     if (GetCount() >= MAXNUM_KEY)
     {
         return false;
@@ -115,35 +111,33 @@ bool CInternalNode::Insert(KEY_TYPE value, CNode *pNode)
 
     int j = 0;
 
-    // �ҵ�Ҫ�������λ��
+    //Find the location to insert
     for (i = 0; (value > m_Keys[i]) && (i < m_Count); i++)
     {
     }
 
-    // ��ǰλ�ü������ļ����κ��ƣ��ճ���ǰλ��
+    //Move back and keep the current location empty
     for (j = m_Count; j > i; j--)
     {
         m_Keys[j] = m_Keys[j - 1];
     }
 
-    // ��ǰλ�ü�������ָ�����κ���
     for (j = m_Count + 1; j > i + 1; j--)
     {
         m_Pointers[j] = m_Pointers[j - 1];
     }
 
-    // �Ѽ���ָ����뵱ǰλ��
+    //Put key and pointer into current location
     m_Keys[i] = value;
-    m_Pointers[i + 1] = pNode; // ע���ǵ�i+1��ָ������ǵ�i��ָ��
-    pNode->SetFather(this);    // �ǳ���Ҫ  �ú�������˼�ǲ���ؼ���value������ָ������
+    m_Pointers[i + 1] = pNode;
+    pNode->SetFather(this); //Set father pointer again
 
     m_Count++;
 
-    // ���سɹ�
     return true;
 }
 
-// ���м�����ɾ�������Լ��ü����ָ��
+//Delete key and pointer in internal node
 bool CInternalNode::Delete(KEY_TYPE key)
 {
     int i, j, k;
@@ -168,23 +162,15 @@ bool CInternalNode::Delete(KEY_TYPE key)
     return true;
 }
 
-/* �����м���
-�����м���ͷ���Ҷ�ӽ����ȫ��ͬ����Ϊ�м��㲻����2V��������2V+1ָ�룬���������һ��Ϊ2��ָ�뽫�޷��� �䡣
-��˸���http://www.seanster.com/BplusTree/BplusTree.html �������� ������㷨�ǣ�
-����Ҫ����ļ�key�жϣ�
-(1)���keyС�ڵ�V��������ѵ�V���������,�����ҵļ��ֱ�ֵ����������
-(2) ���key���ڵ�V+1��������ѵ�V+1���������,�����ҵļ��ֱ�ֵ����������
-(3)���key���ڵ�V��V+1����֮�䣬���key��Ϊ Ҫ����ļ���ԭ���ļ�����һ�뵽���������
-�������RetKey�����Ǳ��ں������뵽���Ƚ��
-*/
-KEY_TYPE CInternalNode::Split(CInternalNode *pNode, KEY_TYPE key) // key���²����ֵ��pNode�Ƿ��ѽ��
+//Split internal node
+KEY_TYPE CInternalNode::Split(CInternalNode *pNode, KEY_TYPE key)
 {
     int i = 0, j = 0;
 
-    // ���Ҫ����ļ�ֵ�ڵ�V��V+1����ֵ�м䣬��Ҫ��תһ�£�����ȴ��������
+    //Situation 1
     if ((key > this->GetElement(ORDER_V)) && (key < this->GetElement(ORDER_V + 1)))
     {
-        // �ѵ�V+1 -- 2V�����Ƶ�ָ���Ľ����
+        // Move key(V+1 -- 2V)
 
         for (i = ORDER_V + 1; i <= MAXNUM_KEY; i++)
         {
@@ -193,27 +179,25 @@ KEY_TYPE CInternalNode::Split(CInternalNode *pNode, KEY_TYPE key) // key���
             this->SetElement(i, INVALID);
         }
 
-        // �ѵ�V+2 -- 2V+1��ָ���Ƶ�ָ���Ľ����
+        // Move pointer(V+2 -- 2V+1)
         j = 0;
         for (i = ORDER_V + 2; i <= MAXNUM_POINTER; i++)
         {
             j++;
-            this->GetPointer(i)->SetFather(pNode); // ���������ӽ��ĸ���
+            this->GetPointer(i)->SetFather(pNode);
             pNode->SetPointer(j+1, this->GetPointer(i)); //Modified
             this->SetPointer(i, INVALID);
         }
 
-        // ���ú�Count����
+        //Set number of key
         this->SetCount(ORDER_V);
         pNode->SetCount(ORDER_V);
 
-        // ��ԭ��ֵ����
         return key;
     }
 
-    // ���´���keyС�ڵ�V����ֵ��key���ڵ�V+1����ֵ�����
+    //Situation 2
 
-    // �ж�����ȡ��V����V+1����
     int position = 0;
     if (key < this->GetElement(ORDER_V))
     {
@@ -224,10 +208,10 @@ KEY_TYPE CInternalNode::Split(CInternalNode *pNode, KEY_TYPE key) // key���
         position = ORDER_V + 1;
     }
 
-    // �ѵ�position�������������Ϊ�µļ�ֵ����
+    //Get key
     KEY_TYPE RetKey = this->GetElement(position);
 
-    // �ѵ�position+1 -- 2V�����Ƶ�ָ���Ľ����
+    //Move key(position+1 -- 2V)
     j = 0;
     for (i = position + 1; i <= MAXNUM_KEY; i++)
     {
@@ -236,36 +220,34 @@ KEY_TYPE CInternalNode::Split(CInternalNode *pNode, KEY_TYPE key) // key���
         this->SetElement(i, INVALID);
     }
 
-    // �ѵ�position+1 -- 2V+1��ָ���Ƶ�ָ���Ľ����(ע��ָ��ȼ���һ��)
+    //Move pointer(position+1 -- 2V+1)
     j = 0;
     for (i = position + 1; i <= MAXNUM_POINTER; i++)
     {
         j++;
-        this->GetPointer(i)->SetFather(pNode); // ���������ӽ��ĸ���
+        this->GetPointer(i)->SetFather(pNode);
         pNode->SetPointer(j, this->GetPointer(i));
         this->SetPointer(i, INVALID);
     }
 
-    // �����ȡ����λ��
+    //Clear the extracted position
     this->SetElement(position, INVALID);
 
-    // ���ú�Count����
+    //Set number of key
     this->SetCount(position - 1);
     pNode->SetCount(MAXNUM_KEY - position);
 
     return RetKey;
 }
 
-//��Ͻ�㣬��ָ���м��������ȫ�����е����м���
 bool CInternalNode::Combine(CNode *pNode)
 {
-    // �������
-    if (this->GetCount() + pNode->GetCount() + 1 > MAXNUM_DATA) // Ԥ��һ���¼���λ��
+    if (this->GetCount() + pNode->GetCount() + 1 > MAXNUM_DATA) //Reserve a place for a new key
     {
         return false;
     }
 
-    // ȡ���ϲ����ĵ�һ�����ӵĵ�һ��Ԫ����Ϊ�¼�ֵ
+    //Get the new key
     CNode *k = pNode->GetPointer(1);
     while (k->GetType() != NODE_TYPE_LEAF)
     {
@@ -291,10 +273,8 @@ bool CInternalNode::Combine(CNode *pNode)
     return true;
 }
 
-// ����һ�����һ��Ԫ�ص������
 bool CInternalNode::MoveOneElement(CNode *pNode)
 {
-    // �������
     if (this->GetCount() >= MAXNUM_DATA)
     {
         return false;
@@ -302,10 +282,10 @@ bool CInternalNode::MoveOneElement(CNode *pNode)
 
     int i, j;
 
-    // �ֵܽ���ڱ�������
+    //Brother is on the left
     if (pNode->GetElement(1) < this->GetElement(1))
     {
-        // ���ڳ�λ��
+        //Make a place first
         for (i = m_Count; i > 0; i--)
         {
             m_Keys[i] = m_Keys[i - 1];
@@ -315,8 +295,7 @@ bool CInternalNode::MoveOneElement(CNode *pNode)
             m_Pointers[j] = m_Pointers[j - 1];
         }
 
-        // ��ֵ
-        // ��һ����ֵ�����ֵܽ������һ����ֵ�����Ǳ�����һ���ӽ��ĵ�һ��Ԫ�ص�ֵ
+        //Get new key
         // Modified(new)
         CNode *k = this->GetPointer(1);
         while (k->GetType() != NODE_TYPE_LEAF)
@@ -324,19 +303,16 @@ bool CInternalNode::MoveOneElement(CNode *pNode)
             k = k->GetPointer(1);
         }
         m_Keys[0] = k->GetElement(1);
-        //
-        // ��һ���ӽ��Ϊ�ֵܽ������һ���ӽ��
+        
         m_Pointers[0] = pNode->GetPointer(pNode->GetCount() + 1);
         pNode->GetPointer(pNode->GetCount() + 1)->SetFather(this); // Modified(new)
 
-        // �޸��ֵܽ��
         pNode->SetElement(pNode->GetCount(), INVALID);
         pNode->SetPointer(pNode->GetCount() + 1, NULL);
     }
-    else // �ֵܽ���ڱ�����ұ�
+    else //Brother is on the right
     {
-        // ��ֵ
-        // ���һ����ֵ�����ֵܽ��ĵ�һ����ֵ�������ֵܽ���һ���ӽ��ĵ�һ��Ԫ�ص�ֵ
+        //Get new key
         // Modified(new)
         CNode *k = pNode->GetPointer(1);
         while (k->GetType() != NODE_TYPE_LEAF)
@@ -345,11 +321,9 @@ bool CInternalNode::MoveOneElement(CNode *pNode)
         }
         m_Keys[m_Count] = k->GetElement(1);
 
-        // ���һ���ӽ��Ϊ�ֵܽ��ĵ�һ���ӽ��
         m_Pointers[m_Count + 1] = pNode->GetPointer(1);
         pNode->GetPointer(1)->SetFather(this); //Modified(new)
 
-        // �޸��ֵܽ��
         for (i = 1; i <= pNode->GetCount() - 1; i++) // Modified(new)
         {
             pNode->SetElement(i, pNode->GetElement(i + 1));
@@ -362,17 +336,17 @@ bool CInternalNode::MoveOneElement(CNode *pNode)
         // Modified(new)
         pNode->SetElement(pNode->GetCount(), INVALID);
         pNode->SetPointer(pNode->GetCount() + 1, NULL);
-        //
+
     }
 
-    // ������Ŀ
+    //Set number of key
     this->SetCount(this->GetCount() + 1);
     pNode->SetCount(pNode->GetCount() - 1);
 
     return true;
 }
 
-// ���Ҷ�ӽ���е�����
+//Clear data in leaf node
 CLeafNode::CLeafNode()
 {
     m_Type = NODE_TYPE_LEAF;
@@ -396,11 +370,10 @@ CLeafNode::~CLeafNode()
 {
 }
 
-// ��Ҷ�ӽ���в�������
+//Insert data in leaf node
 bool CLeafNode::Insert(KEY_TYPE value, Registration *data)
 {
     int i, j;
-    // ���Ҷ�ӽ��������ֱ�ӷ���ʧ��
     if (GetCount() >= MAXNUM_DATA)
     {
         return false;
@@ -424,25 +397,26 @@ bool CLeafNode::Insert(KEY_TYPE value, Registration *data)
         return true;
     }
     //buffer mode work is over!!!!!!!!!!!!!!!!!
-    // �ҵ�Ҫ�������ݵ�λ��
+
+
+    //Find the location to insert
     for (i = 0; (value > m_Datas[i]) && (i < m_Count); i++)
     {
     }
 
-    // ��ǰλ�ü��������������κ��ƣ��ճ���ǰλ��
+    //Move back and keep the current location empty
     for (j = m_Count; j > i; j--)
     {
         m_Datas[j] = m_Datas[j - 1];
         Reg_Datas[j] = Reg_Datas[j - 1]; // Modified
     }
 
-    // �����ݴ��뵱ǰλ��
+    //Store data
     m_Datas[i] = value;
     Reg_Datas[i] = data; //modified
 
     m_Count++;
 
-    // ���سɹ�
     return true;
 }
 
@@ -458,7 +432,6 @@ bool CLeafNode::Delete(KEY_TYPE value)
             break;
         }
     }
-    // ���û���ҵ�������ʧ��
     if (false == found)
     {
         //Buffer mode judging & work!  drush8
@@ -466,7 +439,7 @@ bool CLeafNode::Delete(KEY_TYPE value)
         return false;
     }
 
-    // �������������ǰ��
+    //The following data moves forward
     for (j = i; j < m_Count - 1; j++)
     {
         m_Datas[j] = m_Datas[j + 1];
@@ -481,7 +454,7 @@ bool CLeafNode::Delete(KEY_TYPE value)
     return true;
 }
 
-// ����Ҷ�ӽ�㣬�ѱ�Ҷ�ӽ��ĺ�һ�����ݼ��е�ָ����Ҷ�ӽ����
+//Split leaf node, cut the last half of the data of this leaf node to the specified leaf node
 KEY_TYPE CLeafNode::Split(CLeafNode *pNode)
 {
     if(this->if_buf ==1) {
@@ -492,7 +465,7 @@ KEY_TYPE CLeafNode::Split(CLeafNode *pNode)
            //drush8
     }
 
-    // �ѱ�Ҷ�ӽ��ĺ�һ�������Ƶ�ָ���Ľ����
+    //Move the last half of the leaf node to the specified node
     int j = 0;
     for (int i = ORDER_V + 1; i <= MAXNUM_DATA; i++)
     {
@@ -502,19 +475,17 @@ KEY_TYPE CLeafNode::Split(CLeafNode *pNode)
         this->SetElement(i, INVALID);
         this->Reg_Datas[i-1] = NULL; // Modified(new)
     }
-    // ���ú�Count����
+
     this->SetCount(this->GetCount() - j);
     pNode->SetCount(pNode->GetCount() + j);
 
-    // �����½��ĵ�һ��Ԫ����Ϊ��
+    // return the first element as key
     return pNode->GetElement(1);
 }
 
-// ��Ͻ�㣬��ָ��Ҷ�ӽ�������ȫ�����е���Ҷ�ӽ��
+//Combine node, cut all data of specified leaf node to this leaf node
 bool CLeafNode::Combine(CLeafNode *pNode)
 {
-
-    // �������
     if (this->GetCount() + pNode->GetCount() > MAXNUM_DATA)
     {
         return false;
@@ -548,10 +519,10 @@ BPlusTree::~BPlusTree()
     ClearTree();
 }
 
-// �����в�������
+//Search data in tree
 Registration* BPlusTree::Search(KEY_TYPE data)
 {
-    printf("search begin\n");
+    // printf("search begin\n");
     Registration *Reg_result = NULL;
     int i = 0;
     // int offset = 0;
@@ -561,20 +532,21 @@ Registration* BPlusTree::Search(KEY_TYPE data)
         offset += 19;
     }*/
 
-    printf("1\n");
+    //printf("1\n");
     CNode *pNode = GetRoot();
-    // ѭ�����Ҷ�Ӧ��Ҷ�ӽ��
-    printf("2\n");
+
+    //Use loop to find the corresponding leaf node
+    //printf("2\n");
     while (NULL != pNode)
     {
-        printf("3\n");
-        // ���ΪҶ�ӽ�㣬ѭ������
+        //printf("3\n");
+        //The node is the leaf node, and the loop ends
         if (NODE_TYPE_LEAF == pNode->GetType())
         {
             break;
         }
 
-        // �ҵ���һ����ֵ���ڵ���key��λ��
+        //Find the first location where the key value is greater than or equal to key
         for (i = 1; (data >= pNode->GetElement(i)) && (i <= pNode->GetCount()); i++)
         {
         }
@@ -587,12 +559,12 @@ Registration* BPlusTree::Search(KEY_TYPE data)
 
         pNode = pNode->GetPointer(i);
     }
-    printf("4\n");
+    //printf("4\n");
 
-    // û�ҵ�
+    //Did not find
     if (NULL == pNode)
     {
-        printf("This Reg_id does not exist\n");
+        //printf("This Reg_id does not exist\n");
         return NULL; // Modified(new)
     }
 
@@ -602,22 +574,22 @@ Registration* BPlusTree::Search(KEY_TYPE data)
         offset += 3;
     }*/
 
-    // ��Ҷ�ӽ���м�����
-    printf("5\n");
+    //Keep finding in leaf nodes
+   // printf("5\n");
     CLeafNode *pNode_leaf = (CLeafNode *)pNode;
 
     if(pNode_leaf->if_buf ==1) {          ///for buffer merge   drush8
         pNode_leaf->Buffersort();
         pNode_leaf->Buffermerge();
     }
-    printf("6\n");
+   // printf("6\n");
     bool found = false;
     for (i = 1; (i <= pNode_leaf->GetCount()); i++)
     {
-        printf("7\n");
+        //printf("7\n");
         if (data == pNode_leaf->GetElement(i))
         {
-            printf("8\n");
+            //printf("8\n");
             found = true;
             Reg_result = pNode_leaf->Reg_Datas[i-1]; // Modified(new)
             if (Reg_result == NULL)
@@ -626,14 +598,14 @@ Registration* BPlusTree::Search(KEY_TYPE data)
             }
             
         }
-        printf("9\n");
+        //printf("9\n");
     }
     
     // Modified(new)
-    if (found == false)
-    {
-        cout << "This Reg_id does not exist!" << endl;
-    }
+    // if (found == false)
+    // {
+    //     cout << "This Reg_id does not exist!" << endl;
+    // }
     //
 
     /*if (NULL != sPath)
@@ -648,22 +620,14 @@ Registration* BPlusTree::Search(KEY_TYPE data)
             (void)sprintf(sPath + offset, " ,failed.");
         }
     }*/
-    printf("10\n");
+    //printf("10\n");
     return Reg_result;
 }
 
-/* ��B+���в�������
-������������Ҫ�ҵ�������Ҫ�����Ҷ�ӽ�㣬Ȼ������������
-(1) Ҷ�ӽ��δ����ֱ���ڸý���в��뼴�ɣ�
-(2) Ҷ�ӽ�����������޸����(���������Ҷ�ӽ��)����Ҫ���Ȱ�Ҷ�ӽ����ѣ�Ȼ��ѡ�����ԭ�����½�㣬Ȼ�������ɸ��ڵ㣻
-(3) Ҷ�ӽ�����������丸���δ������Ҫ���Ȱ�Ҷ�ӽ����ѣ�Ȼ��ѡ�����ԭ�����½�㣬���޸ĸ�����ָ�룻
-(4) Ҷ�ӽ�����������丸�����������Ҫ���Ȱ�Ҷ�ӽ����ѣ�Ȼ��ѡ�����ԭ�����½�㣬���ŰѸ������ѣ����޸��游����ָ�롣
-    ��Ϊ�游���Ҳ�����������Կ�����Ҫһֱ�ݹ鵽δ�������Ƚ��Ϊֹ��
-*/
-bool BPlusTree::Insert(KEY_TYPE data, Registration *Reg_data) //
+//Insert data in tree
+bool BPlusTree::Insert(KEY_TYPE data, Registration *Reg_data)
 {
-    // ����Ƿ��ظ�����
-
+    //Check for repeated insertion
     // Modified(new)
     if (Search(data) != NULL)
     {
@@ -677,9 +641,9 @@ bool BPlusTree::Insert(KEY_TYPE data, Registration *Reg_data) //
     //    printf("\n%d,check failed!",data);
     //}
 
-    // ���������Ҷ�ӽ��
+    //Find the corresponding leaf node
     CLeafNode *pOldNode = SearchLeafNode(data);
-    // ���û���ҵ���˵���������ǿյģ����ɸ����
+    //If not, the entire tree is empty and the root is generated
     if (NULL == pOldNode)
     {
         pOldNode = new CLeafNode;
@@ -690,28 +654,28 @@ bool BPlusTree::Insert(KEY_TYPE data, Registration *Reg_data) //
     }
 
     if(pOldNode->if_buf ==1){pOldNode->Buffersort();pOldNode->Buffermerge();}
-    // Ҷ�ӽ��δ������Ӧ���1��ֱ�Ӳ���
+    //Leaf node is not full, just insert
     if (pOldNode->GetCount() < MAXNUM_DATA)
     {
-        cout << "Insert directly into leaf node" << endl;
+        //cout << "Insert directly into leaf node" << endl;
         return pOldNode->Insert(data, Reg_data);
     }
 
-    // ԭҶ�ӽ���������½�Ҷ�ӽ�㣬����ԭ����һ�����ݼ��е��½��
+    //Leaf node is full, create a new leaf node and cut the data of the last half of the original node to the new node
     CLeafNode *pNewNode = new CLeafNode;
     if(this->buffer_flag==1) pNewNode->Set_buf(1);  //drush8
     KEY_TYPE key = INVALID;
-    printf("split begin\n");
+    //printf("split begin\n");
     key = pOldNode->Split(pNewNode);
-    printf("split succeed\n");
+    //printf("split succeed\n");
 
-    // ��˫�������в�����
+    //Insert node in Double-linked list
     CLeafNode *pOldNext = pOldNode->m_pNextNode;
 
     pOldNode->m_pNextNode = pNewNode;
     pNewNode->m_pNextNode = pOldNext;
     pNewNode->m_pPrevNode = pOldNode;
-    printf("1\n");
+    //printf("1\n");
     if (NULL == pOldNext)
     {
         m_pLeafTail = pNewNode;
@@ -720,78 +684,68 @@ bool BPlusTree::Insert(KEY_TYPE data, Registration *Reg_data) //
     {
         pOldNext->m_pPrevNode = pNewNode;
     }
-    printf("2\n");
+    //printf("2\n");
 
-    // �ж��ǲ��뵽ԭ��㻹���½���У�ȷ���ǰ�����ֵ�����
+    //Determine whether to insert into the old node or into a new node
     if (data < key)
     {
-        pOldNode->Insert(data, Reg_data); // ����ԭ���
+        pOldNode->Insert(data, Reg_data);
     }
     else
     {
-        pNewNode->Insert(data, Reg_data); // �����½��
+        pNewNode->Insert(data, Reg_data);
     }
-    printf("3\n");
+    //printf("3\n");
 
-    // �����
     CInternalNode *pFather = (CInternalNode *)(pOldNode->GetFather());
     //printf("3.1\n");
 
-    // ���ԭ����Ǹ��ڵ㣬��Ӧ���2
+    //If the original node is the root node
     if (NULL == pFather)
     {
-        printf("3.2\n");
+        //printf("3.2\n");
         CNode *pNode1 = new CInternalNode;
-        pNode1->SetPointer(1, pOldNode); // ָ��1ָ��ԭ���
-        pNode1->SetElement(1, key);      // ���ü�
-        pNode1->SetPointer(2, pNewNode); // ָ��2ָ���½��
-        pOldNode->SetFather(pNode1);     // ָ�������
-        pNewNode->SetFather(pNode1);     // ָ�������
+        pNode1->SetPointer(1, pOldNode); 
+        pNode1->SetElement(1, key);     
+        pNode1->SetPointer(2, pNewNode); 
+        pOldNode->SetFather(pNode1);    
+        pNewNode->SetFather(pNode1);     
         pNode1->SetCount(1);
 
-        SetRoot(pNode1); // ָ���µĸ����
-        printf("3.3\n");
+        SetRoot(pNode1); //set new root
+        //printf("3.3\n");
         return true;
     }
-    printf("4\n");
+    //printf("4\n");
 
-    // ���3�����4������ʵ��
     bool ret = InsertInternalNode(pFather, key, pNewNode);
-    printf("5\n");
+    //printf("5\n");
     return ret;
 }
 
-/* ɾ��ĳ����
-ɾ�����ݵ��㷨���£�
-(1) ���ɾ����Ҷ�ӽ��������>=50%��ֻ��Ҫ�޸�Ҷ�ӽ�㣬���ɾ�����Ǹ����ļ��������ҲҪ��Ӧ�޸ģ�
-(2) ���ɾ����Ҷ�ӽ������<50%����Ҫ���ҵ�һ��������ֵܽ��(���Ҿ���)��Ȼ������������
-    A. ������ֵܽ������>50%���Ѹ��ֵܽ������һ�����ݼ��е�����㣬�����ļ�ֵҲҪ��Ӧ�޸ġ�
-    B. ������ֵܽ�������=50%������������ϲ���������Ҳ��Ӧ�ϲ���(����ϲ��󸸽�������<50%������Ҫ�ݹ�)
-*/
+//Delete data
 bool BPlusTree::Delete(KEY_TYPE data)
 {
-    // ���������Ҷ�ӽ��
+    //Search corresponding leaf node
     CLeafNode *pOldNode = SearchLeafNode(data);
-    // ���û���ҵ�������ʧ��
+
     if (NULL == pOldNode)
     {
         return false;
     }
-    printf("Search leaf node success\n");
+    //printf("Search leaf node success\n");
 
-    // ɾ�����ݣ����ʧ��һ����û���ҵ���ֱ�ӷ���ʧ��
     bool success = pOldNode->Delete(data);
     if (false == success)
     {
         return false;
     }
-    printf("Delete data success\n");
+    //printf("Delete data success\n");
 
-    // ��ȡ�����
     CInternalNode *pFather = (CInternalNode *)(pOldNode->GetFather());
     if (NULL == pFather)
     {
-        // ���һ�����ݶ�û���ˣ�ɾ�������(ֻ�и��ڵ���ܳ��ִ����)
+        //If none of the data is left, delete the root
         if (0 == pOldNode->GetCount())
         {
             delete pOldNode;
@@ -803,42 +757,39 @@ bool BPlusTree::Delete(KEY_TYPE data)
 
         return true;
     }
-    printf("Get father success\n");
+    //printf("Get father success\n");
 
-    // ɾ����Ҷ�ӽ��������>=50%����Ӧ���1
+    //After deletion, the filling degree of leaf node is still >= 50%
     if (pOldNode->GetCount() >= ORDER_V)
     {
-        printf("S1\n");
+        //printf("S1\n");
         for (int i = 1; (data >= pFather->GetElement(i)) && (i <= pFather->GetCount()); i++)
         {
-            // ���ɾ�����Ǹ����ļ�ֵ����Ҫ���ĸü�
+            //If the parent key is deleted, need to change the key
             if (pFather->GetElement(i) == data)
             {
-                pFather->SetElement(i, pOldNode->GetElement(1)); // ����ΪҶ�ӽ���µĵ�һ��Ԫ��
-                printf("Change father's key success\n");
+                pFather->SetElement(i, pOldNode->GetElement(1)); //Change to the new first element of the leaf node
+                //printf("Change father's key success\n");
             }
         }
 
         return true;
     }
 
-    // �ҵ�һ��������ֵܽ��(����B+���Ķ��壬����Ҷ�ӽ�㣬�������ҵ���)
+    //Find a nearby brother
     int flag = FLAG_LEFT;
     CLeafNode *pBrother = (CLeafNode *)(pOldNode->GetBrother(flag));
-
-
-
-    if (pBrother == NULL)
-    {
-        cout << "Brother is NULL!!!" << endl;
-    }
-    else
-    {
-        printf("Get brother success\n");
-    }
+    // if (pBrother == NULL)
+    // {
+    //     cout << "Brother is NULL!!!" << endl;
+    // }
+    // else
+    // {
+    //     printf("Get brother success\n");
+    // }
     
 
-    // �ֵܽ������>50%����Ӧ���2A
+    //Brother filling degree > 50%
     KEY_TYPE NewData = INVALID;
     Registration *New_Reg_Data = NULL;
 
@@ -848,13 +799,13 @@ bool BPlusTree::Delete(KEY_TYPE data)
         pBrother->Buffersort();
         pBrother->Buffermerge();
     }
-        printf("S2A\n");
-        if (FLAG_LEFT == flag) // �ֵ�����ߣ������һ�����ݹ���
+    //    printf("S2A\n");
+        if (FLAG_LEFT == flag) 
         {
             NewData = pBrother->GetElement(pBrother->GetCount());
             New_Reg_Data = pBrother->Reg_Datas[pBrother->GetCount()-1]; // Modified(new)
         }
-        else // �ֵ����ұߣ��Ƶ�һ�����ݹ���
+        else
         {
             NewData = pBrother->GetElement(1);
             New_Reg_Data = pBrother->Reg_Datas[0]; // Modified(new)
@@ -862,17 +813,17 @@ bool BPlusTree::Delete(KEY_TYPE data)
 
         pOldNode->Insert(NewData, New_Reg_Data);
         pBrother->Delete(NewData);
-        printf("Move one element from brother success\n");
+        //printf("Move one element from brother success\n");
 
-        // �޸ĸ����ļ�ֵ
+        //Change father's key
         if (FLAG_LEFT == flag)
         {
             for (int i = 1; i <= pFather->GetCount() + 1; i++)
             {
                 if (pFather->GetPointer(i) == pOldNode && i > 1)
                 {
-                    pFather->SetElement(i - 1, pOldNode->GetElement(1)); // ���ı�����Ӧ�ļ�
-                    printf("Change father's key success\n");
+                    pFather->SetElement(i - 1, pOldNode->GetElement(1));
+                    //printf("Change father's key success\n");
                 }
             }
         }
@@ -882,13 +833,13 @@ bool BPlusTree::Delete(KEY_TYPE data)
             {
                 if (pFather->GetPointer(i) == pOldNode && i > 1)
                 {
-                    pFather->SetElement(i - 1, pOldNode->GetElement(1)); // ���ı�����Ӧ�ļ�
-                    printf("Change father's key success\n");
+                    pFather->SetElement(i - 1, pOldNode->GetElement(1));
+                    //printf("Change father's key success\n");
                 }
                 if (pFather->GetPointer(i) == pBrother && i > 1)
                 {
-                    pFather->SetElement(i - 1, pBrother->GetElement(1)); // �����ֵܽ���Ӧ�ļ�
-                    printf("Change father's key success\n");
+                    pFather->SetElement(i - 1, pBrother->GetElement(1));
+                    //printf("Change father's key success\n");
                 }
             }
         }
@@ -896,12 +847,10 @@ bool BPlusTree::Delete(KEY_TYPE data)
         return true;
     }
 
-    // ���2B
-    printf("S2B\n");
-    // �������Ҫɾ���ļ�
+    //printf("S2B\n");
     KEY_TYPE NewKey = NULL;
 
-    // �ѱ�������ֵܽ��ϲ���������κϲ������ݽ�С�Ľ�㣬���������������޸�ָ��
+    //Merge this node with its siblings, anyway, into smaller nodes
 
     if (FLAG_LEFT == flag)
     {
@@ -910,7 +859,7 @@ bool BPlusTree::Delete(KEY_TYPE data)
 
         CLeafNode *pOldNext = pOldNode->m_pNextNode;
         pBrother->m_pNextNode = pOldNext;
-        // ��˫��������ɾ�����
+        //Delete node in Double-linked list
         if (NULL == pOldNext)
         {
             m_pLeafTail = pBrother;
@@ -919,9 +868,8 @@ bool BPlusTree::Delete(KEY_TYPE data)
         {
             pOldNext->m_pPrevNode = pBrother;
         }
-        // ɾ�������
         delete pOldNode;
-        printf("Combine success\n");
+        //printf("Combine success\n");
     }
     else
     {
@@ -931,7 +879,7 @@ bool BPlusTree::Delete(KEY_TYPE data)
             if (pFather->GetElement(i) == data)
             {
                 pFather->SetElement(i, pOldNode->GetElement(1));
-                cout << "Change father's key successfully!" << endl;
+                //cout << "Change father's key successfully!" << endl;
             }
         }
         //
@@ -941,7 +889,7 @@ bool BPlusTree::Delete(KEY_TYPE data)
 
         CLeafNode *pOldNext = pBrother->m_pNextNode;
         pOldNode->m_pNextNode = pOldNext;
-        // ��˫��������ɾ�����
+        //Delete node in Double-linked list
         if (NULL == pOldNext)
         {
             m_pLeafTail = pOldNode;
@@ -950,15 +898,14 @@ bool BPlusTree::Delete(KEY_TYPE data)
         {
             pOldNext->m_pPrevNode = pOldNode;
         }
-        // ɾ�������
         delete pBrother;
-        printf("Combine success\n");
+        //printf("Combine success\n");
     }
 
     return DeleteInternalNode(pFather, NewKey);
 }
 
-// �����������ɾ�����н��
+//Delete all nodes
 void BPlusTree::ClearTree()
 {
     CNode *pNode = GetRoot();
@@ -975,6 +922,7 @@ void BPlusTree::ClearTree()
 }
 
 // ��ת������ƽ�⣬ʵ�����ǰ��������ع�һ��,��������룬�����¿���
+/*
 BPlusTree *BPlusTree::RotateTree()
 {
     BPlusTree *pNewTree = new BPlusTree;
@@ -999,6 +947,7 @@ BPlusTree *BPlusTree::RotateTree()
     return pNewTree;
 }
 // ������Ƿ�����B+���Ķ���
+*/
 bool BPlusTree::CheckTree()
 {
     CLeafNode *pThisNode = m_pLeafHead;
@@ -1024,7 +973,6 @@ bool BPlusTree::CheckTree()
     return CheckNode(GetRoot());
 }
 
-// �ݹ����㼰�������Ƿ�����B+���Ķ���
 bool BPlusTree::CheckNode(CNode *pNode)
 {
     if (NULL == pNode)
@@ -1035,13 +983,13 @@ bool BPlusTree::CheckNode(CNode *pNode)
     int i = 0;
     bool ret = false;
 
-    // ����Ƿ�����50%������
+    //Check whether the 50% fill is satisfied
     if ((pNode->GetCount() < ORDER_V) && (pNode != GetRoot()))
     {
         return false;
     }
 
-    // �����������Ƿ񰴴�С����
+    //Checks whether keys or data are sorted by size
     for (i = 1; i < pNode->GetCount(); i++)
     {
         if (pNode->GetElement(i) > pNode->GetElement(i + 1))
@@ -1055,11 +1003,10 @@ bool BPlusTree::CheckNode(CNode *pNode)
         return true;
     }
 
-    // ���м��㣬�ݹ�������
     for (i = 1; i <= pNode->GetCount() + 1; i++)
     {
         ret = CheckNode(pNode->GetPointer(i));
-        // ֻҪ��һ�����Ϸ��ͷ��ز��Ϸ�
+
         if (false == ret)
         {
             return false;
@@ -1069,7 +1016,7 @@ bool BPlusTree::CheckNode(CNode *pNode)
     return true;
 }
 
-// ��ӡ������
+//Print the whole tree
 void BPlusTree::PrintTree()
 {
     CNode *pRoot = GetRoot();
@@ -1083,10 +1030,10 @@ void BPlusTree::PrintTree()
     int i, j, k;
     int total = 0;
 
-    printf("\n��һ��\n | ");
+    printf("\nFiest layer\n | ");
     PrintNode(pRoot);
     total = 0;
-    printf("\n�ڶ���\n | ");
+    printf("\nSecond layer\n | ");
     for (i = 1; i <= MAXNUM_POINTER; i++)
     {
         p1 = pRoot->GetPointer(i);
@@ -1098,7 +1045,7 @@ void BPlusTree::PrintTree()
             printf("\n | ");
     }
     total = 0;
-    printf("\n������\n | ");
+    printf("\nThird layer\n | ");
     for (i = 1; i <= MAXNUM_POINTER; i++)
     {
         p1 = pRoot->GetPointer(i);
@@ -1116,7 +1063,7 @@ void BPlusTree::PrintTree()
         }
     }
     total = 0;
-    printf("\n���Ĳ�\n | ");
+    printf("\nFourth layer\n | ");
     for (i = 1; i <= MAXNUM_POINTER; i++)
     {
         p1 = pRoot->GetPointer(i);
@@ -1141,7 +1088,7 @@ void BPlusTree::PrintTree()
     }
 }
 
-// ��ӡĳ���
+//Print node
 void BPlusTree::PrintNode(CNode *pNode)
 {
     if (NULL == pNode)
@@ -1161,7 +1108,7 @@ void BPlusTree::PrintNode(CNode *pNode)
                 p->Buffermerge();
             }
 
-            cout << "(name:" << p->Reg_Datas[i-1]->person->name << ")";
+            cout << "(name:" << p->Reg_Datas[i-1]->person->name << ")";//Print information you want here~
         }
         
         if (i >= MAXNUM_KEY)
@@ -1171,23 +1118,23 @@ void BPlusTree::PrintNode(CNode *pNode)
     }
 }
 
-// ���Ҷ�Ӧ��Ҷ�ӽ��
+//Search corresponding leaf node
 CLeafNode *BPlusTree::SearchLeafNode(KEY_TYPE data)
 {
     int i = 0;
 
     CNode *pNode = GetRoot();
-    // ѭ�����Ҷ�Ӧ��Ҷ�ӽ��
+
     while (NULL != pNode)
     {
-        // ���ΪҶ�ӽ�㣬ѭ������
+        //The node is the leaf node, and the loop ends
         if (NODE_TYPE_LEAF == pNode->GetType())
         {
-            cout << "Find corresponding leaf node" <<endl;
+            //cout << "Find corresponding leaf node" <<endl;
             break;
         }
 
-        // �ҵ���һ����ֵ���ڵ���key��λ��
+        //Find the first location where the key value is greater than or equal to key
         for (i = 1; i <= pNode->GetCount(); i++)
         {
             if (data < pNode->GetElement(i))
@@ -1202,7 +1149,7 @@ CLeafNode *BPlusTree::SearchLeafNode(KEY_TYPE data)
     return (CLeafNode *)pNode;
 }
 
-//�ݹ麯������������м���
+//Insert key into internal node
 bool BPlusTree::InsertInternalNode(CInternalNode *pNode, KEY_TYPE key, CNode *pRightSon)
 {
     if (NULL == pNode || NODE_TYPE_LEAF == pNode->GetType())
@@ -1210,15 +1157,15 @@ bool BPlusTree::InsertInternalNode(CInternalNode *pNode, KEY_TYPE key, CNode *pR
         return false;
     }
 
-    // ���δ����ֱ�Ӳ���
+    //Node is not full, just insert
     if (pNode->GetCount() < MAXNUM_KEY)
     {
         return pNode->Insert(key, pRightSon);
     }
 
-    CInternalNode *pBrother = new CInternalNode; // C++��new ������ʾ����һ������Ҫ���ڴ�ռ䣬���������׵�ַ��
+    CInternalNode *pBrother = new CInternalNode;
     KEY_TYPE NewKey = INVALID;
-    // ���ѱ����
+    //Split node
     NewKey = pNode->Split(pBrother, key);
 
     if (pNode->GetCount() < pBrother->GetCount())
@@ -1229,49 +1176,46 @@ bool BPlusTree::InsertInternalNode(CInternalNode *pNode, KEY_TYPE key, CNode *pR
     {
         pBrother->Insert(key, pRightSon);
     }
-    else // ������ȣ�����ֵ�ڵ�V��V+1����ֵ�м����������ֽڵ�ҵ��½��ĵ�һ��ָ����
+    else //key(v) = key(v+1)
     {
         pBrother->SetPointer(1, pRightSon);
         pRightSon->SetFather(pBrother);
     }
 
     CInternalNode *pFather = (CInternalNode *)(pNode->GetFather());
-    // ֱ������㶼���ˣ������ɸ����
+    //Until the root is full, new root is generated
     if (NULL == pFather)
     {
         pFather = new CInternalNode;
-        pFather->SetPointer(1, pNode);    // ָ��1ָ��ԭ���
-        pFather->SetElement(1, NewKey);   // ���ü�
-        pFather->SetPointer(2, pBrother); // ָ��2ָ���½��
-        pNode->SetFather(pFather);        // ָ�������
-        pBrother->SetFather(pFather);     // ָ�������
+        pFather->SetPointer(1, pNode);   
+        pFather->SetElement(1, NewKey);  
+        pFather->SetPointer(2, pBrother); 
+        pNode->SetFather(pFather);        
+        pBrother->SetFather(pFather);     
         pFather->SetCount(1);
 
-        SetRoot(pFather); // ָ���µĸ����
+        SetRoot(pFather);
         return true;
     }
 
-    // �ݹ�
     return InsertInternalNode(pFather, NewKey, pBrother);
 }
 
-// �ݹ麯�������м�����ɾ����
+// Delete key in internal node
 bool BPlusTree::DeleteInternalNode(CInternalNode *pNode, KEY_TYPE key)
 {
-    // ɾ���������ʧ��һ����û���ҵ���ֱ�ӷ���ʧ��
     bool success = pNode->Delete(key);
     if (false == success)
     {
-        printf("failed to delete internal node\n");
+        //printf("failed to delete internal node\n");
         return false;
     }
-    printf("Delete internal data success\n");
+    //printf("Delete internal data success\n");
 
-    // ��ȡ�����
     CInternalNode *pFather = (CInternalNode *)(pNode->GetFather());
     if (NULL == pFather)
     {
-        // ���һ�����ݶ�û���ˣ��Ѹ����ĵ�һ�������Ϊ�����
+        //If none of the data is left, the first node of the root is used as the root
         if (0 == pNode->GetCount())
         {
             SetRoot(pNode->GetPointer(1));
@@ -1281,48 +1225,45 @@ bool BPlusTree::DeleteInternalNode(CInternalNode *pNode, KEY_TYPE key)
         return true;
     }
 
-    // ɾ������������>=50%
+    //After deletion, the node filling degree is still >= 50%
     if (pNode->GetCount() >= ORDER_V)
     {
-        printf("s1\n");
+        //printf("s1\n");
         for (int i = 1; (key >= pFather->GetElement(i)) && (i <= pFather->GetCount()); i++)
         {
-            // ���ɾ�����Ǹ����ļ�ֵ����Ҫ���ĸü�
             if (pFather->GetElement(i) == key)
             {
-                pFather->SetElement(i, pNode->GetElement(1)); // ����ΪҶ�ӽ���µĵ�һ��Ԫ��
-                printf("Change father's key success\n");
+                pFather->SetElement(i, pNode->GetElement(1));
+                //printf("Change father's key success\n");
             }
         }
 
         return true;
     }
 
-    //�ҵ�һ��������ֵܽ��(����B+���Ķ��壬���˸���㣬�������ҵ���)
+    //Find a nearby brother
     int flag = FLAG_LEFT;
     CInternalNode *pBrother = (CInternalNode *)(pNode->GetBrother(flag));
 
-    // �ֵܽ������>50%
+    //Brother filling degree > 50%
     // Modified(new)
     KEY_TYPE NewData_l = pBrother->GetElement(pBrother->GetCount());
     KEY_TYPE NewData_r = pBrother->GetElement(1);
-    //
     
     if (pBrother->GetCount() > ORDER_V)
     {
-        printf("s2\n");
+        //printf("s2\n");
         pNode->MoveOneElement(pBrother);
-        printf("Move element success\n");
+        //printf("Move element success\n");
 
-        // �޸ĸ����ļ�ֵ
         if (FLAG_LEFT == flag)
         {
             for (int i = 1; i <= pFather->GetCount() + 1; i++)
             {
                 if (pFather->GetPointer(i) == pNode && i > 1)
                 {
-                    pFather->SetElement(i - 1, NewData_l); // ���ı�����Ӧ�ļ� // Modified(new)
-                    printf("Change father's key success\n");
+                    pFather->SetElement(i - 1, NewData_l); // Modified(new)
+                    //printf("Change father's key success\n");
                 }
             }
         }
@@ -1332,12 +1273,12 @@ bool BPlusTree::DeleteInternalNode(CInternalNode *pNode, KEY_TYPE key)
             {
                 // if (pFather->GetPointer(i) == pNode && i > 1)
                 // {
-                //     pFather->SetElement(i - 1, pNode->GetElement(1)); // ���ı�����Ӧ�ļ�
+                //     pFather->SetElement(i - 1, pNode->GetElement(1));
                 // }
                 if (pFather->GetPointer(i) == pBrother && i > 1)
                 {
-                    pFather->SetElement(i - 1, NewData_r); // �����ֵܽ���Ӧ�ļ� //Modified(new)
-                    printf("Change father's key success\n");
+                    pFather->SetElement(i - 1, NewData_r); //Modified(new)
+                    //printf("Change father's key success\n");
                 }
             }
         }
@@ -1345,27 +1286,27 @@ bool BPlusTree::DeleteInternalNode(CInternalNode *pNode, KEY_TYPE key)
         return true;
     }
 
-    // �������Ҫɾ���ļ����ֵܽ�㶼������50������Ҫ�ϲ���㣬��ʱ�������Ҫɾ����
+    //Keys to be deleted from the parent node: if none of the sibling nodes is greater than 50,
+    //the nodes need to be merged, and the parent node needs to delete the key
     KEY_TYPE NewKey = NULL;
-    printf("s3\n");
+    //printf("s3\n");
 
-    // �ѱ�������ֵܽ��ϲ���������κϲ������ݽ�С�Ľ�㣬���������������޸�ָ��
+    //Merge this node with its siblings, anyway, into smaller nodes
     if (FLAG_LEFT == flag)
     {
         (void)pBrother->Combine(pNode);
         NewKey = pNode->GetElement(1);
         delete pNode;
-        printf("Combine success\n");
+        //printf("Combine success\n");
     }
     else
     {
         (void)pNode->Combine(pBrother);
         NewKey = pBrother->GetElement(1);
         delete pBrother;
-        printf("Combine success\n");
+        //printf("Combine success\n");
     }
 
-    // �ݹ�
     return DeleteInternalNode(pFather, NewKey);
 }
 //drush8::

@@ -1,45 +1,28 @@
-/* BPlusTree.h
-
-B+�������ļ���������ʵ��һ���򵥵�B+��
-
-Definition (from http://www.seanster.com/BplusTree/BplusTree.html ):
-(1) A B+ tree of order v consists of a root, internal nodes and leaves.
-(2) The root my be either leaf or node with two or more children.
-(3) Internal nodes contain between v and 2v keys, and a node with k keys has k + 1 children.
-(4) Leaves are always on the same level.
-(5) If a leaf is a primary index, it consists of a bucket of records, sorted by search key. If it is a secondary index, it will have many short records consisting of a key and a pointer to the actual record.
-
-(1) һ��v�׵�B+���ɸ���㡢�ڲ�����Ҷ�ӽ����ɡ�
-(2) ����������Ҷ�ӽ�㣬Ҳ������������������������ڲ���㡣
-(3) ÿ���ڲ�������v - 2v���������һ���ڲ�������k������������ֻ��k+1��ָ��������ָ�롣
-(4) Ҷ�ӽ������������ͬһ���ϡ�
-(5) ���Ҷ�ӽ������������������һ�鰴��ֵ����ļ�¼�����Ҷ�ӽ���Ǵ�������������һ��̼�¼��ÿ���̼�¼����һ�����Լ�ָ��ʵ�ʼ�¼��ָ�롣
-(6) �ڲ����ļ�ֵ��Ҷ�ӽ�������ֵ���Ǵ�С��������ġ�
-(7) ���м����У�ÿ�������������е����еļ���С���������ÿ�������������е����еļ������ڵ����������
-
+/**
+ * C++: BPlusTree
+ * 
+ * @author Mr.Yang
+ * URL: https://www.cnblogs.com/yangj-Blog/p/12992124.html
+ * Modified by CS225 Group D3
 */
 
-/* B+ ���Ľף����ڲ�����м�����С��Ŀv��
-   Ҳ��Щ�˰ѽ׶���Ϊ�ڲ�����м��������Ŀ����2v��
-   һ����ԣ�Ҷ�ӽ����������ݸ������ڲ����������������һ���ģ�Ҳ��2v��(������������Ŀ����Ϊ�˰��ڲ�����Ҷ�ӽ��ͳһ��ͬһ���ṹ�а�)
-*/
-#define ORDER_V 2 /* Ϊ���������v�̶�Ϊ2��ʵ�ʵ�B+��vֵӦ���ǿ���ġ������v���ڲ��ڵ��м�����Сֵ */
 
-#define MAXNUM_KEY (ORDER_V * 2)        /* �ڲ����������������Ϊ2v */
-#define MAXNUM_POINTER (MAXNUM_KEY + 1) /* �ڲ���������ָ��������ָ�������Ϊ2v+1 */
-#define MAXNUM_DATA (ORDER_V * 2)       /* Ҷ�ӽ����������ݸ�����Ϊ2v */
-#define MAXNUM_BUFFER 2
+#define ORDER_V 2
 
-/* ��ֵ������*/
-typedef int KEY_TYPE; /* Ϊ�����������Ϊint���ͣ�ʵ�ʵ�B+����ֵ����Ӧ���ǿ���� */
-/*��ע�� Ϊ�������Ҷ�ӽ�������Ҳֻ�洢��ֵ*/
+#define MAXNUM_KEY (ORDER_V * 2)        //Maximum number of key in an internal node
+#define MAXNUM_POINTER (MAXNUM_KEY + 1) //Maximum number of pointers in an internal node
+#define MAXNUM_DATA (ORDER_V * 2)       //Maximum number of data in a leaf node
+#define MAXNUM_BUFFER 2                //buffer size..drush8
 
-/* ������� */
+//Key type
+typedef int KEY_TYPE;
+
+//Node type
 enum NODE_TYPE
 {
-    NODE_TYPE_ROOT = 1,     // �����
-    NODE_TYPE_INTERNAL = 2, // �ڲ����
-    NODE_TYPE_LEAF = 3,     // Ҷ�ӽ��
+    NODE_TYPE_ROOT = 1,     // Root
+    NODE_TYPE_INTERNAL = 2, // Internal node
+    NODE_TYPE_LEAF = 3,     // Leaf node
 };
 
 // #define NULL 0
@@ -48,59 +31,59 @@ enum NODE_TYPE
 #define FLAG_LEFT 1
 #define FLAG_RIGHT 2
 
-#include "../code/Data_Structure.h"
-//Declare Registration datatype
-// class Registration;
+#include "../code/Data_Structure.h" //Declare Registration datatype
 
-/* ������ݽṹ��Ϊ�ڲ�����Ҷ�ӽ��ĸ��� */
+/* Parent class of internal and leaf node */
 class CNode
 {
 public:
     CNode();
     virtual ~CNode();
 
-    //��ȡ�����ý������
+    //Get and set the type of node
     NODE_TYPE GetType() { return m_Type; }
     void SetType(NODE_TYPE type) { m_Type = type; }
 
-    // ��ȡ��������Ч���ݸ���
+    //Get and set the number of key/data
     int GetCount() { return m_Count; }
     void SetCount(int i) { m_Count = i; }
 
-    // ��ȡ������ĳ��Ԫ�أ����м���ָ��ֵ����Ҷ�ӽ��ָ����
+    //Get and set one specific key/data
     virtual KEY_TYPE GetElement(int i) { return 0; }
     virtual void SetElement(int i, KEY_TYPE value) {}
 
-    // ��ȡ������ĳ��ָ�룬���м���ָָ�룬��Ҷ�ӽ��������
+    //Get and set one specific pointer
     virtual CNode *GetPointer(int i) { return NULL; }
     virtual void SetPointer(int i, CNode *pointer) {}
 
-    // ��ȡ�����ø����
+    //Get and set the father node
     CNode *GetFather() { return m_pFather; }
     void SetFather(CNode *father) { m_pFather = father; }
 
-    // ��ȡһ��������ֵܽ��
+    //Get a brother node
     CNode *GetBrother(int &flag);
 
-    // ɾ�����
+    //Delete node
     void DeleteChildren();
 
 public:
-    NODE_TYPE m_Type; // ������ͣ�ȡֵΪNODE_TYPE����
+    NODE_TYPE m_Type; // Node type
 
-    int m_Count; // ��Ч���ݸ��������м���ָ����������Ҷ�ӽ��ָ���ݸ���
-    int buffer_Count;
-    CNode *m_pFather; // ָ�򸸽���ָ�룬��׼B+���в�û�и�ָ�룬������Ϊ�˸����ʵ�ֽ����Ѻ���ת�Ȳ���
+    int m_Count; // Valid key/data number
+    int buffer_Count =0; //drush8 for 
+
+
+    CNode *m_pFather; // Pointer to the father node
 };
 
-/* �ڲ�������ݽṹ */
+/* Internal node */
 class CInternalNode : public CNode
 {
 public:
     CInternalNode();
     virtual ~CInternalNode();
 
-    // ��ȡ�����ü�ֵ�����û���˵�����ִ�1��ʼ��ʵ���ڽ�����Ǵ�0��ʼ��
+    //Get and set key (starting from 1)
     KEY_TYPE GetElement(int i)
     {
         if ((i > 0) && (i <= MAXNUM_KEY))
@@ -121,7 +104,7 @@ public:
         }
     }
 
-    // ��ȡ������ָ�룬���û���˵�����ִ�1��ʼ
+    //Get and set pointer (starting from 1)
     CNode *GetPointer(int i)
     {
         if ((i > 0) && (i <= MAXNUM_POINTER))
@@ -142,24 +125,24 @@ public:
         }
     }
 
-    // �ڽ��pNode�ϲ����value
+    //Insert key into node
     bool Insert(KEY_TYPE value, CNode *pNode);
-    // ɾ����value
+    //Delete key value
     bool Delete(KEY_TYPE value);
 
-    // ���ѽ��
+    //Split node
     KEY_TYPE Split(CInternalNode *pNode, KEY_TYPE key);
-    // ��Ͻ��(�ϲ����)
+    //Combine node
     bool Combine(CNode *pNode);
-    // ����һ�����һ��Ԫ�ص������
+    //Move one element from another node
     bool MoveOneElement(CNode *pNode);
 
 public:
-    KEY_TYPE m_Keys[MAXNUM_KEY];       // ������
-    CNode *m_Pointers[MAXNUM_POINTER]; // ָ������
+    KEY_TYPE m_Keys[MAXNUM_KEY];       //keys
+    CNode *m_Pointers[MAXNUM_POINTER]; //pointers
 };
 
-/* Ҷ�ӽ�����ݽṹ */
+/* Leaf node */
 class CLeafNode : public CNode
 {
 public:
@@ -173,7 +156,7 @@ public:
     CLeafNode();
     virtual ~CLeafNode();
 
-    // ��ȡ����������
+    //Get and set data
     KEY_TYPE GetElement(int i)
     {
         if ((i > 0) && (i <= MAXNUM_DATA))
@@ -194,32 +177,32 @@ public:
         }
     }
 
-    // ��ȡ������ָ�룬��Ҷ�ӽ�������壬ֻ��ʵ�и�����麯��
+    //Get and set pointer (NULL)
     CNode *GetPointer(int i)
     {
         return NULL;
     }
 
-    // ��������
+    //Insert data
     bool Insert(KEY_TYPE value, Registration *data); //modified
-    // ɾ������
+    //Delete data
     bool Delete(KEY_TYPE value);
 
-    // ���ѽ��
+    //Split node
     KEY_TYPE Split(CLeafNode *pNode);
-    // ��Ͻ��
+    //Combine node
     bool Combine(CLeafNode *pNode);
 
 public:
-    // ����������������ʵ��˫������
-    CLeafNode *m_pPrevNode; // ǰһ�����
-    CLeafNode *m_pNextNode; // ��һ�����
+    //Double-linked list
+    CLeafNode *m_pPrevNode;
+    CLeafNode *m_pNextNode;
 
 public:
-    KEY_TYPE m_Datas[MAXNUM_DATA]; // ��������
-    
+    KEY_TYPE m_Datas[MAXNUM_DATA]; // Data (Reg_id)
 public:
-    Registration *Reg_Datas[MAXNUM_DATA]; // modified
+    Registration *Reg_Datas[MAXNUM_DATA]; // Regestration information // modified
+
 
 public:
     Registration *Buffer_Block[MAXNUM_BUFFER];   //for KD standard tree: with buffer
@@ -231,38 +214,37 @@ public: //for the overflow block, that means, combine/merge
     bool Bufferdelete(KEY_TYPE value);
 };
 
-/* B+�����ݽṹ */
+/* B+ Tree */
 class BPlusTree
 {
 public:
     BPlusTree();
     virtual ~BPlusTree();
 
-    // ����ָ��������
+    //Search data
     Registration *Search(KEY_TYPE data); //modified
-    // ����ָ��������
+    //Insert data
     bool Insert(KEY_TYPE data, Registration *Reg_data); //modified
-    // ɾ��ָ��������
+    //Delete data
     bool Delete(KEY_TYPE data);
 
-    // �����
+    //Clear Tree
     void ClearTree();
 
-    // ��ӡ��
+    //Print Tree
     void PrintTree();
 
-    // ��ת��
-    BPlusTree *RotateTree();
+    // BPlusTree *RotateTree();
 
-    // ������Ƿ�����B+���Ķ���
+    //Check whether the tree satisfies the definition of B+ Tree
     bool CheckTree();
 
     void PrintNode(CNode *pNode);
 
-    // �ݹ����㼰�������Ƿ�����B+���Ķ���
+    //Check whether nodes satisfy the definition of B+ Tree
     bool CheckNode(CNode *pNode);
 
-    // ��ȡ�����ø����
+    //Get and set root node
     CNode *GetRoot()
     {
         return m_Root;
@@ -281,7 +263,7 @@ public:
         m_Root = root;
     }
 
-    // ��ȡ���������
+    //Get and set depth
     int GetDepth()
     {
         return m_Depth;
@@ -292,13 +274,13 @@ public:
         m_Depth = depth;
     }
 
-    // ��ȼ�һ
+    //Increase depth
     void IncDepth()
     {
         m_Depth = m_Depth + 1;
     }
 
-    // ��ȼ�һ
+    //Decrease depth
     void DecDepth()
     {
         if (m_Depth > 0)
@@ -308,22 +290,25 @@ public:
     }
 
 public:
-    // ����������������ʵ��˫������
-    CLeafNode *m_pLeafHead; // ͷ���
-    CLeafNode *m_pLeafTail; // β���
+    //Double-liinked list
+    CLeafNode *m_pLeafHead;
+    CLeafNode *m_pLeafTail;
 
 public:
-    // Ϊ���������Ҷ�ӽ��
+    //Search leaf node for insert
     CLeafNode *SearchLeafNode(KEY_TYPE data);
-    //��������м���
+    //Insert key into internal node
     bool InsertInternalNode(CInternalNode *pNode, KEY_TYPE key, CNode *pRightSon);
-    // ���м�����ɾ����
+    //Delete key in internal node
     bool DeleteInternalNode(CInternalNode *pNode, KEY_TYPE key);
 
-    Registration *idsearch(KEY_TYPE id);
-    CNode *m_Root; // �����
-    int m_Depth;   // �������
+    
 
+    CNode *m_Root; // root node
+    int m_Depth;   // depth of tree
+
+
+    Registration* idsearch(KEY_TYPE id);
     int buffer_flag =0;
     void buffermode(int open){     //warning: once buffer mode is open, key value of tree will be exchanged.
         if(open == 1) buffer_flag =1;   //id in this mode will becomes age_group id.
