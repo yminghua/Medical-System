@@ -22,38 +22,38 @@ CNode *CNode::GetBrother(int &flag)
     CInternalNode *pFather = (CInternalNode *)(GetFather()); //Get pointer of father node //Modified
     if (NULL == pFather)
     {
-        printf("Father is NULL!!!\n");
+        //printf("Father is NULL!!!\n");
         return NULL;
     }
 
     CNode *pBrother = NULL;
-    cout << "father's first key is: " << pFather->GetElement(1) << endl;
+    //cout << "father's first key is: " << pFather->GetElement(1) << endl;
     
     for (int i = 1; i <= pFather->GetCount() + 1; i++)
     {
         //Find the location of current node
         if (pFather->GetPointer(i) == this)
         {
-            cout << "Find!" << endl;
+            //cout << "Find!" << endl;
             if (i == (pFather->GetCount() + 1)) //Indicate that current node is on the rightmost
             {
                 pBrother = pFather->GetPointer(i - 1); //Get its previous pointer
-                if (pBrother == NULL)
-                {
-                    cout << "Brother is NULL" << endl;
-                }
+                // if (pBrother == NULL)
+                // {
+                //     cout << "Brother is NULL" << endl;
+                // }
                 flag = FLAG_LEFT;
-                cout << "Brother's first key: " << pBrother->GetElement(1) << endl;
+                //cout << "Brother's first key: " << pBrother->GetElement(1) << endl;
             }
             else
             {
                 pBrother = pFather->GetPointer(i + 1); //Find the latter pointer first
-                if (pBrother == NULL)
-                {
-                    cout << "Brother is NULL" << endl;
-                }
+                // if (pBrother == NULL)
+                // {
+                //     cout << "Brother is NULL" << endl;
+                // }
                 flag = FLAG_RIGHT;
-                cout << "Brother's first key: " << pBrother->GetElement(1) << endl;
+                //cout << "Brother's first key: " << pBrother->GetElement(1) << endl;
             }
         }
     }
@@ -592,10 +592,10 @@ Registration* BPlusTree::Search(KEY_TYPE data)
             //printf("8\n");
             found = true;
             Reg_result = pNode_leaf->Reg_Datas[i-1]; // Modified(new)
-            if (Reg_result == NULL)
-            {
-                cout << "Error!" << endl;
-            }
+            // if (Reg_result == NULL)
+            // {
+            //     cout << "Error!" << endl;
+            // }
             
         }
         //printf("9\n");
@@ -752,7 +752,7 @@ bool BPlusTree::Delete(KEY_TYPE data)
             m_pLeafHead = NULL;
             m_pLeafTail = NULL;
             SetRoot(NULL);
-            cout << "Delete root successfully!\n" << "Tree is empty!" << endl;
+            cout << "Tree is empty!" << endl;
         }
 
         return true;
@@ -921,33 +921,28 @@ void BPlusTree::ClearTree()
     SetRoot(NULL);
 }
 
-// ��ת������ƽ�⣬ʵ�����ǰ��������ع�һ��,��������룬�����¿���
-/*
-BPlusTree *BPlusTree::RotateTree()
-{
-    BPlusTree *pNewTree = new BPlusTree;
-    int i = 0;
-    CLeafNode *pNode = m_pLeafHead;
-    while (NULL != pNode)
-    {
-        if(pNode->if_buf ==1) {  //buffer mode necessary  drush8
-        pNode->Buffersort();
-        pNode->Buffermerge();
-        }
+// BPlusTree *BPlusTree::RotateTree()
+// {
+//     BPlusTree *pNewTree = new BPlusTree;
+//     int i = 0;
+//     CLeafNode *pNode = m_pLeafHead;
+//     while (NULL != pNode)
+//     {
+//         if(pNode->if_buf ==1) {  //buffer mode necessary  drush8
+//         pNode->Buffersort();
+//         pNode->Buffermerge();
+//         }
+//         for (int i = 1; i <= pNode->GetCount(); i++)
+//         {
+//             (void)pNewTree->Insert(pNode->GetElement(i), pNode->Reg_Datas[i-1]); // Modified(new)
+//         }
 
+//         pNode = pNode->m_pNextNode;
+//     }
 
-        for (int i = 1; i <= pNode->GetCount(); i++)
-        {
-            (void)pNewTree->Insert(pNode->GetElement(i), pNode->Reg_Datas[i-1]); // Modified(new)
-        }
+//     return pNewTree;
+// }
 
-        pNode = pNode->m_pNextNode;
-    }
-
-    return pNewTree;
-}
-// ������Ƿ�����B+���Ķ���
-*/
 bool BPlusTree::CheckTree()
 {
     CLeafNode *pThisNode = m_pLeafHead;
@@ -1378,23 +1373,22 @@ bool CLeafNode::Bufferdelete(KEY_TYPE value)
             break;
         }
     }
-    // ���û���ҵ�������ʧ��
+
     if (false == found)
     {
         return false;
     }
-
-    // �������������ǰ��
+  
     for (j = i; j < buffer_Count - 1; j++)
     {
         Buffer_Value[j] = Buffer_Value[j + 1];
-        Buffer_Block[j] = Buffer_Block[j + 1]; // Modified(new)
+        Buffer_Block[j] = Buffer_Block[j + 1];
     }
 
     Buffer_Value[j] = INVALID;
-    Buffer_Block[j] = NULL; // Modified(new)
+    Buffer_Block[j] = NULL;
     m_Count--;
     buffer_Count--;
-    // ���سɹ�
+
     return true;
 }

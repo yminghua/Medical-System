@@ -290,7 +290,7 @@ public:
     }
 
 public:
-    //Double-liinked list
+    //Double-linked list
     CLeafNode *m_pLeafHead;
     CLeafNode *m_pLeafTail;
 
