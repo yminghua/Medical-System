@@ -7,7 +7,7 @@ using namespace std;
 
 using std::string;
 
-void System::Register(int id, string name, int contact, int profession, int age_group, int risk, int letter, int registry)
+void System::Register(int id, string name, int contact, int profession, int age_group, int risk, int letter, int registry, int treatment_type)
 {
     //cout<<"register"<<endl;
     //for monthly report::waiting people in total:
@@ -28,12 +28,18 @@ void System::Register(int id, string name, int contact, int profession, int age_
 
     reg->person = per;
     reg->registry = registry;
+    reg->treatment_type = treatment_type;
     reg->time = counter;
     reg->reg_id = global_reg_id;
     global_reg_id++;
     Month_global_reg_id_number++;
     reg->set_priority();
     Reg_List.Insert(reg->reg_id, reg); //modified for BP
+
+    //Reg_Byage.Insert(reg->reg_id, reg);//show out the relational database:drush8
+    //Reg_Byage.Insert(reg->person->age_group, reg);//show out the relational database:drush8
+    Reg_Byage.Insert(reg->person->contact, reg);//show out the relational database:drush8
+
     /* Now check for special case: Priority letter, High/Midium risk, if has withdrawn */
     //First check whether the person has withdrawn before. If has, delete him from the withdrawn queue
     bool withdraw=false; //True if this person is in the withdrawn list
@@ -125,7 +131,7 @@ void System::Transfer()
 
 void System::Gen_Appointment()
 {
-    int max = 4; // maximum daily capacity for the three local station. max/2 for morning and afternoon each
+    int max = 2; // maximum daily capacity for the three local station. max/2 for morning and afternoon each
     int load1 = max, load2 = max, load3 = max;                         
     int date1 = counter + 1, date2 = counter + 1, date3 = counter + 1; // initialize the appointment date for the three station
     Appointment *app;
@@ -214,6 +220,7 @@ void System::Gen_Appointment()
         //cout << "the allocation for app succeed\n";
         app->person = reg->person;
         app->reg_id = reg->reg_id;
+        app->treatment_type = reg->treatment_type;
         //cout << "the generation for app data person and reg_id succeed\n";
         // now set the appointment time and loc based on origin registry and current capacity
         if (reg->registry == 1)
@@ -637,7 +644,7 @@ void System::Change_Status(int reg_id, int new_profession, int new_risk)
 
 void System::Half_Day_Pass()
 {
-/*//    cout<<"finish"<<endl;
+
     //for the weekly report::
     int num = appointment_queue.updateR(counter);
 //   cout<<"finish"<<endl;
@@ -662,14 +669,14 @@ void System::Half_Day_Pass()
         App_adder=0; Withdraw_adder=0;
         tt_time = 0;
         tt_time_count =0;
-    }*/
+    }
 
     counter++;
- //  cout<<"finish"<<endl;
+ ///  cout<<"finish"<<endl;
     Transfer(); // transfer the data in the local heap to the central heap. (per half day)
- //  cout<<"finish1"<<endl;
+ ///  cout<<"finish1"<<endl;
     if (counter%2 == 0) Gen_Appointment();
- //  cout<<"finish2"<<endl;
+ ///  cout<<"finish2"<<endl;
 
     /* ==== test data ==== */
     switch (counter)
@@ -704,7 +711,7 @@ void System::Half_Day_Pass()
     case 2:
     {
 
-        cout << "a\n";
+     //   cout << "a\n";
         Register(587429,"Norton_Sailsbury",11964,7,4,3,0,2);
         Register(892282,"Ian_Kipling",16888,4,6,1,0,1);
         Register(379365,"Abigail_Noel",10506,7,7,1,5,3);
@@ -715,7 +722,7 @@ void System::Half_Day_Pass()
         Register(614764,"Baron_Yerkes",18172,4,1,1,0,2);
         Register(845238,"Phyllis_Lattimore",15197,1,3,3,0,3);
         Register(659971,"Mona_Bloor",11828,8,2,0,0,2);
-        cout << "b\n";
+    //    cout << "b\n";
 
         
         /*Withdraw(2);  // register in 1, withdraw in 2. withdraw before appointment
@@ -869,7 +876,7 @@ void System::n_Day_Pass(int n)
         Half_Day_Pass();
 }
 
-/*void System::Weekly_Report()    //this one only can sort by name
+void System::Weekly_Report()    //this one only can sort by name
 {
     cout << "==Weekly Report==" << endl;
     cout<<"\nsorted by name"<<endl;
@@ -893,12 +900,7 @@ void System::n_Day_Pass(int n)
 //    Appointment_Queue_Node* queueingp = appoint.head;
     cout<<"\nweekly:appointmentpeople\n"<<endl;
     appoint.print();
-//    while(queueingp !=NULL){
-//        Person* member = queueingp->head_pointer->person;        
-//        cout<<queueingp->head_pointer->reg_id<<" "<<member->name<<" "<<member->profession  //continue
-//        <<member->age_group<<member->risk<<counter-Reg_List.reprarray[queueingp->head_pointer->reg_id]->time<<endl;
-//        queueingp = queueingp->next;    //the time have to count such way.
-//    }//finish the appointming report!!
+//finish the appointming report!!
     appoint.deleteall();
 
     //this part: about treated people
@@ -915,17 +917,17 @@ void System::n_Day_Pass(int n)
 
     //final part: hardest part: queueing people
     RegWR_Queue instack;
-    for (int i = 0;i<global_reg_id;i++){
-        int judge = Reg_List.reprarray[i]->status;
+    for (int i = 1;i<global_reg_id;i++){
+        int judge = Reg_List.idsearch(i)->status;
         if(judge>=1&&judge<=5){  //IMPORTANT: here need to fix, i don't know exact status that proper
             Waiting_Queue_Node* p1 = instack.head;
             while (1){                  
-                if (p1 == NULL) {instack.iinsert(Reg_List.reprarray[i],NULL);break;}
-                if(Reg_List.reprarray[i]->person->name>p1->head_pointer->person->name){
-                    if(p1->next == NULL){instack.iinsert(Reg_List.reprarray[i],p1);break;}
+                if (p1 == NULL) {instack.iinsert(Reg_List.idsearch(i),NULL);break;}
+                if(Reg_List.idsearch(i)->person->name>p1->head_pointer->person->name){
+                    if(p1->next == NULL){instack.iinsert(Reg_List.idsearch(i),p1);break;}
                     p1 = p1->next;      
                 }
-                else {instack.iinsert(Reg_List.reprarray[i],p1->prev);break;}   
+                else {instack.iinsert(Reg_List.idsearch(i),p1->prev);break;}   
             }         
         }
     }// finish the sort
@@ -933,15 +935,10 @@ void System::n_Day_Pass(int n)
 //    Waiting_Queue_Node* instackp = instack.head;
     cout<<"\nweekly:queueingpeople\n"<<endl;
     instack.print();
-//    while(instackp !=NULL){
-//        Person* member = instackp->head_pointer->person;
-//        cout<<instackp->head_pointer->reg_id<<" "<<member->name<<" "<<member->profession  //continue
-//        <<member->age_group<<member->risk<<counter-Reg_List.reprarray[instackp->head_pointer->reg_id]->time<<endl;
-//        instackp = instackp->next;    //the time have to count such way.
-//    }//finish the appointming report!!
+//finish the appointming report!!
     instack.deleteall();  
     //now, over!!
-}*/
+}
 
 void System::Monthly_Report()
 {
@@ -1000,7 +997,7 @@ void System::print()
     cout << "\n";
 }
 
-/*void System::Weekly_ReportA()    //this one only can sort by name
+void System::Weekly_ReportA()    //this one only can sort by age
 {
     cout << "==Weekly Report==" << endl;
     cout<<"\nsorted by age group"<<endl;
@@ -1024,12 +1021,7 @@ void System::print()
 //    Appointment_Queue_Node* queueingp = appoint.head;
     cout<<"\nweekly:appointmentpeople\n"<<endl;
     appoint.print();
-//    while(queueingp !=NULL){
-//        Person* member = queueingp->head_pointer->person;        
-//        cout<<queueingp->head_pointer->reg_id<<" "<<member->name<<" "<<member->profession  //continue
-//        <<member->age_group<<member->risk<<counter-Reg_List.reprarray[queueingp->head_pointer->reg_id]->time<<endl;
-//        queueingp = queueingp->next;    //the time have to count such way.
-//    }//finish the appointming report!!
+//finish the appointming report!!
     appoint.deleteall();
 
     //this part: about treated people
@@ -1046,17 +1038,17 @@ void System::print()
 
     //final part: hardest part: queueing people
     RegWR_Queue instack;
-    for (int i = 0;i<global_reg_id;i++){
-        int judge = Reg_List.reprarray[i]->status;
+    for (int i = 1;i<global_reg_id;i++){
+        int judge = Reg_List.idsearch(i)->status;
         if(judge>=1&&judge<=5){  //IMPORTANT: here need to fix, i don't know exact status that proper
             Waiting_Queue_Node* p1 = instack.head;
             while (1){                  
-                if (p1 == NULL) {instack.iinsert(Reg_List.reprarray[i],NULL);break;}
-                if(Reg_List.reprarray[i]->person->age_group>p1->head_pointer->person->age_group){
-                    if(p1->next == NULL){instack.iinsert(Reg_List.reprarray[i],p1);break;}
+                if (p1 == NULL) {instack.iinsert(Reg_List.idsearch(i),NULL);break;}
+                if(Reg_List.idsearch(i)->person->age_group>p1->head_pointer->person->age_group){
+                    if(p1->next == NULL){instack.iinsert(Reg_List.idsearch(i),p1);break;}
                     p1 = p1->next;      
                 }
-                else {instack.iinsert(Reg_List.reprarray[i],p1->prev);break;}   
+                else {instack.iinsert(Reg_List.idsearch(i),p1->prev);break;}   
             }         
         }
     }// finish the sort
@@ -1064,17 +1056,12 @@ void System::print()
 //    Waiting_Queue_Node* instackp = instack.head;
     cout<<"\nweekly:queueingpeople\n"<<endl;
     instack.print();
-//    while(instackp !=NULL){
-//        Person* member = instackp->head_pointer->person;
-//        cout<<instackp->head_pointer->reg_id<<" "<<member->name<<" "<<member->profession  //continue
-//        <<member->age_group<<member->risk<<counter-Reg_List.reprarray[instackp->head_pointer->reg_id]->time<<endl;
-//        instackp = instackp->next;    //the time have to count such way.
-//    }//finish the appointming report!!
+//finish the appointming report!!
     instack.deleteall();  
     //now, over!!
-}*/
+}
 
-/*void System::Weekly_ReportP()    //this one only can sort by Profession
+void System::Weekly_ReportP()    //this one only can sort by Profession
 {
     cout << "==Weekly Report==" << endl;
     cout<<"\nsorted by profession"<<endl;
@@ -1098,12 +1085,7 @@ void System::print()
 //    Appointment_Queue_Node* queueingp = appoint.head;
     cout<<"\nweekly:appointmentpeople\n"<<endl;
     appoint.print();
-//    while(queueingp !=NULL){
-//        Person* member = queueingp->head_pointer->person;        
-//        cout<<queueingp->head_pointer->reg_id<<" "<<member->name<<" "<<member->profession  //continue
-//        <<member->age_group<<member->risk<<counter-Reg_List.reprarray[queueingp->head_pointer->reg_id]->time<<endl;
-//        queueingp = queueingp->next;    //the time have to count such way.
-//    }//finish the appointming report!!
+
     appoint.deleteall();
 
     //this part: about treated people
@@ -1120,17 +1102,17 @@ void System::print()
 
     //final part: hardest part: queueing people
     RegWR_Queue instack;
-    for (int i = 0;i<global_reg_id;i++){
-        int judge = Reg_List.reprarray[i]->status;
+    for (int i = 1;i<global_reg_id;i++){
+        int judge = Reg_List.idsearch(i)->status;
         if(judge>=1&&judge<=5){  //IMPORTANT: here need to fix, i don't know exact status that proper
             Waiting_Queue_Node* p1 = instack.head;
             while (1){                  
-                if (p1 == NULL) {instack.iinsert(Reg_List.reprarray[i],NULL);break;}
-                if(Reg_List.reprarray[i]->person->profession>p1->head_pointer->person->profession){
-                    if(p1->next == NULL){instack.iinsert(Reg_List.reprarray[i],p1);break;}
+                if (p1 == NULL) {instack.iinsert(Reg_List.idsearch(i),NULL);break;}
+                if(Reg_List.idsearch(i)->person->profession>p1->head_pointer->person->profession){
+                    if(p1->next == NULL){instack.iinsert(Reg_List.idsearch(i),p1);break;}
                     p1 = p1->next;      
                 }
-                else {instack.iinsert(Reg_List.reprarray[i],p1->prev);break;}   
+                else {instack.iinsert(Reg_List.idsearch(i),p1->prev);break;}   
             }         
         }
     }// finish the sort
@@ -1138,12 +1120,7 @@ void System::print()
 //    Waiting_Queue_Node* instackp = instack.head;
     cout<<"\nweekly:queueingpeople\n"<<endl;
     instack.print();
-//    while(instackp !=NULL){
-//        Person* member = instackp->head_pointer->person;
-//        cout<<instackp->head_pointer->reg_id<<" "<<member->name<<" "<<member->profession  //continue
-//        <<member->age_group<<member->risk<<counter-Reg_List.reprarray[instackp->head_pointer->reg_id]->time<<endl;
-//        instackp = instackp->next;    //the time have to count such way.
-//    }//finish the appointming report!!
+//finish the appointming report!!
     instack.deleteall();  
     //now, over!!
-}*/
+}

@@ -450,6 +450,7 @@ bool CLeafNode::Delete(KEY_TYPE value)
     Reg_Datas[j] = NULL; // Modified(new)
     m_Count--;
 
+    // ���سɹ�
     return true;
 }
 
@@ -931,8 +932,6 @@ void BPlusTree::ClearTree()
 //         pNode->Buffersort();
 //         pNode->Buffermerge();
 //         }
-
-
 //         for (int i = 1; i <= pNode->GetCount(); i++)
 //         {
 //             (void)pNewTree->Insert(pNode->GetElement(i), pNode->Reg_Datas[i-1]); // Modified(new)
@@ -1379,7 +1378,7 @@ bool CLeafNode::Bufferdelete(KEY_TYPE value)
     {
         return false;
     }
-
+  
     for (j = i; j < buffer_Count - 1; j++)
     {
         Buffer_Value[j] = Buffer_Value[j + 1];

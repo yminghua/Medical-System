@@ -11,6 +11,7 @@ int main()
 {
     int op;
     System system;
+    system.Reg_Byage.buffermode(1);
     /*system.Register(599206,"DominicLong",16834,1,1,0,0,2);
     system.Register(203183,	"TrumanSapir",	13294,	7,	7,	0,	1,	1);
     system.Transfer();
@@ -56,9 +57,10 @@ int main()
             cout << "14: Print Reg_List\n";
             cout << "15: Delete information in Reg_List\n";
             cout << "16: Search information in Reg_List\n";
+            cout << "17: relational database: report-by name of all with BuffB+\n";
             cin >> op;
         }
-        while ((op < 0) || (op > 16));
+        while ((op < 0) || (op > 17));
         switch (op)
         {
             case 0: 
@@ -102,20 +104,20 @@ int main()
                 system.Change_Status(reg_id, new_profession, new_risk);
                 break;
             }
-            /*case 5:
+            case 5:
             {
                 // weekly report
                 cout << "5\n";
                 system.Weekly_Report();
                 break;
-            }*/
-            /*case 6:
+            }
+            case 6:
             {
                 // monthly report
                 cout << "6\n";
                 system.Monthly_Report();
                 break;
-            }*/
+            }
             case 7:
             {
                 // Transfer
@@ -152,20 +154,20 @@ int main()
                 system.n_Day_Pass(n);
                 break;
             }
-            /*case 12:
+            case 12:
             {
                 // weekly report
                 cout << "12\n";
                 system.Weekly_ReportP();
                 break;
-            }*/
-            /*case 13:
+            }
+            case 13:
             {
                 // weekly report
                 cout << "13\n";
                 system.Weekly_ReportA();
                 break;
-            }*/
+            }
             
             case 14:
             {
@@ -208,6 +210,13 @@ int main()
                 {
                     cout << "Reg_id: " << r->reg_id << " name: " << r->person->name << " id: " << r->person->id << endl;
                 }
+                break;
+            }
+
+            case 17:
+            {
+                cout<<"till now, total regestered people sorted by agegroup:\n";
+                system.Reg_Byage.PrintTree();
                 break;
             }
 
