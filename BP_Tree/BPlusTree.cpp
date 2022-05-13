@@ -1030,7 +1030,7 @@ void BPlusTree::PrintTree()
     int i, j, k;
     int total = 0;
 
-    printf("\nFiest layer\n | ");
+    printf("\nFirst layer\n | ");
     PrintNode(pRoot);
     total = 0;
     printf("\nSecond layer\n | ");

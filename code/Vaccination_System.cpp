@@ -131,7 +131,7 @@ void System::Transfer()
 
 void System::Gen_Appointment()
 {
-    int max = 4; // maximum daily capacity for the three local station. max/2 for morning and afternoon each
+    int max = 2; // maximum daily capacity for the three local station. max/2 for morning and afternoon each
     int load1 = max, load2 = max, load3 = max;                         
     int date1 = counter + 1, date2 = counter + 1, date3 = counter + 1; // initialize the appointment date for the three station
     Appointment *app;
