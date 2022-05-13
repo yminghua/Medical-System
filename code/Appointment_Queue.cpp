@@ -1,5 +1,6 @@
 #include <string>
 #include "Data_Structure.h"
+//#include "../BP_Tree/BPlusTree.h"
 //#include              //many head function
 // class KMPlist
 // KMPlist<T>::KMPlist(int size)    //module
@@ -45,7 +46,7 @@ public:
     int updateR(int nowday);//new one::
     void insertNPA(Appointment_Queue_Node* node);
     void deleteNPA(Appointment_Queue_Node* node);
-
+    
     //for debug::
     void print();
 
