@@ -220,6 +220,7 @@ void System::Gen_Appointment()
         //cout << "the allocation for app succeed\n";
         app->person = reg->person;
         app->reg_id = reg->reg_id;
+        app->treatment_type = reg->treatment_type;
         //cout << "the generation for app data person and reg_id succeed\n";
         // now set the appointment time and loc based on origin registry and current capacity
         if (reg->registry == 1)

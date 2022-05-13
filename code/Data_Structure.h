@@ -73,6 +73,7 @@ void Registration::print(void)
          << "profession: " << person->profession << "   "
          << "age_group: " << person->age_group << "   "
          << "risk: " << person->risk << "   "
+         << "treatment_type: " << treatment_type << "   "
          << "name: " << person->name << "\n";
 }
 
@@ -85,6 +86,7 @@ public:
     int loc; //1~3, appointment location
     int time; //The appointment time
     int waiting_time; //The time the person has waited from register to appointment finished
+    int treatment_type;
 
 public:
     void print();
@@ -100,6 +102,7 @@ void Appointment::print()
          << "profession: " << person->profession << "   "
          << "age_group: " << person->age_group << "   "
          << "risk: " << person->risk << "   "
+         << "treatment_type: " << treatment_type << "   "
          << "name: " << person->name << "\n";
 }
 
