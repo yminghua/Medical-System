@@ -1103,7 +1103,7 @@ void BPlusTree::PrintNode(CNode *pNode)
                 p->Buffermerge();
             }
 
-            cout << "(name:" << p->Reg_Datas[i-1]->person->name << ")";//Print information you want here~
+            cout << "(name:" << p->Reg_Datas[i-1]->person->name << ") "; //Print information you want here~
         }
         
         if (i >= MAXNUM_KEY)
