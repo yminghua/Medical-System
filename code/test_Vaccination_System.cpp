@@ -200,7 +200,14 @@ int main()
                 int reg_id;
                 cin >> reg_id;
                 Registration *r = system.Reg_List.Search(reg_id);
-                cout << "Reg_id: " << r->reg_id << " name: " << r->person->name << " id: " << r->person->id << endl;
+                if (r == NULL)
+                {
+                    cout << "This Reg_id does not exist!" << endl;
+                }
+                else
+                {
+                    cout << "Reg_id: " << r->reg_id << " name: " << r->person->name << " id: " << r->person->id << endl;
+                }
                 break;
             }
 

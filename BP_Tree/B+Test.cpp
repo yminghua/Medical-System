@@ -65,14 +65,14 @@ void Test4(BPlusTree *pTree, int data)
     }
 }
 
-// 对树进行旋转
-BPlusTree *Test5(BPlusTree *pTree)
-{
-    BPlusTree *pNewTree = pTree->RotateTree();
-    delete pTree;
-    printf("\nsuccessed!\n");
-    return pNewTree;
-}
+// // 对树进行旋转
+// BPlusTree *Test5(BPlusTree *pTree)
+// {
+//     BPlusTree *pNewTree = pTree->RotateTree();
+//     delete pTree;
+//     printf("\nsuccessed!\n");
+//     return pNewTree;
+// }
 
 // 打印
 void Test6(BPlusTree *pTree)
@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
         printf("    *           2。在B+树中查找一个数；                               *\n");
         printf("    *           3。在B+树中插入一个数(Reg=NULL)；                     *\n");
         printf("    *           4。在B+树中删除一个数；                               *\n");
-        printf("    *           5。对B+树旋转，进行重新平衡；                         *\n");
+        // printf("    *           5。对B+树旋转，进行重新平衡；                         *\n");
         printf("    *           6。显示整个B+树；                                     *\n");
         printf("    *           7。检查整个B+树；                                     *\n");
         printf("    *           0。退出程序；                                         *\n");
@@ -148,9 +148,9 @@ int main(int argc, char *argv[])
             Test4(pTree, y);
             break;
 
-        case 5:
-            pTree = Test5(pTree);
-            break;
+        // case 5:
+        //     pTree = Test5(pTree);
+        //     break;
 
         case 6:
             Test6(pTree);
