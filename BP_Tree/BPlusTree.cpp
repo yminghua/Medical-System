@@ -22,38 +22,38 @@ CNode *CNode::GetBrother(int &flag)
     CInternalNode *pFather = (CInternalNode *)(GetFather()); //Get pointer of father node //Modified
     if (NULL == pFather)
     {
-        printf("Father is NULL!!!\n");
+        //printf("Father is NULL!!!\n");
         return NULL;
     }
 
     CNode *pBrother = NULL;
-    cout << "father's first key is: " << pFather->GetElement(1) << endl;
+    //cout << "father's first key is: " << pFather->GetElement(1) << endl;
     
     for (int i = 1; i <= pFather->GetCount() + 1; i++)
     {
         //Find the location of current node
         if (pFather->GetPointer(i) == this)
         {
-            cout << "Find!" << endl;
+            //cout << "Find!" << endl;
             if (i == (pFather->GetCount() + 1)) //Indicate that current node is on the rightmost
             {
                 pBrother = pFather->GetPointer(i - 1); //Get its previous pointer
-                if (pBrother == NULL)
-                {
-                    cout << "Brother is NULL" << endl;
-                }
+                // if (pBrother == NULL)
+                // {
+                //     cout << "Brother is NULL" << endl;
+                // }
                 flag = FLAG_LEFT;
-                cout << "Brother's first key: " << pBrother->GetElement(1) << endl;
+                //cout << "Brother's first key: " << pBrother->GetElement(1) << endl;
             }
             else
             {
                 pBrother = pFather->GetPointer(i + 1); //Find the latter pointer first
-                if (pBrother == NULL)
-                {
-                    cout << "Brother is NULL" << endl;
-                }
+                // if (pBrother == NULL)
+                // {
+                //     cout << "Brother is NULL" << endl;
+                // }
                 flag = FLAG_RIGHT;
-                cout << "Brother's first key: " << pBrother->GetElement(1) << endl;
+                //cout << "Brother's first key: " << pBrother->GetElement(1) << endl;
             }
         }
     }
@@ -357,6 +357,12 @@ CLeafNode::CLeafNode()
         Reg_Datas[i] = NULL; // Modified(new)
     }
 
+    for (int i = 0; i < MAXNUM_BUFFER; i++)
+    {
+        Buffer_Value[i] = INVALID;
+        Buffer_Block[i] = NULL; //necessary if buffer mode is open..   :drush8
+    }    
+
     m_pPrevNode = NULL;
     m_pNextNode = NULL;
 }
@@ -372,6 +378,26 @@ bool CLeafNode::Insert(KEY_TYPE value, Registration *data)
     {
         return false;
     }
+    //new added :: for buffer mode!!!!!!!!!!!!!!!1 drush8
+    if(this->if_buf ==1){
+        if(buffer_Count == MAXNUM_BUFFER){
+            Buffersort();
+            Buffermerge();
+            Buffer_Value[buffer_Count] = value;
+            Buffer_Block[buffer_Count] = data;
+            buffer_Count++;m_Count++;
+            return true;
+        }
+        m_Count++;
+        Buffer_Value[buffer_Count] = value;
+        Buffer_Block[buffer_Count] = data;
+        buffer_Count++;
+//        Buffersort();
+//        Buffermerge();        
+        return true;
+    }
+    //buffer mode work is over!!!!!!!!!!!!!!!!!
+
 
     //Find the location to insert
     for (i = 0; (value > m_Datas[i]) && (i < m_Count); i++)
@@ -406,9 +432,10 @@ bool CLeafNode::Delete(KEY_TYPE value)
             break;
         }
     }
-
     if (false == found)
     {
+        //Buffer mode judging & work!  drush8
+        if(this->if_buf ==1) return Bufferdelete(value); 
         return false;
     }
 
@@ -429,6 +456,14 @@ bool CLeafNode::Delete(KEY_TYPE value)
 //Split leaf node, cut the last half of the data of this leaf node to the specified leaf node
 KEY_TYPE CLeafNode::Split(CLeafNode *pNode)
 {
+    if(this->if_buf ==1) {
+        Buffersort();
+        Buffermerge();   
+        pNode->Buffersort();
+        pNode->Buffermerge();
+           //drush8
+    }
+
     //Move the last half of the leaf node to the specified node
     int j = 0;
     for (int i = ORDER_V + 1; i <= MAXNUM_DATA; i++)
@@ -454,6 +489,15 @@ bool CLeafNode::Combine(CLeafNode *pNode)
     {
         return false;
     }
+
+    if(this->if_buf ==1) {
+        Buffersort();
+        Buffermerge();
+    }
+    if(pNode->if_buf ==1) {
+        pNode->Buffersort();
+        pNode->Buffermerge();
+    }         //for buffer mode necessary..  drush8
 
     for (int i = 1; i <= pNode->GetCount(); i++)
     {
@@ -530,9 +574,14 @@ Registration* BPlusTree::Search(KEY_TYPE data)
     }*/
 
     //Keep finding in leaf nodes
-    //printf("5\n");
+   // printf("5\n");
     CLeafNode *pNode_leaf = (CLeafNode *)pNode;
-    //printf("6\n");
+
+    if(pNode_leaf->if_buf ==1) {          ///for buffer merge   drush8
+        pNode_leaf->Buffersort();
+        pNode_leaf->Buffermerge();
+    }
+   // printf("6\n");
     bool found = false;
     for (i = 1; (i <= pNode_leaf->GetCount()); i++)
     {
@@ -542,10 +591,10 @@ Registration* BPlusTree::Search(KEY_TYPE data)
             //printf("8\n");
             found = true;
             Reg_result = pNode_leaf->Reg_Datas[i-1]; // Modified(new)
-            if (Reg_result == NULL)
-            {
-                cout << "Error!" << endl;
-            }
+            // if (Reg_result == NULL)
+            // {
+            //     cout << "Error!" << endl;
+            // }
             
         }
         //printf("9\n");
@@ -597,11 +646,13 @@ bool BPlusTree::Insert(KEY_TYPE data, Registration *Reg_data)
     if (NULL == pOldNode)
     {
         pOldNode = new CLeafNode;
+        if(this->buffer_flag==1) pOldNode->Set_buf(1);    //drush8
         m_pLeafHead = pOldNode;
         m_pLeafTail = pOldNode;
         SetRoot(pOldNode);
     }
 
+    if(pOldNode->if_buf ==1){pOldNode->Buffersort();pOldNode->Buffermerge();}
     //Leaf node is not full, just insert
     if (pOldNode->GetCount() < MAXNUM_DATA)
     {
@@ -611,6 +662,7 @@ bool BPlusTree::Insert(KEY_TYPE data, Registration *Reg_data)
 
     //Leaf node is full, create a new leaf node and cut the data of the last half of the original node to the new node
     CLeafNode *pNewNode = new CLeafNode;
+    if(this->buffer_flag==1) pNewNode->Set_buf(1);  //drush8
     KEY_TYPE key = INVALID;
     //printf("split begin\n");
     key = pOldNode->Split(pNewNode);
@@ -618,6 +670,7 @@ bool BPlusTree::Insert(KEY_TYPE data, Registration *Reg_data)
 
     //Insert node in Double-linked list
     CLeafNode *pOldNext = pOldNode->m_pNextNode;
+
     pOldNode->m_pNextNode = pNewNode;
     pNewNode->m_pNextNode = pOldNext;
     pNewNode->m_pPrevNode = pOldNode;
@@ -698,7 +751,7 @@ bool BPlusTree::Delete(KEY_TYPE data)
             m_pLeafHead = NULL;
             m_pLeafTail = NULL;
             SetRoot(NULL);
-            cout << "Delete root successfully!\n" << "Tree is empty!" << endl;
+            cout << "Tree is empty!" << endl;
         }
 
         return true;
@@ -741,8 +794,12 @@ bool BPlusTree::Delete(KEY_TYPE data)
 
     if (pBrother->GetCount() > ORDER_V)
     {
-        //printf("S2A\n");
-        if (FLAG_LEFT == flag)
+        if(pBrother->if_buf ==1) {  //buffer mode necessary   drush8
+        pBrother->Buffersort();
+        pBrother->Buffermerge();
+    }
+    //    printf("S2A\n");
+        if (FLAG_LEFT == flag) 
         {
             NewData = pBrother->GetElement(pBrother->GetCount());
             New_Reg_Data = pBrother->Reg_Datas[pBrother->GetCount()-1]; // Modified(new)
@@ -810,7 +867,6 @@ bool BPlusTree::Delete(KEY_TYPE data)
         {
             pOldNext->m_pPrevNode = pBrother;
         }
-
         delete pOldNode;
         //printf("Combine success\n");
     }
@@ -841,7 +897,6 @@ bool BPlusTree::Delete(KEY_TYPE data)
         {
             pOldNext->m_pPrevNode = pOldNode;
         }
-
         delete pBrother;
         //printf("Combine success\n");
     }
@@ -865,7 +920,6 @@ void BPlusTree::ClearTree()
     SetRoot(NULL);
 }
 
-// // 旋转以重新平衡，实际上是把整个树重构一下,结果不理想，待重新考虑
 // BPlusTree *BPlusTree::RotateTree()
 // {
 //     BPlusTree *pNewTree = new BPlusTree;
@@ -873,6 +927,12 @@ void BPlusTree::ClearTree()
 //     CLeafNode *pNode = m_pLeafHead;
 //     while (NULL != pNode)
 //     {
+//         if(pNode->if_buf ==1) {  //buffer mode necessary  drush8
+//         pNode->Buffersort();
+//         pNode->Buffermerge();
+//         }
+
+
 //         for (int i = 1; i <= pNode->GetCount(); i++)
 //         {
 //             (void)pNewTree->Insert(pNode->GetElement(i), pNode->Reg_Datas[i-1]); // Modified(new)
@@ -893,6 +953,11 @@ bool BPlusTree::CheckTree()
         pNextNode = pThisNode->m_pNextNode;
         if (NULL != pNextNode)
         {
+            if(this->buffer_flag==1){   //drush8
+                pThisNode->Buffersort();pThisNode->Buffermerge();
+                pNextNode->Buffersort();pThisNode->Buffermerge();
+            }
+
             if (pThisNode->GetElement(pThisNode->GetCount()) > pNextNode->GetElement(1))
             {
                 return false;
@@ -961,7 +1026,7 @@ void BPlusTree::PrintTree()
     int i, j, k;
     int total = 0;
 
-    printf("\nFiest layer\n | ");
+    printf("\nFirst layer\n | ");
     PrintNode(pRoot);
     total = 0;
     printf("\nSecond layer\n | ");
@@ -1033,7 +1098,13 @@ void BPlusTree::PrintNode(CNode *pNode)
         if (pNode->m_Type == NODE_TYPE_LEAF && i<=pNode->GetCount())
         {
             CLeafNode *p = (CLeafNode*)pNode;
-            cout << "(name:" << p->Reg_Datas[i-1]->person->name << ")"; //Print information you want here~
+
+            if(p->if_buf ==1) {  //buffer mode necessary drush8
+                p->Buffersort();
+                p->Buffermerge();
+            }
+
+            cout << "(name:" << p->Reg_Datas[i-1]->person->name << ")";//Print information you want here~
         }
         
         if (i >= MAXNUM_KEY)
@@ -1158,7 +1229,7 @@ bool BPlusTree::DeleteInternalNode(CInternalNode *pNode, KEY_TYPE key)
         {
             if (pFather->GetElement(i) == key)
             {
-                pFather->SetElement(i, pNode->GetElement(1)); // 更改为叶子结点新的第一个元素
+                pFather->SetElement(i, pNode->GetElement(1));
                 //printf("Change father's key success\n");
             }
         }
@@ -1233,4 +1304,92 @@ bool BPlusTree::DeleteInternalNode(CInternalNode *pNode, KEY_TYPE key)
     }
 
     return DeleteInternalNode(pFather, NewKey);
+}
+//drush8::
+Registration* BPlusTree::idsearch(KEY_TYPE id)
+{
+    CLeafNode * tar_leaf = SearchLeafNode(id);
+    if(this->buffer_flag ==1) {
+        tar_leaf->Buffersort();
+        tar_leaf->Buffermerge();
+    }
+    for(int i=0;i<tar_leaf->m_Count;i++){
+        if(tar_leaf->m_Datas[i] == id){
+            return tar_leaf->Reg_Datas[i];
+        }
+    }
+    return NULL;
+}
+
+void CLeafNode::Buffermerge()
+{
+    KEY_TYPE final_value[MAXNUM_DATA];
+    Registration* final_Reigs[MAXNUM_DATA];
+    int i=0,j=0,k=0;
+    int mm_Count = m_Count - buffer_Count;
+    while(i<mm_Count || j<buffer_Count){
+        if(i == mm_Count||(j!= buffer_Count && m_Datas[i]>=Buffer_Value[j])){
+            final_value[k] = Buffer_Value[j];
+            final_Reigs[k] = Buffer_Block[j];
+            k++;j++; continue;
+        }
+        if(j == buffer_Count||(i!= mm_Count && m_Datas[i]<=Buffer_Value[j])){
+            final_value[k] = m_Datas[i];
+            final_Reigs[k] = Reg_Datas[i];
+            k++;i++;
+        }    
+    }
+
+    for (int l=0;l<k;l++){
+        m_Datas[l] = final_value[l];
+        Reg_Datas[l] = final_Reigs[l];        
+    }
+    buffer_Count =0;
+}
+
+void CLeafNode::Buffersort(){
+    for (int i =0;i<buffer_Count;i++){
+        int value = Buffer_Value[i],j=i;
+        Registration* reg = Buffer_Block[i];
+        while(j>0 && value < Buffer_Value[j-1]){
+            j--;
+            Buffer_Value[j+1] = Buffer_Value[j];
+            Buffer_Block[j+1] = Buffer_Block[j];
+        }
+
+        Buffer_Value[j] = value;
+        Buffer_Block[j] = reg;
+    }
+}
+
+bool CLeafNode::Bufferdelete(KEY_TYPE value)
+{
+    int i, j;
+    bool found = false;
+    for (i = 0; i < buffer_Count; i++)
+    {
+        if (value == Buffer_Value[i])
+        {
+            found = true;
+            break;
+        }
+    }
+
+    if (false == found)
+    {
+        return false;
+    }
+
+    for (j = i; j < buffer_Count - 1; j++)
+    {
+        Buffer_Value[j] = Buffer_Value[j + 1];
+        Buffer_Block[j] = Buffer_Block[j + 1];
+    }
+
+    Buffer_Value[j] = INVALID;
+    Buffer_Block[j] = NULL;
+    m_Count--;
+    buffer_Count--;
+
+    return true;
 }

@@ -12,6 +12,7 @@
 #define MAXNUM_KEY (ORDER_V * 2)        //Maximum number of key in an internal node
 #define MAXNUM_POINTER (MAXNUM_KEY + 1) //Maximum number of pointers in an internal node
 #define MAXNUM_DATA (ORDER_V * 2)       //Maximum number of data in a leaf node
+#define MAXNUM_BUFFER 2                //buffer size..drush8
 
 //Key type
 typedef int KEY_TYPE;
@@ -69,6 +70,8 @@ public:
     NODE_TYPE m_Type; // Node type
 
     int m_Count; // Valid key/data number
+    int buffer_Count =0; //drush8 for 
+
 
     CNode *m_pFather; // Pointer to the father node
 };
@@ -143,6 +146,13 @@ public:
 class CLeafNode : public CNode
 {
 public:
+    
+    int if_buf =0;
+
+    void Set_buf(int i){
+        if(i == 1) if_buf =1;
+    }
+
     CLeafNode();
     virtual ~CLeafNode();
 
@@ -192,6 +202,16 @@ public:
     KEY_TYPE m_Datas[MAXNUM_DATA]; // Data (Reg_id)
 public:
     Registration *Reg_Datas[MAXNUM_DATA]; // Regestration information // modified
+
+
+public:
+    Registration *Buffer_Block[MAXNUM_BUFFER];   //for KD standard tree: with buffer
+    KEY_TYPE Buffer_Value[MAXNUM_BUFFER]; 
+
+public: //for the overflow block, that means, combine/merge
+    void Buffermerge();
+    void Buffersort();
+    bool Bufferdelete(KEY_TYPE value);
 };
 
 /* B+ Tree */
@@ -270,7 +290,7 @@ public:
     }
 
 public:
-    //Double-liinked list
+    //Double-linked list
     CLeafNode *m_pLeafHead;
     CLeafNode *m_pLeafTail;
 
@@ -282,6 +302,16 @@ public:
     //Delete key in internal node
     bool DeleteInternalNode(CInternalNode *pNode, KEY_TYPE key);
 
+    
+
     CNode *m_Root; // root node
     int m_Depth;   // depth of tree
+
+
+    Registration* idsearch(KEY_TYPE id);
+    int buffer_flag =0;
+    void buffermode(int open){     //warning: once buffer mode is open, key value of tree will be exchanged.
+        if(open == 1) buffer_flag =1;   //id in this mode will becomes age_group id.
+        else buffer_flag =0;
+    }
 };
